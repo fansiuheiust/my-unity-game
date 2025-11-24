@@ -167,7 +167,6 @@ public class Controller : MonoBehaviour
 
     void OnBlockRotation(InputAction.CallbackContext context) {
         Vector2 v = (context.ReadValue<Vector2>() - new Vector2(Screen.width/2f, Screen.height/2f));
-        Debug.Log(Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg);
         _player.BlockRotate(Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg);
     }
 

@@ -41,7 +41,7 @@ public class MeleeObject : WeaponObject {
     public override void BlockClicked() {
         _model.transform.localPosition += _blockChange;
         BlockRotated(0);
-        _blade.stance = BladeStance.Block;
+        _blade.Stance = BladeStance.Block;
         StartBlock();
     }
     public override void BlockLifted() {
@@ -50,7 +50,7 @@ public class MeleeObject : WeaponObject {
         transform.localEulerAngles = Vector3.zero;
         _model.transform.localEulerAngles = Vector3.zero;
 
-        _blade.stance = BladeStance.None;
+        _blade.Stance = BladeStance.None;
         EndBlock();
         ResetBlockControl();
     }
@@ -73,7 +73,7 @@ public class MeleeObject : WeaponObject {
         StartAttack();
 
         _isActing = true;
-        _blade.stance = BladeStance.Attack;
+        _blade.Stance = BladeStance.Attack;
         _blade.GetComponent<Collider>().isTrigger = false;
 
         _model.localEulerAngles = new Vector3(0, 90, 90);
@@ -100,7 +100,7 @@ public class MeleeObject : WeaponObject {
 
         // disable blade collision and stay
         _blade.GetComponent<Collider>().isTrigger = true;
-        _blade.stance = BladeStance.None;
+        _blade.Stance = BladeStance.None;
         yield return new WaitForSeconds(2 * time / 3);
 
         ResetPosition();
