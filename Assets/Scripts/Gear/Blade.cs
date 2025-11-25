@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum BladeStance {
-    None, Attack, Block
+    None, Attack, Block, Idle
 }
 public class Blade : MonoBehaviour {
     BladeStance _stance = BladeStance.None;

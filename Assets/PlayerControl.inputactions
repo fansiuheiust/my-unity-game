@@ -19,7 +19,7 @@
                     "name": "jump",
                     "type": "Button",
                     "id": "c05d7b23-fcce-4774-9b87-4447ff5e4f2f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -68,6 +68,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "tempstun",
+                    "type": "Button",
+                    "id": "ef777a23-caa4-498c-9474-58e2c779e9ae",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -211,6 +220,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "47a1293a-31ae-49fc-ac6b-aca2ba4fa2cf",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "tempstun",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

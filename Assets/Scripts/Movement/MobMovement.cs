@@ -57,6 +57,17 @@ public class MobMovement : MonoBehaviour
     /// </summary>
     const float _epsilon = 0.0625f;
 
+    bool _isStunned = false;
+    public bool IsStunned { 
+        get {
+            return _isStunned;
+        } 
+        set {
+            if (value) _movement = Vector3.zero;
+            _isStunned = value;
+        }
+    }
+
     
     void Start()
     {
@@ -114,12 +125,14 @@ public class MobMovement : MonoBehaviour
     /// </summary>
     /// <param name="value">Movement direction</param>
     public void OnMovementTriggered(Vector3 value) {
+        if (IsStunned) return;
         _movement = value.normalized;
     }
     /// <summary>
     /// Triggered every time when the mob should jump
     /// </summary>
     public void OnJumpTriggered() {
+        if (IsStunned) return;
         if (!Grounded) return;
         Jump();
     }

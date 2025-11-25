@@ -40,6 +40,12 @@ public class Mob : MonoBehaviour {
     MobMovement _movement;
 
     /// <summary>
+    /// Self-documenting
+    /// </summary>
+    public bool IsStunned { get; private set; } = false;
+
+    // Events
+    /// <summary>
     /// <para>Raised when a mob dies.</para>
     /// <para>
     /// arg0: the soon-to-be dead mob.
@@ -84,6 +90,15 @@ public class Mob : MonoBehaviour {
     /// Raised when block control (e.g. player input changed due to blocking) should reset
     /// </summary>
     public event Action OnBlockControlReset;
+
+    /// <summary>
+    /// Raised when the mob is stunned
+    /// </summary>
+    public UnityEvent<Mob> OnStunStart;
+    /// <summary>
+    /// Raised when the mob is no longer stunned
+    /// </summary>
+    public UnityEvent<Mob> OnStunEnd;
 
 
 
@@ -141,6 +156,32 @@ public class Mob : MonoBehaviour {
     public void TakeDamage(float amount, Mob source, DamageType damageType) {
         stats.TakeDamage(amount, damageType);
         DeathCheck(source);
+    }
+
+    // status related
+    Coroutine _stunCoroutine;
+    /// <summary>
+    /// Applies stun to a mob. If the mob is already stunned, reset the countdown
+    /// </summary>
+    /// <param name="time">Self-documenting</param>
+    /// <param name="source">The mob who inflicted the stun</param>
+    public void TakeStun(float time, Mob source) {
+        if (_stunCoroutine != null) {
+            StopCoroutine(_stunCoroutine);
+        } else {
+            IsStunned = true;
+            _movement.IsStunned = true;
+            OnStunStart.Invoke(this);
+        }
+        _stunCoroutine = StartCoroutine(Stun(time));
+    }
+    IEnumerator Stun(float time) {
+        yield return new WaitForSeconds(time);
+        _stunCoroutine = null;
+        IsStunned = false;
+        _movement.IsStunned = false;
+        OnStunEnd.Invoke(this);
+        yield break;
     }
 
 
@@ -225,8 +266,10 @@ public class Mob : MonoBehaviour {
 
         _weaponObject.OnAttackStart -= OnAttackStarted;
         _weaponObject.OnAttackEnd -= OnAttackEnded;
+        _weaponObject.OnAttackControlReset -= OnAttackControlResetted;
         _weaponObject.OnBlockStart -= OnBlockStarted;
         _weaponObject.OnBlockEnd -= OnBlockEnded;
+        _weaponObject.OnBlockControlReset -= OnBlockControlResetted;
 
         Destroy(_weaponObject);
         _weaponObject = null;
@@ -244,21 +287,65 @@ public class Mob : MonoBehaviour {
         EquippedArmors[type] = null;
     }
 
-    // Attack
+    // Controls
+    /// <summary>
+    /// indicate if the mob clicked attack button when being stunned
+    /// </summary>
+    bool _clickedAttackDuringStun = false;
     /// <summary>
     /// Handles mob "clicking" attack button
     /// </summary>
     public void AttackClick() {
+        if (IsStunned) {
+            _clickedAttackDuringStun = true;
+            OnAttackControlReset?.Invoke();
+            return;
+        }
         _weaponObject?.AttackClicked(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
     }
-
     /// <summary>
     /// Handles mob "lifting" attack button
     /// </summary>
     public void AttackLift() {
+        // do nothing if attack was clicked when stunned
+        if (_clickedAttackDuringStun) {
+            _clickedAttackDuringStun = false;
+            return;
+        }
         _weaponObject?.AttackLifted(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
     }
 
+    /// <summary>
+    /// indicate if the mob clicked block button when being stunned
+    /// </summary>
+    bool _clickedBlockDuringStun = false;
+    /// <summary>
+    /// Handles mob "clicking" block button
+    /// </summary>
+    public void BlockClick() {
+        if (IsStunned) {
+            _clickedBlockDuringStun = true;
+            OnBlockControlReset?.Invoke();
+            return;
+        }
+        _weaponObject?.BlockClicked();
+    }
+    /// <summary>
+    /// Handles mob "lifting" block button
+    /// </summary>
+    public void BlockLift() {
+        if (_clickedBlockDuringStun) {
+            _clickedBlockDuringStun = false;
+            return;
+        }
+        _weaponObject?.BlockLifted();
+    }
+    public void BlockRotate(float angle) {
+        if (_clickedBlockDuringStun) return;
+        _weaponObject?.BlockRotated(angle);
+    }
+
+    // event invokers
     void OnAttackStarted() {
         OnAttackStart.Invoke(this);
     }
@@ -268,26 +355,6 @@ public class Mob : MonoBehaviour {
     void OnAttackControlResetted() {
         OnAttackControlReset?.Invoke();
     }
-
-
-    // block
-    /// <summary>
-    /// Handles mob "clicking" block button
-    /// </summary>
-    public void BlockClick() {
-        _weaponObject?.BlockClicked();
-    }
-
-    /// <summary>
-    /// Handles mob "lifting" block button
-    /// </summary>
-    public void BlockLift() {
-        _weaponObject?.BlockLifted();
-    }
-    public void BlockRotate(float angle) {
-        _weaponObject?.BlockRotated(angle);
-    }
-
     void OnBlockStarted() {
         OnBlockStart.Invoke(this);
     }

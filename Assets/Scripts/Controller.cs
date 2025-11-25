@@ -55,6 +55,9 @@ public class Controller : MonoBehaviour
         _playerInput.actions["block"].canceled += OnBlockInputCancel;
         _playerInput.actions["blockrotate"].performed += OnBlockRotation;
         _playerInput.actions["blockrotate"].Disable();
+
+        // temp stuff
+        _playerInput.actions["tempstun"].performed += x=> { _player.TakeStun(1, null); };
     }
 
 
@@ -132,7 +135,6 @@ public class Controller : MonoBehaviour
     
     // attack
     void OnAttackInput(InputAction.CallbackContext context) {
-        _playerInput.actions["block"].Disable();
         _player.AttackClick();
     }
 
@@ -140,20 +142,18 @@ public class Controller : MonoBehaviour
         _player.AttackLift();
     }
     void OnAttackEnded() {
-        _playerInput.actions["block"].Enable();
     }
 
 
     // block
     void OnBlockInput(InputAction.CallbackContext context) {
         _playerInput.actions["rotate"].Disable();
-        _playerInput.actions["attack"].Disable();
-        _player.BlockClick();
         _playerInput.actions["blockrotate"].Enable();
         Cursor.visible = true;
+        _player.BlockClick();
 
 
-        
+
     }
     void OnBlockInputCancel(InputAction.CallbackContext context) {
         _player.BlockLift();
@@ -162,7 +162,6 @@ public class Controller : MonoBehaviour
         Cursor.visible = false;
         _playerInput.actions["blockrotate"].Disable();
         _playerInput.actions["rotate"].Enable();
-        _playerInput.actions["attack"].Enable();
     }
 
     void OnBlockRotation(InputAction.CallbackContext context) {

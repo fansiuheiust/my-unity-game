@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -30,29 +31,59 @@ public class MeleeObject : WeaponObject {
     }
 
     public override void AttackClicked(float attackTime) {
-        if (!_isActing)
-            Swing(attackTime);
+        if (_blade.Stance != BladeStance.None) {
+            base.AttackClicked(0);
+            return;
+        }
+        Swing(attackTime);
     }
 
     public override void AttackLifted(float attackTime) {
         // blank
     }
 
+
+    /// <summary>
+    /// indicates if action block is undergoing cooldown
+    /// </summary>
+    bool _blockUnderCd = false;
     public override void BlockClicked() {
+        if (_blockUnderCd || _blade.Stance != BladeStance.None) {
+            base.BlockClicked();
+            return;
+        }
         _model.transform.localPosition += _blockChange;
         BlockRotated(0);
         _blade.Stance = BladeStance.Block;
         StartBlock();
+        StartCoroutine(BlockTire(0.5f));
     }
+    
     public override void BlockLifted() {
+        if (_blade.Stance != BladeStance.Block) return;
         _model.transform.localPosition -= _blockChange;
 
         transform.localEulerAngles = Vector3.zero;
         _model.transform.localEulerAngles = Vector3.zero;
 
         _blade.Stance = BladeStance.None;
+        StartCoroutine(BlockCooldown(0.5f));
         EndBlock();
         ResetBlockControl();
+    }
+    /// <summary>
+    /// Stops blocking after a set amount of time
+    /// </summary>
+    /// <param name="time">Time until blocking stops</param>
+    IEnumerator BlockTire(float time) {
+        yield return new WaitForSeconds(time);
+        BlockLifted();
+        yield break;
+    }
+    IEnumerator BlockCooldown(float time) {
+        _blockUnderCd = true;
+        yield return new WaitForSeconds(time);
+        _blockUnderCd = false;
     }
     public override void BlockRotated(float angle) {
         transform.localEulerAngles = new Vector3(0, 0, angle);
@@ -72,7 +103,6 @@ public class MeleeObject : WeaponObject {
     IEnumerator SwingAnimation(float time) {
         StartAttack();
 
-        _isActing = true;
         _blade.Stance = BladeStance.Attack;
         _blade.GetComponent<Collider>().isTrigger = false;
 
@@ -100,11 +130,11 @@ public class MeleeObject : WeaponObject {
 
         // disable blade collision and stay
         _blade.GetComponent<Collider>().isTrigger = true;
-        _blade.Stance = BladeStance.None;
+        _blade.Stance = BladeStance.Idle;
         yield return new WaitForSeconds(2 * time / 3);
 
         ResetPosition();
-        _isActing = false;
+        _blade.Stance = BladeStance.None;
 
         EndAttack();
         ResetAttackControl();
