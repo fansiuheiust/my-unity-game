@@ -8,7 +8,7 @@ public enum BladeStance {
 }
 public class Blade : MonoBehaviour {
     BladeStance _stance = BladeStance.None;
-    Mob _owner;
+    public Mob Owner { get; private set; }
     List<Mob> attackeds = new();
     /// <summary>
     /// Self-documenting, but comes with a setter for executing stuff when hopping from a stance
@@ -30,7 +30,7 @@ public class Blade : MonoBehaviour {
 
 
     void Awake() {
-        _owner = transform.root.GetComponent<Mob>();
+        Owner = transform.root.GetComponent<Mob>();
     }
 
 
@@ -54,7 +54,7 @@ public class Blade : MonoBehaviour {
     void OnSwordHit(GameObject gameObject) {
         if (gameObject.GetComponent<Mob>() is not null) {
             Mob mob = gameObject.GetComponent<Mob>();
-            _owner.DealDamage(mob, DamageType.Melee); // this line can kill mob
+            Owner.DealDamage(mob, DamageType.Melee); // this line can kill mob
             Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
             attackeds.Add(mob);
         }
