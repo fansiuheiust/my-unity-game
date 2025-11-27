@@ -58,12 +58,19 @@ public class MobMovement : MonoBehaviour
     const float _epsilon = 0.0625f;
 
     bool _isStunned = false;
+    float _prevMaxSpeed;
     public bool IsStunned { 
         get {
             return _isStunned;
         } 
         set {
-            if (value) _movement = Vector3.zero;
+            if (!IsStunned && value) {
+                _prevMaxSpeed = maxSpeed;
+                maxSpeed = 0;
+            }
+            if (IsStunned && !value) {
+                maxSpeed = _prevMaxSpeed;
+            }
             _isStunned = value;
         }
     }
@@ -148,5 +155,24 @@ public class MobMovement : MonoBehaviour
 
     public void OnFinalStatsChanged(float newSpeed) {
         _speedBonus = 1 + newSpeed;
+    }
+
+
+
+    // status related
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="orign">Where the knockback should be from</param>
+    /// <param name="duration">How long the knockback should last, with mob's stats considered</param>
+    public void TakeKnockback(Vector3 origin, float duration) {
+        // apply force to rigid body
+        _rb.linearVelocity = Vector3.zero;
+        // v = u + at, u = 0 => v = at
+        Vector3 dir = transform.position - origin;
+        Vector2 xzV = acceleration * duration * (new Vector2(dir.x, dir.z)).normalized;
+        Vector3 newV = new Vector3(xzV.x, 0, xzV.y);
+        _rb.AddForce(newV, ForceMode.VelocityChange);
+        targetVelocity = newV;
     }
 }

@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "tempstuninterrupt",
+                    "type": "Button",
+                    "id": "42107526-f31b-46e3-9a83-69a6d1ef70ed",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -226,11 +235,22 @@
                 {
                     "name": "",
                     "id": "47a1293a-31ae-49fc-ac6b-aca2ba4fa2cf",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/leftBracket",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "tempstun",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f52e563e-9b38-40fe-8570-3b0b30254f9d",
+                    "path": "<Keyboard>/rightBracket",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "tempstuninterrupt",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

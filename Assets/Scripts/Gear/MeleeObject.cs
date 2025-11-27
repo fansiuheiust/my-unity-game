@@ -30,19 +30,28 @@ public class MeleeObject : WeaponObject {
         _model = transform.Find("Model");
     }
 
+    /// <summary>
+    /// Performs an attack
+    /// </summary>
+    /// <param name="attackTime">self-documenting</param>
     public override void AttackClicked(float attackTime) {
         if (_blade.Stance != BladeStance.None) {
             base.AttackClicked(0);
             return;
         }
+        InternalStun(attackTime);
+        _blade.attackTime = attackTime;
         Swing(attackTime);
     }
-
+    /// <summary>
+    /// Nothing
+    /// </summary>
+    /// <param name="attackTime">self-documenting</param>
     public override void AttackLifted(float attackTime) {
         // blank
     }
 
-
+    const float max_block_dur = 0.5f;
     /// <summary>
     /// indicates if action block is undergoing cooldown
     /// </summary>
@@ -56,9 +65,13 @@ public class MeleeObject : WeaponObject {
         BlockRotated(0);
         _blade.Stance = BladeStance.Block;
         StartBlock();
-        StartCoroutine(BlockTire(0.5f));
+        InternalStun(max_block_dur);
+        StartCoroutine(BlockTire(max_block_dur));
     }
     
+    /// <summary>
+    /// Note that this will be called if the mob is "tired" of blocking
+    /// </summary>
     public override void BlockLifted() {
         if (_blade.Stance != BladeStance.Block) return;
         _model.transform.localPosition -= _blockChange;
@@ -67,7 +80,8 @@ public class MeleeObject : WeaponObject {
         _model.transform.localEulerAngles = Vector3.zero;
 
         _blade.Stance = BladeStance.None;
-        StartCoroutine(BlockCooldown(0.5f));
+        InterruptStun();
+        StartCoroutine(BlockCooldown(max_block_dur));
         EndBlock();
         ResetBlockControl();
     }

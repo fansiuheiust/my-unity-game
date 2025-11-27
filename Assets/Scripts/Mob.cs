@@ -8,7 +8,7 @@ using System;
 
 public class Mob : MonoBehaviour {
     [SerializeField]
-    MobStats stats;
+    public MobStats Stats { get; private set; }
 
     [SerializeField]
     SerializedMobStats initialStats;
@@ -104,14 +104,14 @@ public class Mob : MonoBehaviour {
 
 
     void Awake() {
-        stats = new(initialStats);
+        Stats = new(initialStats);
         OnDeath = new();
         _movement = GetComponent<MobMovement>();
         _rotatable = transform.Find("Rotatable");
-        stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
+        Stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
 
         // raises all stats change events
-        stats.ComputeFinalStats();
+        Stats.ComputeFinalStats();
 
         // GC
         initialStats = null;
@@ -119,7 +119,7 @@ public class Mob : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        Equip(new Melee("Test sword", new BaseStats(atk: 7), new ScalingStats(atk: 0.1f, atkSpeed: -5f), 0.9f, WeaponSpeed.Slow));
+        Equip(new Melee("Test sword", new BaseStats(atk: 4), new ScalingStats(atk: 0.1f), 0.9f, WeaponSpeed.Normal));
     }
 
     // Update is called once per frame
@@ -143,7 +143,7 @@ public class Mob : MonoBehaviour {
     /// <param name="source">Mob that deals damage</param>
     /// <param name="damageType">Type of damage the mob dealt</param>
     void TakeDamage(Mob source, DamageType damageType) {
-        stats.TakeDamage(source.stats, damageType);
+        Stats.TakeDamage(source.Stats, damageType);
         DeathCheck(source);
     }
 
@@ -154,35 +154,95 @@ public class Mob : MonoBehaviour {
     /// <param name="source">Source of damage (null if not damaged by a mob)</param>
     /// <param name="damageType">type of damage</param>
     public void TakeDamage(float amount, Mob source, DamageType damageType) {
-        stats.TakeDamage(amount, damageType);
+        Stats.TakeDamage(amount, damageType);
         DeathCheck(source);
     }
 
     // status related
+    // stun
     Coroutine _stunCoroutine;
     /// <summary>
-    /// Applies stun to a mob. If the mob is already stunned, reset the countdown
+    /// Whether the current stun (if any) should trigger stun-related events
+    /// </summary>
+    bool _isStunInternal = false;
+    /// <summary>
+    /// Applies stun to a mob. If the mob is already stunned, reset the countdown.
+    /// Triggers OnStunEnd if the enemy is already stunned by a non-internal stun but the new one is not.
     /// </summary>
     /// <param name="time">Self-documenting</param>
     /// <param name="source">The mob who inflicted the stun</param>
-    public void TakeStun(float time, Mob source) {
-        if (_stunCoroutine != null) {
+    /// <param name="isInternal">Whether this stun will invoke stun-related events</param>
+    public void TakeStun(float time, Mob source, bool isInternal = false) {
+        if (IsStunned) {
             StopCoroutine(_stunCoroutine);
-        } else {
-            IsStunned = true;
-            _movement.IsStunned = true;
-            OnStunStart.Invoke(this);
+            // trigger end stun if the new stun is not internal but the old stun was
+            if (_isStunInternal && !isInternal) OnStunEnd.Invoke(this);
         }
-        _stunCoroutine = StartCoroutine(Stun(time));
+        _isStunInternal = isInternal;
+        // else but _isStunInternal = isInternal will trigger after if and before else
+        if (!IsStunned) {
+            StartStun();
+        }
+        _stunCoroutine = StartCoroutine(EndStun(time));
     }
-    IEnumerator Stun(float time) {
+    /// <summary>
+    /// Ends stun before the original duration
+    /// </summary>
+    public void InterruptStun() {
+        if (!IsStunned) return;
+        StopCoroutine(_stunCoroutine);
+        EndStun();
+    }
+    /// <summary>
+    /// Ends a stun status after a period of time
+    /// </summary>
+    /// <param name="time">Time (in seconds) until a stun ends</param>
+    IEnumerator EndStun(float time) {
         yield return new WaitForSeconds(time);
+        EndStun();
+        yield break;
+    }
+    void StartStun() {
+        IsStunned = true;
+        _movement.IsStunned = true;
+        if (!_isStunInternal) OnStunStart.Invoke(this);
+    }
+    void EndStun() {
         _stunCoroutine = null;
         IsStunned = false;
         _movement.IsStunned = false;
-        OnStunEnd.Invoke(this);
-        yield break;
+        if (!_isStunInternal) OnStunEnd.Invoke(this);
     }
+
+    // knockback
+    /// <summary>
+    /// Deals knockback to another mob
+    /// </summary>
+    /// <param name="target">self-documenting</param>
+    /// <param name="origin">the position of the knockback</param>
+    /// <param name="duration">How long should the mob not act (because of knockback) for</param>
+    public void DealKnockback(Mob target, Vector3 origin, float duration) {
+        target.TakeKnockback(this, origin, duration);
+    }
+    /// <summary>
+    /// Deals knockback to another mob with the origin being self's position
+    /// </summary>
+    /// <param name="target">self-documenting</param>
+    /// <param name="duration">How long should the mob not act (because of knockback) for</param>
+    public void DealKnockback(Mob target, float duration) => DealKnockback(target, transform.position, duration);
+    /// <summary>
+    /// Takes knockback
+    /// </summary>
+    /// <param name="source">The mob who inflicted the knockback</param>
+    /// <param name="origin">the position of the knockback</param>
+    /// <param name="duration">How long should this mob not act (because of knockback) for</param>
+    void TakeKnockback(Mob source, Vector3 origin, float duration) {
+        if (IsStunned) return;
+        duration *= (1+source.Stats.Final.Knockback) * (1-Stats.Final.KnockbackResistance);
+        TakeStun(duration, source);
+        _movement.TakeKnockback(origin, duration);
+    }
+
 
 
 
@@ -191,7 +251,7 @@ public class Mob : MonoBehaviour {
     /// <returns>
     /// Default dead checker: Hp < 1
     /// </returns>
-    protected virtual bool IsDead => stats.IsDead;
+    protected virtual bool IsDead => Stats.IsDead;
 
     /// <summary>
     /// Called to check and act if the mob is dead
@@ -236,7 +296,7 @@ public class Mob : MonoBehaviour {
     public void Equip(Weapon weapon) {
         if (EquippedWeapon is not null)
             UnequipWeapon();
-        stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
+        Stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
         EquippedWeapon = weapon;
         _weaponObject = Instantiate(weapon.WeaponPrefab, _rotatable).GetComponent<WeaponObject>();
         _weaponObject.OnAttackStart += OnAttackStarted;
@@ -245,6 +305,8 @@ public class Mob : MonoBehaviour {
         _weaponObject.OnBlockStart += OnBlockStarted;
         _weaponObject.OnBlockEnd += OnBlockEnded;
         _weaponObject.OnBlockControlReset += OnBlockControlResetted;
+        _weaponObject.OnInternalStunRequest += OnInternalStunRequested;
+        _weaponObject.OnStunInterruptRequest += InterruptStun;
     }
     /// <summary>
     /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
@@ -253,7 +315,7 @@ public class Mob : MonoBehaviour {
     public void Equip(Armor armor) {
         if (EquippedArmors[armor.Type] is not null)
             UnequipArmor(armor.Type);
-        stats.GainStats(armor.Base, armor.Scaling);
+        Stats.GainStats(armor.Base, armor.Scaling);
         EquippedArmors[armor.Type] = armor;
     }
 
@@ -262,7 +324,7 @@ public class Mob : MonoBehaviour {
     /// </summary>
     public void UnequipWeapon() {
 
-        stats.UnequipWeapon();
+        Stats.UnequipWeapon();
 
         _weaponObject.OnAttackStart -= OnAttackStarted;
         _weaponObject.OnAttackEnd -= OnAttackEnded;
@@ -270,11 +332,13 @@ public class Mob : MonoBehaviour {
         _weaponObject.OnBlockStart -= OnBlockStarted;
         _weaponObject.OnBlockEnd -= OnBlockEnded;
         _weaponObject.OnBlockControlReset -= OnBlockControlResetted;
+        _weaponObject.OnInternalStunRequest -= OnInternalStunRequested;
+        _weaponObject.OnStunInterruptRequest -= InterruptStun;
 
         Destroy(_weaponObject);
         _weaponObject = null;
 
-        stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
+        Stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
         EquippedWeapon = null;
     }
     /// <summary>
@@ -283,7 +347,7 @@ public class Mob : MonoBehaviour {
     /// <param name="type">Type of the armor to be unequipped</param>
     public void UnequipArmor(ArmorType type) {
         Armor ToLose = EquippedArmors[type];
-        stats.LoseStats(ToLose.Base, ToLose.Scaling);
+        Stats.LoseStats(ToLose.Base, ToLose.Scaling);
         EquippedArmors[type] = null;
     }
 
@@ -301,7 +365,7 @@ public class Mob : MonoBehaviour {
             OnAttackControlReset?.Invoke();
             return;
         }
-        _weaponObject?.AttackClicked(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+        _weaponObject?.AttackClicked(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
     }
     /// <summary>
     /// Handles mob "lifting" attack button
@@ -312,7 +376,7 @@ public class Mob : MonoBehaviour {
             _clickedAttackDuringStun = false;
             return;
         }
-        _weaponObject?.AttackLifted(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+        _weaponObject?.AttackLifted(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
     }
 
     /// <summary>
@@ -363,5 +427,8 @@ public class Mob : MonoBehaviour {
     }
     void OnBlockControlResetted() {
         OnBlockControlReset?.Invoke();
+    }
+    void OnInternalStunRequested(float dur) {
+        TakeStun(dur, null, true);
     }
 }

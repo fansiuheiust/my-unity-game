@@ -8,6 +8,7 @@ public enum BladeStance {
 }
 public class Blade : MonoBehaviour {
     BladeStance _stance = BladeStance.None;
+    public float attackTime = 0f;
     public Mob Owner { get; private set; }
     List<Mob> attackeds = new();
     /// <summary>
@@ -54,6 +55,7 @@ public class Blade : MonoBehaviour {
     void OnSwordHit(GameObject gameObject) {
         if (gameObject.GetComponent<Mob>() is not null) {
             Mob mob = gameObject.GetComponent<Mob>();
+            Owner.DealKnockback(mob, attackTime / 2);
             Owner.DealDamage(mob, DamageType.Melee); // this line can kill mob
             Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
             attackeds.Add(mob);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using NUnit.Framework;
+using System.Security.Cryptography;
 
 public abstract class WeaponObject : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public abstract class WeaponObject : MonoBehaviour {
     public event Action OnBlockStart;
     public event Action OnBlockEnd;
     public event Action OnBlockControlReset;
+    public event Action<float> OnInternalStunRequest;
+    public event Action OnStunInterruptRequest;
 
     /// <summary>
     /// Triggered when attack button is clicked
@@ -67,7 +70,21 @@ public abstract class WeaponObject : MonoBehaviour {
     protected void EndBlock() {
         OnBlockEnd?.Invoke();
     }
+    /// <summary>
+    /// Reaises OnBlockControlReset
+    /// </summary>
     protected void ResetBlockControl() {
         OnBlockControlReset?.Invoke();
     }
+    /// <summary>
+    /// Requests an internal stun for the wielder
+    /// </summary>
+    /// <param name="dur">duration of stun</param>
+    protected void InternalStun(float dur) {
+        OnInternalStunRequest?.Invoke(dur);
+    }
+    protected void InterruptStun() {
+        OnStunInterruptRequest?.Invoke();
+    }
+
 }

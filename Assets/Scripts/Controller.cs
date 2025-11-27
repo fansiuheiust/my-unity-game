@@ -41,7 +41,6 @@ public class Controller : MonoBehaviour
         onJump.AddListener(_movement.OnJumpTriggered);
         _player.OnAttackControlReset += OnAttackEnded;
         _player.OnBlockControlReset += OnBlockEnded;
-        
 
         _playerInput.actions["walk"].performed += OnMovementInput;
         _playerInput.actions["walk"].canceled += OnMovementCancel;
@@ -58,6 +57,7 @@ public class Controller : MonoBehaviour
 
         // temp stuff
         _playerInput.actions["tempstun"].performed += x=> { _player.TakeStun(1, null); };
+        _playerInput.actions["tempstuninterrupt"].performed += x => { _player.InterruptStun(); };
     }
 
 
