@@ -12,10 +12,6 @@ public class MeleeObject : WeaponObject {
     /// </summary>
     Transform _model;
     /// <summary>
-    /// true if the object is already undergoing an animation
-    /// </summary>
-    bool _isActing = false;
-    /// <summary>
     /// blade of the melee weapon
     /// </summary>
     Blade _blade;
@@ -25,7 +21,8 @@ public class MeleeObject : WeaponObject {
     /// </summary>
     Vector3 _blockChange = new(0.5f, -0.4f, 0);
 
-    void Awake() {
+    protected override void Awake() {
+        base.Awake();
         _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
         _model = transform.Find("Model");
     }
@@ -39,7 +36,7 @@ public class MeleeObject : WeaponObject {
             base.AttackClicked(0);
             return;
         }
-        InternalStun(attackTime);
+        owner.TakeStun(attackTime, null, true);
         _blade.attackTime = attackTime;
         Swing(attackTime);
     }
@@ -65,7 +62,7 @@ public class MeleeObject : WeaponObject {
         BlockRotated(0);
         _blade.Stance = BladeStance.Block;
         StartBlock();
-        InternalStun(max_block_dur);
+        owner.TakeStun(max_block_dur, null, true);
         StartCoroutine(BlockTire(max_block_dur));
     }
     
@@ -80,7 +77,7 @@ public class MeleeObject : WeaponObject {
         _model.transform.localEulerAngles = Vector3.zero;
 
         _blade.Stance = BladeStance.None;
-        InterruptStun();
+        owner.InterruptStun();
         StartCoroutine(BlockCooldown(max_block_dur));
         EndBlock();
         ResetBlockControl();

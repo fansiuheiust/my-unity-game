@@ -19,11 +19,6 @@ public class Mob : MonoBehaviour {
     Transform _rotatable;
 
     /// <summary>
-    /// The physical weapon
-    /// </summary>
-    WeaponObject _weaponObject = null;
-
-    /// <summary>
     /// The weapon equipped by the mob
     /// </summary>
     public Weapon EquippedWeapon { get; private set; } = null;
@@ -120,11 +115,6 @@ public class Mob : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         Equip(new Melee("Test sword", new BaseStats(atk: 4), new ScalingStats(atk: 0.1f), 0.9f, WeaponSpeed.Normal));
-    }
-
-    // Update is called once per frame
-    void Update() {
-        
     }
 
     // damage-related
@@ -298,15 +288,7 @@ public class Mob : MonoBehaviour {
             UnequipWeapon();
         Stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
         EquippedWeapon = weapon;
-        _weaponObject = Instantiate(weapon.WeaponPrefab, _rotatable).GetComponent<WeaponObject>();
-        _weaponObject.OnAttackStart += OnAttackStarted;
-        _weaponObject.OnAttackEnd += OnAttackEnded;
-        _weaponObject.OnAttackControlReset += OnAttackControlResetted;
-        _weaponObject.OnBlockStart += OnBlockStarted;
-        _weaponObject.OnBlockEnd += OnBlockEnded;
-        _weaponObject.OnBlockControlReset += OnBlockControlResetted;
-        _weaponObject.OnInternalStunRequest += OnInternalStunRequested;
-        _weaponObject.OnStunInterruptRequest += InterruptStun;
+        Instantiate(weapon.WeaponPrefab, _rotatable);
     }
     /// <summary>
     /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
@@ -326,17 +308,7 @@ public class Mob : MonoBehaviour {
 
         Stats.UnequipWeapon();
 
-        _weaponObject.OnAttackStart -= OnAttackStarted;
-        _weaponObject.OnAttackEnd -= OnAttackEnded;
-        _weaponObject.OnAttackControlReset -= OnAttackControlResetted;
-        _weaponObject.OnBlockStart -= OnBlockStarted;
-        _weaponObject.OnBlockEnd -= OnBlockEnded;
-        _weaponObject.OnBlockControlReset -= OnBlockControlResetted;
-        _weaponObject.OnInternalStunRequest -= OnInternalStunRequested;
-        _weaponObject.OnStunInterruptRequest -= InterruptStun;
-
-        Destroy(_weaponObject);
-        _weaponObject = null;
+        OnWeaponUnequip();
 
         Stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
         EquippedWeapon = null;
@@ -351,7 +323,11 @@ public class Mob : MonoBehaviour {
         EquippedArmors[type] = null;
     }
 
-    // Controls
+    // Weapon control
+    public event Action<float> OnAttackClick, OnAttackLift;
+    public event Action OnBlockClick, OnBlockLift;
+    public event Action<float> OnBlockRotate;
+    public event Action OnWeaponUnequip;
     /// <summary>
     /// indicate if the mob clicked attack button when being stunned
     /// </summary>
@@ -365,7 +341,7 @@ public class Mob : MonoBehaviour {
             OnAttackControlReset?.Invoke();
             return;
         }
-        _weaponObject?.AttackClicked(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
+        OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
     }
     /// <summary>
     /// Handles mob "lifting" attack button
@@ -376,7 +352,7 @@ public class Mob : MonoBehaviour {
             _clickedAttackDuringStun = false;
             return;
         }
-        _weaponObject?.AttackLifted(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
+        OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
     }
 
     /// <summary>
@@ -392,7 +368,7 @@ public class Mob : MonoBehaviour {
             OnBlockControlReset?.Invoke();
             return;
         }
-        _weaponObject?.BlockClicked();
+        OnBlockClick?.Invoke();
     }
     /// <summary>
     /// Handles mob "lifting" block button
@@ -402,33 +378,18 @@ public class Mob : MonoBehaviour {
             _clickedBlockDuringStun = false;
             return;
         }
-        _weaponObject?.BlockLifted();
+        OnBlockLift?.Invoke();
     }
     public void BlockRotate(float angle) {
         if (_clickedBlockDuringStun) return;
-        _weaponObject?.BlockRotated(angle);
+        OnBlockRotate?.Invoke(angle);
     }
 
-    // event invokers
-    void OnAttackStarted() {
-        OnAttackStart.Invoke(this);
-    }
-    void OnAttackEnded() {
-        OnAttackEnd.Invoke(this);
-    }
-    void OnAttackControlResetted() {
+    // event invokers 
+    public void ResetAttackControl() {
         OnAttackControlReset?.Invoke();
     }
-    void OnBlockStarted() {
-        OnBlockStart.Invoke(this);
-    }
-    void OnBlockEnded() {
-        OnBlockEnd.Invoke(this);
-    }
-    void OnBlockControlResetted() {
+    public void ResetBlockControl() {
         OnBlockControlReset?.Invoke();
-    }
-    void OnInternalStunRequested(float dur) {
-        TakeStun(dur, null, true);
     }
 }
