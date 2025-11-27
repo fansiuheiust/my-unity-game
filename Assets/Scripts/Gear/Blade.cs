@@ -62,6 +62,6 @@ public class Blade : MonoBehaviour {
         }
     }
     void OnBlockHit(GameObject gameObject) {
-
+        Debug.Log("GG");
     }
 }

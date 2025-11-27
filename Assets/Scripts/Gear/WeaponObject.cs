@@ -2,17 +2,36 @@ using UnityEngine;
 using System;
 using NUnit.Framework;
 using System.Security.Cryptography;
+using UnityEditor.SceneManagement;
 
 public abstract class WeaponObject : MonoBehaviour {
 
-    public event Action OnAttackStart;
-    public event Action OnAttackEnd;
-    public event Action OnAttackControlReset;
-    public event Action OnBlockStart;
-    public event Action OnBlockEnd;
-    public event Action OnBlockControlReset;
-    public event Action<float> OnInternalStunRequest;
-    public event Action OnStunInterruptRequest;
+    protected Mob owner;
+
+    /// <summary>
+    /// This should be invoked even if derived objects override
+    /// </summary>
+    protected virtual void Awake() {
+        owner = transform.root.GetComponent<Mob>();
+        owner.OnAttackClick += AttackClicked;
+        owner.OnAttackLift += AttackLifted;
+        owner.OnBlockClick += BlockClicked;
+        owner.OnBlockLift += BlockLifted;
+        owner.OnBlockRotate += BlockRotated;
+        owner.OnWeaponUnequip += Delete;
+    }
+
+
+    void Delete() {
+        owner.OnAttackClick -= AttackClicked;
+        owner.OnAttackLift -= AttackLifted;
+        owner.OnBlockClick -= BlockClicked;
+        owner.OnBlockLift -= BlockLifted;
+        owner.OnBlockRotate -= BlockRotated;
+        owner.OnWeaponUnequip -= Delete;
+        owner = null;
+        Destroy(gameObject);
+    }
 
     /// <summary>
     /// Triggered when attack button is clicked
@@ -44,47 +63,36 @@ public abstract class WeaponObject : MonoBehaviour {
     /// Must be called before an attack to invoke event
     /// </summary>
     protected void StartAttack() {
-        OnAttackStart?.Invoke();
+        owner.OnAttackStart.Invoke(owner);
     }
     /// <summary>
     /// Must be called after an attack to invoke event
     /// </summary>
     protected void EndAttack() {
-        OnAttackEnd?.Invoke();
+        owner.OnAttackEnd.Invoke(owner);
     }
     /// <summary>
     /// Raises OnAttackControlReset
     /// </summary>
     protected void ResetAttackControl() {
-        OnAttackControlReset?.Invoke();
+        owner.ResetAttackControl();
     }
     /// <summary>
     /// Must be called after a block to invoke event
     /// </summary>
     protected void StartBlock() {
-        OnBlockStart?.Invoke();
+        owner.OnBlockStart.Invoke(owner);
     }
     /// <summary>
     /// Must be called after a block to invoke event 
     /// </summary>
     protected void EndBlock() {
-        OnBlockEnd?.Invoke();
+        owner.OnBlockEnd.Invoke(owner);
     }
     /// <summary>
     /// Reaises OnBlockControlReset
     /// </summary>
     protected void ResetBlockControl() {
-        OnBlockControlReset?.Invoke();
+        owner.ResetBlockControl();
     }
-    /// <summary>
-    /// Requests an internal stun for the wielder
-    /// </summary>
-    /// <param name="dur">duration of stun</param>
-    protected void InternalStun(float dur) {
-        OnInternalStunRequest?.Invoke(dur);
-    }
-    protected void InterruptStun() {
-        OnStunInterruptRequest?.Invoke();
-    }
-
 }

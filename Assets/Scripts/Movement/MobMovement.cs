@@ -132,7 +132,6 @@ public class MobMovement : MonoBehaviour
     /// </summary>
     /// <param name="value">Movement direction</param>
     public void OnMovementTriggered(Vector3 value) {
-        if (IsStunned) return;
         _movement = value.normalized;
     }
     /// <summary>
