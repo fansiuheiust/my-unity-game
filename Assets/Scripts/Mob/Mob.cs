@@ -43,15 +43,17 @@ public class Mob : MonoBehaviour {
     /// <summary>
     /// <para>Raised when a mob dies.</para>
     /// <para>
-    /// arg0: the soon-to-be dead mob.
-    /// arg1: source, null if it does not exist.
+    /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob.
+    /// </para>
+    /// <para>
+    /// <c>Mob1</c>: source, null if it does not exist.
     /// </para>
     /// </summary>
     public UnityEvent<Mob, Mob> OnDeath;
     /// <summary>
     /// <para>Raised when an attack starts</para>
     /// <para>
-    /// arg0: the invoker
+    /// <c>Mob</c>: the invoker
     /// </para>
     /// </summary>
     public UnityEvent<Mob> OnAttackStart;
@@ -65,14 +67,14 @@ public class Mob : MonoBehaviour {
     /// <summary>
     /// <para>Raised when a block starts</para>
     /// <para>
-    /// arg0: the invoker
+    /// <c>Mob</c>: the invoker
     /// </para>
     /// </summary>
     public UnityEvent<Mob> OnBlockStart;
     /// <summary>
     /// <para>Raised when a block ends</para>
     /// <para>
-    /// arg0: the invoker
+    /// <c>Mob</c>: the invoker
     /// </para>
     /// </summary>
     public UnityEvent<Mob> OnBlockEnd;
@@ -94,6 +96,16 @@ public class Mob : MonoBehaviour {
     /// Raised when the mob is no longer stunned
     /// </summary>
     public UnityEvent<Mob> OnStunEnd;
+    /// <summary>
+    /// Raised when a mob jumps
+    /// </summary>
+    public UnityEvent<Mob> OnJump;
+    /// <summary>
+    /// <para>Raised when a mob changes move direction</para>
+    /// <para><c>Mob</c>: Invoker</para>
+    /// <para><c>Vector3</c>: Direction</para>
+    /// </summary>
+    public UnityEvent<Mob, Vector3> OnMovementChange;
 
 
 
@@ -322,6 +334,25 @@ public class Mob : MonoBehaviour {
         Stats.LoseStats(ToLose.Base, ToLose.Scaling);
         EquippedArmors[type] = null;
     }
+
+    // Movement control
+    /// <summary>
+    /// For updating a mob's movement direction.
+    /// </summary>
+    public Vector3 MoveDirection {
+        set {
+            _movement.OnMovementTriggered(value);
+        } 
+    }
+
+    /// <summary>
+    /// Makes the mob jump.
+    /// </summary>
+    public void Jump() {
+        _movement.OnJumpTriggered();
+        OnJump.Invoke(this);
+    }
+
 
     // Weapon control
     public event Action<float> OnAttackClick, OnAttackLift;

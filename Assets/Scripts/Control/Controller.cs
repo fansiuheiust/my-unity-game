@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
+using System;
 
 /// <summary>
 /// Controls the player's movement
@@ -19,26 +20,20 @@ public class Controller : MonoBehaviour
     PlayerMovement _movement;
     PlayerInput _playerInput;
     public Transform _camera;
-    UnityEvent<Vector3> onMovement;
-    UnityEvent onJump;
 
     float _xAxisRotation = 0;
 
 
     void Awake() {
+        if (!TryGetComponent(out _player))
+            throw new NullReferenceException($"{gameObject} does not have an attached Mob script");
         _movement = GetComponent<PlayerMovement>();
-        _player = GetComponent<Mob>();
         _camera = transform.Find("Camera");
         _playerInput = GetComponent<PlayerInput>();
 
         _playerInput.enabled = false;
         _playerInput.enabled = true;
 
-        onMovement = new();
-        onJump = new();
-
-        onMovement.AddListener(_movement.OnMovementTriggered);
-        onJump.AddListener(_movement.OnJumpTriggered);
         _player.OnAttackControlReset += OnAttackEnded;
         _player.OnBlockControlReset += OnBlockEnded;
 
@@ -76,18 +71,20 @@ public class Controller : MonoBehaviour
     /// Invoked once per key press. Gives <code>PlayerMovement</code> the direction to move, accounting for camera's rotation
     /// </summary>
     /// <param name="context">WASD pressed</param>
-    void OnMovementInput(InputAction.CallbackContext context) { onMovement.Invoke(Quaternion.Euler(0, transform.Find("Camera").localEulerAngles.y, 0) * context.ReadValue<Vector3>()); }
+    void OnMovementInput(InputAction.CallbackContext context) {
+        _player.MoveDirection = Quaternion.Euler(0, transform.Find("Camera").localEulerAngles.y, 0) * context.ReadValue<Vector3>();
+    }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="context">WASD lifted</param>
-    void OnMovementCancel(InputAction.CallbackContext context) { onMovement.Invoke(Vector3.zero); }
+    void OnMovementCancel(InputAction.CallbackContext context) { _player.MoveDirection = Vector3.zero; }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="context">Jump pressed</param>
     void OnJumpInput(InputAction.CallbackContext context) {
-        onJump.Invoke();
+        _player.Jump();
     }
 
     // player rotation
