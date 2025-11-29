@@ -115,7 +115,6 @@ public class MeleeObject : WeaponObject {
         StartAttack();
 
         _blade.Stance = BladeStance.Attack;
-        _blade.GetComponent<Collider>().isTrigger = false;
 
         _model.localEulerAngles = new Vector3(0, 90, 90);
         //  swing
@@ -140,7 +139,6 @@ public class MeleeObject : WeaponObject {
 
 
         // disable blade collision and stay
-        _blade.GetComponent<Collider>().isTrigger = true;
         _blade.Stance = BladeStance.Idle;
         yield return new WaitForSeconds(2 * time / 3);
 
