@@ -25,14 +25,19 @@ public class Mob : MonoBehaviour {
     /// <summary>
     /// The armors equipped by the mob
     /// </summary>
-    public Dictionary<ArmorType, Armor> EquippedArmors { get; private set; } = new Dictionary<ArmorType, Armor>() { 
-        { ArmorType.Helmet, null }, 
+    public Dictionary<ArmorType, Armor> EquippedArmors { get; private set; } = new Dictionary<ArmorType, Armor>() {
+        { ArmorType.Helmet, null },
         { ArmorType.Chestplate, null},
         { ArmorType.Leggings, null},
         { ArmorType.Boots, null}
     };
 
     MobMovement _movement;
+    protected T CastMovement<T>() where T: MobMovement {
+        if (_movement is T m)
+            return m;
+        throw new ArgumentException($"{gameObject}'s movement is not {nameof(T)}");
+    }
 
     /// <summary>
     /// Self-documenting

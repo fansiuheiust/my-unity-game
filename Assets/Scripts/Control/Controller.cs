@@ -16,8 +16,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     [SerializeField]
     float sensitivity = 0.1f;
-    Mob _player;
-    PlayerMovement _movement;
+    Player _player;
     PlayerInput _playerInput;
     public Transform _camera;
 
@@ -27,7 +26,6 @@ public class Controller : MonoBehaviour
     void Awake() {
         if (!TryGetComponent(out _player))
             throw new NullReferenceException($"{gameObject} does not have an attached Mob script");
-        _movement = GetComponent<PlayerMovement>();
         _camera = transform.Find("Camera");
         _playerInput = GetComponent<PlayerInput>();
 
@@ -102,7 +100,7 @@ public class Controller : MonoBehaviour
         Vector2 v = context.ReadValue<Vector2>();
         _xAxisRotation += v.y * sensitivity;
         _camera.localEulerAngles = new Vector3(_xAxisRotation = Mathf.Min(Mathf.Max(_xAxisRotation, -75), 75), _camera.localEulerAngles.y + v.x*sensitivity,0);
-        _movement.Rotate(Quaternion.Euler(0, v.x * sensitivity, 0));
+        _player.RotateMovement(Quaternion.Euler(0, v.x * sensitivity, 0));
         Mouse.current.WarpCursorPosition(new(Screen.width / 2f, Screen.height / 2f));
     }
 

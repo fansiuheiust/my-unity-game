@@ -4,7 +4,13 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 public abstract class AI : MonoBehaviour {
+    /// <summary>
+    /// Second per target find
+    /// </summary>
     [SerializeField] protected float findInterval;
+    /// <summary>
+    /// Radius of target find
+    /// </summary>
     [SerializeField] protected float searchRadius;
     
     /// <summary>
@@ -15,11 +21,11 @@ public abstract class AI : MonoBehaviour {
     /// <summary>
     /// The mob the AI should act on
     /// </summary>
-    protected Mob Target {
+    protected virtual Mob Target {
         get {
             return _target;
         }
-        private set {
+        set {
             if (value == null) {
                 TargetFinder = StartCoroutine(FindTarget());
             } else {
@@ -37,11 +43,14 @@ public abstract class AI : MonoBehaviour {
     /// <summary>
     /// Criteria of the mob to be treated as a target
     /// </summary>
-    protected abstract Func<Mob, bool> Predicate { get; }
+    protected abstract bool Predicate(Mob m);
 
     private void Awake() {
         Owner = GetComponent<Mob>();
         if (!Owner) throw new NullReferenceException($"{gameObject} does not have an attached Mob component.");
+
+
+        TargetFinder = StartCoroutine(FindTarget());
     }
     
     IEnumerator FindTarget() {
@@ -57,5 +66,41 @@ public abstract class AI : MonoBehaviour {
     }
 
     // Controls
-    
+    /// <summary>
+    /// Sets the mob's move direction
+    /// </summary>
+    protected Vector3 MoveDirection { set {
+            Owner.MoveDirection = value;
+        } 
+    }
+    protected void Jump() {
+        Owner.Jump();
+    }
+
+    /// <summary>
+    /// Used when attack 'key' should be 'clicked'
+    /// </summary>
+    protected void ClickAttack() {
+        Owner.AttackClick();
+    }
+    /// <summary>
+    /// Used when attack 'key' should be 'lifted'
+    /// </summary>
+    protected void LiftAttack() {
+        Owner.AttackLift();
+    }
+
+    /// <summary>
+    /// Used when block 'key' should be 'clicked'
+    /// </summary>
+    protected void ClickBlock() {
+        Owner.BlockClick();
+    }
+    /// <summary>
+    /// Used when block 'key' should be 'lifted'
+    /// </summary>
+    protected void LiftBlock() {
+        Owner.BlockLift();
+    }
+
 }
