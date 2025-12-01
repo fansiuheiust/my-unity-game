@@ -164,7 +164,7 @@ public class FinalStats : ScalingStats {
         Def = Def > 0 ? Def : 0;
         MaxHp = MaxHp > 1 ? MaxHp : 1;
         MaxMana = MaxMana > 1 ? MaxMana : 1;
-        WalkSpeed = WalkSpeed > 0 ? WalkSpeed < 10 ? WalkSpeed : 10 : 0;
+        WalkSpeed = WalkSpeed > -1 ? WalkSpeed < 10 ? WalkSpeed : 10 : -1;
         AtkSpeed = AtkSpeed > -0.5f ? AtkSpeed < 1 ? AtkSpeed : 1 : -0.5f;
         CritRate = CritRate > 0 ? CritRate : 0;
         CritDmg = CritDmg > -1 ? CritDmg : -1;

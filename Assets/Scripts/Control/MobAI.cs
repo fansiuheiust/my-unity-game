@@ -49,7 +49,8 @@ public abstract class MobAI : MonoBehaviour {
         Owner = GetComponent<Mob>();
         if (!Owner) throw new NullReferenceException($"{gameObject} does not have an attached Mob component.");
 
-
+        Owner.OnAttackControlReset += OnAttackControlReset;
+        Owner.OnBlockControlReset += OnBlockControlReset;
         TargetFinder = StartCoroutine(FindTarget());
     }
     
@@ -63,6 +64,19 @@ public abstract class MobAI : MonoBehaviour {
             }
             yield return new WaitForSeconds(findInterval);
         }
+    }
+    // Events
+    /// <summary>
+    /// Called every time when attack resets
+    /// </summary>
+    protected virtual void OnAttackControlReset() {
+
+    }
+    /// <summary>
+    /// Called every time when block resets
+    /// </summary>
+    protected virtual void OnBlockControlReset() {
+
     }
 
     // Controls

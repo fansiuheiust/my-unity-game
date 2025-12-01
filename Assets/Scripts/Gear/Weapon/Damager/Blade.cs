@@ -15,6 +15,12 @@ public enum BladeStance {
 public class Blade : MonoBehaviour {
     BladeStance _stance = BladeStance.None;
     public float attackTime = 0f;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action<Mob> OnAttackCancelled;
+
     public Mob Owner { get; private set; }
     Collider _collider;
     List<Mob> attackeds = new();
@@ -78,16 +84,18 @@ public class Blade : MonoBehaviour {
         }
     }
 
-    void OnSwordHit(GameObject gameObject) {
-        if (gameObject.GetComponent<Mob>() is not null) {
-            Mob mob = gameObject.GetComponent<Mob>();
+    void OnSwordHit(GameObject obj) {
+        if (obj.TryGetComponent(out Blade b) && b.Stance == BladeStance.Block) {
+            if (!attackeds.Contains(b.Owner))
+                OnAttackCancelled?.Invoke(b.Owner);
+        }
+        if (obj.TryGetComponent(out Mob mob)) {
             Owner.DealKnockback(mob, attackTime / 2);
             Owner.DealDamage(mob, DamageType.Melee); // this line can kill mob
-            Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), obj.GetComponent<Collider>());
             attackeds.Add(mob);
         }
     }
-    void OnBlockHit(GameObject gameObject) {
-        Debug.Log("GG");
+    void OnBlockHit(GameObject obj) {
     }
 }

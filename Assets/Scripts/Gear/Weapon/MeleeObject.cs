@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// Attached to the Melee weapon gameObject, used for handling the melee weapon's movement
@@ -21,10 +22,16 @@ public class MeleeObject : WeaponObject {
     /// </summary>
     Vector3 _blockChange = new(0.5f, -0.4f, 0);
 
+    /// <summary>
+    /// The active attack animation
+    /// </summary>
+    Coroutine _attackAnimation;
+
     protected override void Awake() {
         base.Awake();
         _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
         _model = transform.Find("Model");
+        _blade.OnAttackCancelled += InterruptedAttack;
     }
 
     /// <summary>
@@ -66,10 +73,10 @@ public class MeleeObject : WeaponObject {
             base.BlockClicked();
             return;
         }
-
+        _blade.Stance = BladeStance.Block;
         _model.transform.localPosition += _blockChange;
         BlockRotated(0);
-        _blade.Stance = BladeStance.Block;
+
         StartBlock();
         owner.TakeStun(max_block_dur, null, true);
 
@@ -111,12 +118,12 @@ public class MeleeObject : WeaponObject {
     }
     public override void BlockRotated(float angle) {
         // localEuler x of model:
-        // [0, 90):     -90
-        // [90, 180):   90
-        // [-180, -90): -90
-        // [-90, 0):    90
+        // [-30, 90):     -90
+        // [90, 180) \cup [-180, -150):   90
+        // [-150, -90): -90
+        // [-90, -30):    90
         transform.localEulerAngles = new Vector3(0, 0, angle);
-        _model.transform.localEulerAngles = new Vector3(0 <= angle && angle < 90 || -180 <= angle && angle < -90? -90: 90, 0, 0);
+        _model.transform.localEulerAngles = new Vector3(-30 <= angle && angle < 90 || -150 <= angle && angle < -90? -90: 90, 0, 0);
     }
 
 
@@ -127,7 +134,7 @@ public class MeleeObject : WeaponObject {
     /// </summary>
     /// <param name="time">Duration of the swing</param>
     public void Swing(float time) {
-        StartCoroutine(SwingAnimation(time));
+        _attackAnimation = StartCoroutine(SwingAnimation(time));
     }
     IEnumerator SwingAnimation(float time) {
         StartAttack();
@@ -160,17 +167,29 @@ public class MeleeObject : WeaponObject {
         _blade.Stance = BladeStance.Idle;
         yield return new WaitForSeconds(2 * time / 3);
 
-        ResetPosition();
+        CancelAttack();
+
+        yield break;
+    }
+
+
+    /// <summary>
+    /// called when an attack should be cancelled (due to animation over or blocked)
+    /// </summary>
+    void CancelAttack() {
+        transform.localEulerAngles = Vector3.zero;
+        _model.localEulerAngles = Vector3.zero;
         _blade.Stance = BladeStance.None;
 
         EndAttack();
         ResetAttackControl();
-
-        yield break;
-    }
-    void ResetPosition() {
-        transform.localEulerAngles = Vector3.zero;
-        _model.localEulerAngles = Vector3.zero;
     }
 
+
+    void InterruptedAttack(Mob src) {
+        owner.TakeStun(2, src);
+        StopCoroutine(_attackAnimation);
+        _attackAnimation = null;
+        CancelAttack();
+    }
 }
