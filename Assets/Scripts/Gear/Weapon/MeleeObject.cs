@@ -31,7 +31,7 @@ public class MeleeObject : WeaponObject {
         base.Awake();
         _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
         _model = transform.Find("Model");
-        _blade.OnAttackCancelled += InterruptedAttack;
+        _blade.OnAttackInterrupted += InterruptedAttack;
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ public class MeleeObject : WeaponObject {
 
 
     void InterruptedAttack(Mob src) {
-        owner.TakeStun(2, src);
+        owner.OnAttackInterrupt.Invoke(owner, src);
         StopCoroutine(_attackAnimation);
         _attackAnimation = null;
         CancelAttack();

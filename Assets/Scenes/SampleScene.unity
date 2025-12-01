@@ -390,7 +390,7 @@ MonoBehaviour:
     base:
       <Atk>k__BackingField: 0
       <Def>k__BackingField: 0
-      <MaxHp>k__BackingField: 20
+      <MaxHp>k__BackingField: 1024
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
     scaling:
@@ -416,6 +416,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnAttackEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackInterrupt:
     m_PersistentCalls:
       m_Calls: []
   OnBlockStart:
@@ -1272,6 +1275,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnAttackEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackInterrupt:
     m_PersistentCalls:
       m_Calls: []
   OnBlockStart:

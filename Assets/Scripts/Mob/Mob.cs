@@ -65,10 +65,16 @@ public class Mob : MonoBehaviour {
     /// <summary>
     /// <para>Raised when an attack ends</para>
     /// <para>
-    /// arg0: the invoker
+    /// Mob0: the invoker
     /// </para>
     /// </summary>
     public UnityEvent<Mob> OnAttackEnd;
+    /// <summary>
+    /// <para>Raised when an attack is interrupted (by blocking)</para>
+    /// <para>Mob0: Mob whose attack is interrupted</para>
+    /// <para>Mob1: Mob who interrupted the attack</para>
+    /// </summary>
+    public UnityEvent<Mob, Mob> OnAttackInterrupt;
     /// <summary>
     /// <para>Raised when a block starts</para>
     /// <para>

@@ -19,7 +19,7 @@ public class Blade : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    public event Action<Mob> OnAttackCancelled;
+    public event Action<Mob> OnAttackInterrupted;
 
     public Mob Owner { get; private set; }
     Collider _collider;
@@ -86,8 +86,9 @@ public class Blade : MonoBehaviour {
 
     void OnSwordHit(GameObject obj) {
         if (obj.TryGetComponent(out Blade b) && b.Stance == BladeStance.Block) {
-            if (!attackeds.Contains(b.Owner))
-                OnAttackCancelled?.Invoke(b.Owner);
+            if (!attackeds.Contains(b.Owner)) {
+                OnAttackInterrupted?.Invoke(b.Owner);
+            }
         }
         if (obj.TryGetComponent(out Mob mob)) {
             Owner.DealKnockback(mob, attackTime / 2);
@@ -97,5 +98,6 @@ public class Blade : MonoBehaviour {
         }
     }
     void OnBlockHit(GameObject obj) {
+
     }
 }

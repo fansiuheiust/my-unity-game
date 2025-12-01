@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HostileMelee : MobAI {
+public class HostileMelee : MobBehaviour {
     [SerializeField] protected float attackRadius = 2;
     protected override bool Predicate(Mob m) => m is Player;
 
@@ -8,6 +8,12 @@ public class HostileMelee : MobAI {
     /// vector from self to target, updated at the start of <c>Update</c>
     /// </summary>
     Vector3 _delta;
+
+
+    protected override void Awake() {
+        base.Awake();
+        Owner.OnAttackInterrupt.AddListener((m1, m2) => { m1.TakeStun(2, m2); });
+    }
 
     void Update() {
         if (Target == null) return;

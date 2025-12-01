@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public abstract class MobAI : MonoBehaviour {
+public abstract class MobBehaviour : MonoBehaviour {
     /// <summary>
     /// Second per target find
     /// </summary>
@@ -45,7 +45,7 @@ public abstract class MobAI : MonoBehaviour {
     /// </summary>
     protected abstract bool Predicate(Mob m);
 
-    private void Awake() {
+    protected virtual void Awake() {
         Owner = GetComponent<Mob>();
         if (!Owner) throw new NullReferenceException($"{gameObject} does not have an attached Mob component.");
 
