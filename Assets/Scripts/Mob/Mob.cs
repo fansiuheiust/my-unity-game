@@ -16,7 +16,7 @@ public class Mob : MonoBehaviour {
     /// <summary>
     /// Parent of objects that store gameObject's that rotate about the mob
     /// </summary>
-    Transform _rotatable;
+    protected Transform _rotatable;
 
     /// <summary>
     /// The weapon equipped by the mob
@@ -115,7 +115,7 @@ public class Mob : MonoBehaviour {
 
 
 
-    void Awake() {
+    protected virtual void Awake() {
         Stats = new(initialStats);
         OnDeath = new();
         _movement = GetComponent<MobMovement>();
@@ -174,7 +174,7 @@ public class Mob : MonoBehaviour {
     bool _isStunInternal = false;
     /// <summary>
     /// Applies stun to a mob. If the mob is already stunned, reset the countdown.
-    /// Triggers OnStunEnd if the enemy is already stunned by a non-internal stun but the new one is not.
+    /// Triggers OnStunEnd if the enemy is already stunned by a non-internal stun but the new one is internal.
     /// </summary>
     /// <param name="time">Self-documenting</param>
     /// <param name="source">The mob who inflicted the stun</param>

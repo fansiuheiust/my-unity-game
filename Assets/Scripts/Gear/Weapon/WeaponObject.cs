@@ -34,7 +34,8 @@ public abstract class WeaponObject : MonoBehaviour {
     }
 
     /// <summary>
-    /// Triggered when attack button is clicked
+    /// <para>This just cancels the attack action as it is not implemented</para>
+    /// <para>(to stop seeing this even if you implemented for a derived class, document the overridden method</para>
     /// </summary>
     /// <param name="attackTime">1/(final attack speed)</param>
     public virtual void AttackClicked(float attackTime) {
@@ -42,13 +43,17 @@ public abstract class WeaponObject : MonoBehaviour {
     }
 
     /// <summary>
-    /// Triggered when attack button is lifted
+    /// 
     /// </summary>
     /// <param name="attackTime">1/(final attack speed)</param>
     public virtual void AttackLifted(float attackTime) {
 
     }
 
+    /// <summary>
+    /// <para>This just cancels the block action as it is not implemented</para>
+    /// <para>(to stop seeing this even if you implemented for a derived class, document the overridden method</para>
+    /// </summary>
     public virtual void BlockClicked() {
         ResetBlockControl();
     }

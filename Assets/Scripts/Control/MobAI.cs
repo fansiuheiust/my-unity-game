@@ -3,15 +3,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public abstract class AI : MonoBehaviour {
+public abstract class MobAI : MonoBehaviour {
     /// <summary>
     /// Second per target find
     /// </summary>
-    [SerializeField] protected float findInterval;
+    [SerializeField] protected float findInterval = 1;
     /// <summary>
     /// Radius of target find
     /// </summary>
-    [SerializeField] protected float searchRadius;
+    [SerializeField] protected float searchRadius = 10;
     
     /// <summary>
     /// Self-documenting
@@ -55,10 +55,10 @@ public abstract class AI : MonoBehaviour {
     
     IEnumerator FindTarget() {
         while (true) {
+            yield return new WaitForSeconds(0);
             Collider[] candidates = Physics.OverlapSphere(transform.position, searchRadius);
             foreach (Collider x in candidates) {
-                Mob m = x.GetComponent<Mob>();
-                if (m != null && Predicate(m))
+                if (x.TryGetComponent(out Mob m) && Predicate(m))
                     Target = m;
             }
             yield return new WaitForSeconds(findInterval);

@@ -36,7 +36,12 @@ public class MeleeObject : WeaponObject {
             base.AttackClicked(0);
             return;
         }
+
         owner.TakeStun(attackTime, null, true);
+
+        if (owner is Player p)
+            p.RotateToCamera();
+
         _blade.attackTime = attackTime;
         Swing(attackTime);
     }
@@ -53,16 +58,24 @@ public class MeleeObject : WeaponObject {
     /// indicates if action block is undergoing cooldown
     /// </summary>
     bool _blockUnderCd = false;
+    /// <summary>
+    /// Starts blocking
+    /// </summary>
     public override void BlockClicked() {
         if (_blockUnderCd || _blade.Stance != BladeStance.None) {
             base.BlockClicked();
             return;
         }
+
         _model.transform.localPosition += _blockChange;
         BlockRotated(0);
         _blade.Stance = BladeStance.Block;
         StartBlock();
         owner.TakeStun(max_block_dur, null, true);
+
+        if (owner is Player p)
+            p.RotateToCamera();
+
         StartCoroutine(BlockTire(max_block_dur));
     }
     
@@ -97,6 +110,11 @@ public class MeleeObject : WeaponObject {
         _blockUnderCd = false;
     }
     public override void BlockRotated(float angle) {
+        // localEuler x of model:
+        // [0, 90):     -90
+        // [90, 180):   90
+        // [-180, -90): -90
+        // [-90, 0):    90
         transform.localEulerAngles = new Vector3(0, 0, angle);
         _model.transform.localEulerAngles = new Vector3(0 <= angle && angle < 90 || -180 <= angle && angle < -90? -90: 90, 0, 0);
     }
@@ -155,13 +173,4 @@ public class MeleeObject : WeaponObject {
         _model.localEulerAngles = Vector3.zero;
     }
 
-
-    // localEuler x of model:
-    // [0, 90):     -90
-    // [90, 180):   90
-    // [-180, -90): -90
-    // [-90, 0):    90
-    // model position change:
-    // x = 0.75->1.25
-    // y = 0.4->0
 }

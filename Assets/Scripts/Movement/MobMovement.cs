@@ -27,6 +27,8 @@ public class MobMovement : MonoBehaviour
 
     Rigidbody _rb;
 
+    Transform _rotatable;
+
     /// <summary>
     /// The direction the mob moves to
     /// </summary>
@@ -75,11 +77,9 @@ public class MobMovement : MonoBehaviour
         }
     }
 
-    
-    void Start()
-    {
+    void Awake() {
+        _rotatable = transform.Find("Rotatable");
         _rb = gameObject.GetComponent<Rigidbody>();
-
     }
 
     // Update is called once per frame
@@ -123,8 +123,8 @@ public class MobMovement : MonoBehaviour
         _rb.AddForce(acc, ForceMode.Acceleration);
 
         // make model face correctly
-        if (targetVelocity.magnitude > _epsilon)
-            transform.Find("Rotatable").transform.rotation = Quaternion.LookRotation(targetVelocity);
+        if (!IsStunned && targetVelocity.magnitude > _epsilon)
+            _rotatable.rotation = Quaternion.LookRotation(targetVelocity);
     }
 
     /// <summary>
