@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using System;
+using JetBrains.Annotations;
 
 public class Mob : MonoBehaviour {
     [SerializeField]
@@ -40,9 +41,24 @@ public class Mob : MonoBehaviour {
     }
 
     /// <summary>
+    /// The list of effects affecting the mob
+    /// </summary>
+    public List<Effect> Effects { get; private set; } = new();
+
+    bool _isStunned = false;
+
+    /// <summary>
     /// Self-documenting
     /// </summary>
-    public bool IsStunned { get; private set; } = false;
+    public bool IsStunned {
+        get => _isStunned;
+        set {
+            if (_isStunned != value) {
+                _isStunned = value;
+                _movement.IsStunned = value;
+            }
+        } 
+    }
 
     // Events
     /// <summary>
@@ -104,7 +120,7 @@ public class Mob : MonoBehaviour {
     /// </summary>
     public UnityEvent<Mob> OnStunStart;
     /// <summary>
-    /// Raised when the mob is no longer stunned
+    /// Raised when a stun is lifted, even if there are more stuns
     /// </summary>
     public UnityEvent<Mob> OnStunEnd;
     /// <summary>
@@ -172,12 +188,30 @@ public class Mob : MonoBehaviour {
     }
 
     // status related
-    // stun
-    Coroutine _stunCoroutine;
+
+    // effect
     /// <summary>
-    /// Whether the current stun (if any) should trigger stun-related events
+    /// Adds an UNAPPLIED effect to the mob, use Apply(...) to apply the effect
     /// </summary>
-    bool _isStunInternal = false;
+    /// <typeparam name="T">Type of effect</typeparam>
+    public T AddEffect<T>() where T: Effect {
+        T e = gameObject.AddComponent<T>();
+        Effects.Add(e);
+        return e;
+    }
+
+    /// <summary>
+    /// Only for removing effect FROM Effect.cs
+    /// </summary>
+    /// <param name="e">Effect to be removed, must be equal reference</param>
+    public void RemoveExpiredEffect(Effect e) {
+        Effects.Remove(e);
+        Destroy(e);
+    }
+
+    
+
+    // stun
     /// <summary>
     /// Applies stun to a mob. If the mob is already stunned, reset the countdown.
     /// Triggers OnStunEnd if the enemy is already stunned by a non-internal stun but the new one is internal.
@@ -186,45 +220,19 @@ public class Mob : MonoBehaviour {
     /// <param name="source">The mob who inflicted the stun</param>
     /// <param name="isInternal">Whether this stun will invoke stun-related events</param>
     public void TakeStun(float time, Mob source, bool isInternal = false) {
-        if (IsStunned) {
-            StopCoroutine(_stunCoroutine);
-            // trigger end stun if the new stun is not internal but the old stun was
-            if (_isStunInternal && !isInternal) OnStunEnd.Invoke(this);
-        }
-        _isStunInternal = isInternal;
-        // else but _isStunInternal = isInternal will trigger after if and before else
-        if (!IsStunned) {
-            StartStun();
-        }
-        _stunCoroutine = StartCoroutine(EndStun(time));
+        AddEffect<Stun>().Apply(time, isInternal);
     }
     /// <summary>
     /// Ends stun before the original duration
     /// </summary>
     public void InterruptStun() {
         if (!IsStunned) return;
-        StopCoroutine(_stunCoroutine);
-        EndStun();
-    }
-    /// <summary>
-    /// Ends a stun status after a period of time
-    /// </summary>
-    /// <param name="time">Time (in seconds) until a stun ends</param>
-    IEnumerator EndStun(float time) {
-        yield return new WaitForSeconds(time);
-        EndStun();
-        yield break;
-    }
-    void StartStun() {
-        IsStunned = true;
-        _movement.IsStunned = true;
-        if (!_isStunInternal) OnStunStart.Invoke(this);
-    }
-    void EndStun() {
-        _stunCoroutine = null;
-        IsStunned = false;
-        _movement.IsStunned = false;
-        if (!_isStunInternal) OnStunEnd.Invoke(this);
+        for (int i = 0; i < Effects.Count; i++) {
+            if (Effects[i] is Stun) {
+                Effects[i].Cleanse();
+                i--;
+            }
+        }
     }
 
     // knockback
@@ -250,7 +258,6 @@ public class Mob : MonoBehaviour {
     /// <param name="origin">the position of the knockback</param>
     /// <param name="duration">How long should this mob not act (because of knockback) for</param>
     void TakeKnockback(Mob source, Vector3 origin, float duration) {
-        if (IsStunned) return;
         duration *= (1+source.Stats.Final.Knockback) * (1-Stats.Final.KnockbackResistance);
         TakeStun(duration, source);
         _movement.TakeKnockback(origin, duration);

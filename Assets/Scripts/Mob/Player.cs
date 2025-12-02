@@ -4,11 +4,16 @@ public class Player : Mob {
 
     Transform _camera;
 
-
-
     protected override void Awake() {
         base.Awake();
         _camera = transform.Find("Camera");
+    }
+
+
+
+    protected override void Die(Mob killer) {
+        Debug.Log("You died, but let me restore your HP.");
+        Stats.Heal(Stats.Final.MaxHp, Stats);
     }
 
     /// <summary>

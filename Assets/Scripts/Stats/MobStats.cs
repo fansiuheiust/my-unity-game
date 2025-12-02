@@ -170,6 +170,15 @@ public class MobStats {
         }, damageType);
     }
 
+    /// <summary>
+    /// Self-documenting
+    /// </summary>
+    /// <param name="amount">Amount of HP to receive</param>
+    /// <param name="source">Who healed you</param>
+    public void Heal(float amount, MobStats source) {
+        Hp += amount;
+    }
+
 }
 
 
