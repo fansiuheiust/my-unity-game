@@ -390,7 +390,7 @@ MonoBehaviour:
     base:
       <Atk>k__BackingField: 0
       <Def>k__BackingField: 0
-      <MaxHp>k__BackingField: 1024
+      <MaxHp>k__BackingField: 20
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
     scaling:
@@ -404,7 +404,7 @@ MonoBehaviour:
       <CritRate>k__BackingField: 0
       <CritDmg>k__BackingField: 0
       <DmgReduction>k__BackingField: 0
-      <Knockback>k__BackingField: 0.5
+      <Knockback>k__BackingField: 0
       <KnockbackResistance>k__BackingField: 0
     hashedScaling:
     - stats: 0

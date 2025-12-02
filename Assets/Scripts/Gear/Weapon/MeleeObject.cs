@@ -31,7 +31,7 @@ public class MeleeObject : WeaponObject {
         base.Awake();
         _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
         _model = transform.Find("Model");
-        _blade.OnAttackInterrupted += InterruptedAttack;
+        _blade.OnAttackInterrupted += AttackInterruptedByBlock;
     }
 
     /// <summary>
@@ -44,10 +44,14 @@ public class MeleeObject : WeaponObject {
             return;
         }
 
+        // in this part, attack will take place
+
         owner.TakeStun(attackTime, null, true);
 
         if (owner is Player p)
             p.RotateToCamera();
+
+        owner.OnStunStart.AddListener(AttackInterruptedByStun);
 
         _blade.attackTime = attackTime;
         Swing(attackTime);
@@ -181,15 +185,29 @@ public class MeleeObject : WeaponObject {
         _model.localEulerAngles = Vector3.zero;
         _blade.Stance = BladeStance.None;
 
+        owner.OnStunStart.RemoveListener(AttackInterruptedByStun);
+
         EndAttack();
         ResetAttackControl();
     }
 
-
-    void InterruptedAttack(Mob src) {
-        owner.OnAttackInterrupt.Invoke(owner, src);
+    /// <summary>
+    /// What happens when a blade gets blocked
+    /// </summary>
+    /// <param name="src">blocker</param>
+    void AttackInterruptedByBlock(Mob src) {
         StopCoroutine(_attackAnimation);
-        _attackAnimation = null;
         CancelAttack();
+        _attackAnimation = null;
+        owner.OnAttackInterrupt.Invoke(owner, src);
+    }
+    /// <summary>
+    /// What happens when stunned during attack
+    /// </summary>
+    /// <param name="self">Useless</param>
+    void AttackInterruptedByStun(Mob self) {
+        if (_attackAnimation != null) StopCoroutine(_attackAnimation);
+        CancelAttack();
+        _attackAnimation = null;
     }
 }

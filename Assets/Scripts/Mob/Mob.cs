@@ -252,13 +252,14 @@ public class Mob : MonoBehaviour {
     /// <param name="duration">How long should the mob not act (because of knockback) for</param>
     public void DealKnockback(Mob target, float duration) => DealKnockback(target, transform.position, duration);
     /// <summary>
-    /// Takes knockback
+    /// Takes knockback, does nothing if the duration is 0 (i.e. player has no knockback or mob has full knockback immunity)
     /// </summary>
     /// <param name="source">The mob who inflicted the knockback</param>
     /// <param name="origin">the position of the knockback</param>
     /// <param name="duration">How long should this mob not act (because of knockback) for</param>
     void TakeKnockback(Mob source, Vector3 origin, float duration) {
         duration *= (1+source.Stats.Final.Knockback) * (1-Stats.Final.KnockbackResistance);
+        if (duration < 1e-3f) return;
         TakeStun(duration, source);
         _movement.TakeKnockback(origin, duration);
     }
