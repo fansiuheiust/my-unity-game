@@ -3,6 +3,18 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+/// <summary>
+/// <para>What the mob is currentlly doing, add more as you implement more behaviour:</para>
+/// <c>Idle</c>: Nothing<br />
+/// <c>Charge</c>: Charging towards the target<br />
+/// <c>Attack</c>: Attacking the target<br />
+/// <c>Tank</c>: Tanking the target's attack<br />
+/// <c>Escape</c>: Running away from the target<br />
+/// </summary>
+public enum MobState {
+    Idle, Charge, Attack, Tank, Escape
+}
+
 public abstract class MobBehaviour : MonoBehaviour {
     /// <summary>
     /// Second per target find
@@ -19,7 +31,7 @@ public abstract class MobBehaviour : MonoBehaviour {
     protected Mob Owner { get; private set; } = null;
     Mob _target;
     /// <summary>
-    /// The mob the AI should act on
+    /// The mob the AI should act on, setting it to null will resume target finding
     /// </summary>
     protected virtual Mob Target {
         get {
@@ -39,6 +51,14 @@ public abstract class MobBehaviour : MonoBehaviour {
     /// Stores the ongoing coroutine that finds a target
     /// </summary>
     protected Coroutine TargetFinder { get; set; }
+    MobState _state = MobState.Idle;
+    public virtual MobState State {
+        get => _state;
+        protected set {
+            _state = value; 
+        }
+    }
+
 
     /// <summary>
     /// Criteria of the mob to be treated as a target
@@ -55,8 +75,8 @@ public abstract class MobBehaviour : MonoBehaviour {
     }
     
     IEnumerator FindTarget() {
+        yield return new WaitForSeconds(0);
         while (true) {
-            yield return new WaitForSeconds(0);
             Collider[] candidates = Physics.OverlapSphere(transform.position, searchRadius);
             foreach (Collider x in candidates) {
                 if (x.TryGetComponent(out Mob m) && Predicate(m))

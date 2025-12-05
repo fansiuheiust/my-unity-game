@@ -1261,7 +1261,7 @@ MonoBehaviour:
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
       <WalkSpeed>k__BackingField: -0.5
-      <AtkSpeed>k__BackingField: -0.5
+      <AtkSpeed>k__BackingField: -0.2
       <CritRate>k__BackingField: 0
       <CritDmg>k__BackingField: 0
       <DmgReduction>k__BackingField: 0
@@ -1482,7 +1482,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   findInterval: 1
   searchRadius: 10
-  attackRadius: 2
+  moveRadius: 2.5
+  attackRadius: 3
+  stateChangeInterval: 1
 --- !u!1 &1302450001
 GameObject:
   m_ObjectHideFlags: 0
