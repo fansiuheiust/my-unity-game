@@ -171,13 +171,15 @@ public class Mob : MonoBehaviour {
     /// </summary>
     /// <param name="source">Mob that deals damage</param>
     /// <param name="damageType">Type of damage the mob dealt</param>
-    void TakeDamage(Mob source, DamageType damageType) {
-        Stats.TakeDamage(source.Stats, damageType);
+    /// <param name="weaponMultiplier">The damage multiplier based on the weapon's action</param>
+    void TakeDamage(Mob source, DamageType damageType, float weaponMultiplier = 1f) {
+        Stats.TakeDamage(source.Stats, damageType, weaponMultiplier);
         DeathCheck(source);
     }
 
     /// <summary>
-    /// Takes a fixed amount of damage
+    /// Takes damage, damage dealt is purely dependent on the amount. <br />
+    /// Damage resistance still applies
     /// </summary>
     /// <param name="amount">Amount of damage</param>
     /// <param name="source">Source of damage (null if not damaged by a mob)</param>

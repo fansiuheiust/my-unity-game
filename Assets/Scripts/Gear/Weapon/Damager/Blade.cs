@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,17 +13,15 @@ using UnityEngine;
 public enum BladeStance {
     None, Attack, Block, Idle
 }
-public class Blade : MonoBehaviour {
+public class Blade : WeaponBody {
     BladeStance _stance = BladeStance.None;
     public float attackTime = 0f;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public event Action<Mob> OnAttackInterrupted;
+    
 
-    public Mob Owner { get; private set; }
-    Collider _collider;
+    protected override DamageType DamageType => DamageType.Melee;
+    
+
     List<Mob> attackeds = new();
     /// <summary>
     /// Self-documenting, but comes with a setter for executing stuff when hopping from a stance
@@ -48,56 +47,39 @@ public class Blade : MonoBehaviour {
                 // y = {attack, block}
                 case BladeStance.Attack:
                 case BladeStance.Block:
-                    _collider.isTrigger = false;
+                    Collider.isTrigger = false;
                     break;
                 // y = {idle, none}
                 case BladeStance.Idle:
                 case BladeStance.None:
-                    _collider.isTrigger = true;
+                    Collider.isTrigger = true;
                     break;
             }
             _stance = value;
         }
     }
 
-
-    void Awake() {
-        Owner = transform.root.GetComponent<Mob>();
-        _collider = gameObject.GetComponent<Collider>();
-    }
-
-
-    /// <summary>
-    /// Handles collision, when the blade is swinging
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter(Collision collision) {
-        switch (_stance) {
+    protected override void Hit(GameObject target) {
+        switch (Stance) {
             case BladeStance.Attack:
-                OnSwordHit(collision.gameObject);
+                base.Hit(target);
                 break;
             case BladeStance.Block:
-                OnBlockHit(collision.gameObject);
-                break;
-            default:
+                OnBlockHit(target);
                 break;
         }
     }
 
-    void OnSwordHit(GameObject obj) {
-        if (obj.TryGetComponent(out Blade b) && b.Stance == BladeStance.Block) {
-            if (!attackeds.Contains(b.Owner)) {
-                OnAttackInterrupted?.Invoke(b.Owner);
-            }
-        }
-        if (obj.TryGetComponent(out Mob mob)) {
-            Owner.DealKnockback(mob, attackTime / 2);
-            Owner.DealDamage(mob, DamageType.Melee); // this line can kill mob
-            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), obj.GetComponent<Collider>());
-            attackeds.Add(mob);
-        }
+    protected override void Hit(Mob target) {
+        base.Hit(target);
+        Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), target.GetComponent<Collider>());
+        attackeds.Add(target);
     }
+
     void OnBlockHit(GameObject obj) {
-
+        if (obj.TryGetComponent(out WeaponBody other) && other.IsBlockAvailable(this)) {
+            other.InterruptAttack(Owner);
+        }
     }
+    public override bool IsBlockAvailable(WeaponBody blocker) => base.IsBlockAvailable(blocker) && !attackeds.Contains(blocker.Owner);
 }

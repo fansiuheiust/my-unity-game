@@ -160,8 +160,9 @@ public class MobStats {
     /// </summary>
     /// <param name="source">Stats of the source mob</param>
     /// <param name="damageType">Type of damage, damage reduction won't apply if it is DamageType.True</param>
-    public void TakeDamage(MobStats source, DamageType damageType) {
-        TakeDamage(damageType switch {
+    /// <param name="weaponMultiplier">Multiplier of the calculated damage based on the weapon's action</param>
+    public void TakeDamage(MobStats source, DamageType damageType, float weaponMultiplier = 1f) {
+        TakeDamage(weaponMultiplier * damageType switch {
             DamageType.Melee => source.MeleeDmg,
             DamageType.Projectile => source.ProjectileDmg,
             DamageType.Magic => source.MagicDmg,
