@@ -70,8 +70,13 @@ public class Blade : WeaponBody {
         }
     }
 
+    /// <summary>
+    /// Also deals knockback
+    /// </summary>
+    /// <param name="target">self-documenting</param>
     protected override void Hit(Mob target) {
         base.Hit(target);
+        Owner.DealKnockback(target, 0.5f * attackTime);
         Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), target.GetComponent<Collider>());
         attackeds.Add(target);
     }

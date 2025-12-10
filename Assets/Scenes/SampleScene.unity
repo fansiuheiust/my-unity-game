@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00310e13f5087474b940592207e7798b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thresholdFloatDistance: 0.2
+  thresholdFloatDistance: 0.1
   springCoefficient: 150
   dampCoefficient: 21
   maxSpeed: 10
@@ -1266,7 +1266,7 @@ MonoBehaviour:
       <CritDmg>k__BackingField: 0
       <DmgReduction>k__BackingField: 0
       <Knockback>k__BackingField: 0
-      <KnockbackResistance>k__BackingField: 0.1
+      <KnockbackResistance>k__BackingField: 0
     hashedScaling: []
   OnDeath:
     m_PersistentCalls:
@@ -1310,7 +1310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c7cd9e7a31e044d8f40d70be38f36b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thresholdFloatDistance: 0.2
+  thresholdFloatDistance: 0.1
   springCoefficient: 150
   dampCoefficient: 21
   maxSpeed: 10
