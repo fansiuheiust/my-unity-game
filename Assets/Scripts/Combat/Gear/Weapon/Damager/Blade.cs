@@ -4,87 +4,89 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// <para><c>None</c>: currently not acting or undergoing any actions.</para>
-/// <para><c>Attack</c>: self-documenting.</para>
-/// <para><c>Block</c>: self-documenting.</para>
-/// <para><c>Idle</c>: undergoing an action, but no need to trigger collision.</para>
-/// </summary>
-public enum BladeStance {
-    None, Attack, Block, Idle
-}
-public class Blade : WeaponBody {
-    BladeStance _stance = BladeStance.None;
-    public float attackTime = 0f;
-
-    
-
-    protected override DamageType DamageType => DamageType.Melee;
-    
-
-    List<Mob> attackeds = new();
+namespace Combat {
     /// <summary>
-    /// Self-documenting, but comes with a setter for executing stuff when hopping from a stance
+    /// <para><c>None</c>: currently not acting or undergoing any actions.</para>
+    /// <para><c>Attack</c>: self-documenting.</para>
+    /// <para><c>Block</c>: self-documenting.</para>
+    /// <para><c>Idle</c>: undergoing an action, but no need to trigger collision.</para>
     /// </summary>
-    public BladeStance Stance { 
-        get =>_stance; 
-        set {
-            // x -> S
-            switch (_stance) {
-                // x = attack
-                case BladeStance.Attack:
-                    foreach (Mob m in attackeds) {
-                        if (m != null)
-                            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), m.GetComponent<Collider>(), false);
-                    }
-                    attackeds.Clear();
-                    break;
+    public enum BladeStance {
+        None, Attack, Block, Idle
+    }
+    public class Blade : WeaponBody {
+        BladeStance _stance = BladeStance.None;
+        public float attackTime = 0f;
 
+
+
+        protected override DamageType DamageType => DamageType.Melee;
+
+
+        List<Mob> attackeds = new();
+        /// <summary>
+        /// Self-documenting, but comes with a setter for executing stuff when hopping from a stance
+        /// </summary>
+        public BladeStance Stance {
+            get => _stance;
+            set {
+                // x -> S
+                switch (_stance) {
+                    // x = attack
+                    case BladeStance.Attack:
+                        foreach (Mob m in attackeds) {
+                            if (m != null)
+                                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), m.GetComponent<Collider>(), false);
+                        }
+                        attackeds.Clear();
+                        break;
+
+                }
+
+                // S -> y
+                switch (value) {
+                    // y = {attack, block}
+                    case BladeStance.Attack:
+                    case BladeStance.Block:
+                        Collider.isTrigger = false;
+                        break;
+                    // y = {idle, none}
+                    case BladeStance.Idle:
+                    case BladeStance.None:
+                        Collider.isTrigger = true;
+                        break;
+                }
+                _stance = value;
             }
-            
-            // S -> y
-            switch (value) {
-                // y = {attack, block}
+        }
+
+        protected override void Hit(GameObject target) {
+            switch (Stance) {
                 case BladeStance.Attack:
+                    base.Hit(target);
+                    break;
                 case BladeStance.Block:
-                    Collider.isTrigger = false;
-                    break;
-                // y = {idle, none}
-                case BladeStance.Idle:
-                case BladeStance.None:
-                    Collider.isTrigger = true;
+                    OnBlockHit(target);
                     break;
             }
-            _stance = value;
         }
-    }
 
-    protected override void Hit(GameObject target) {
-        switch (Stance) {
-            case BladeStance.Attack:
-                base.Hit(target);
-                break;
-            case BladeStance.Block:
-                OnBlockHit(target);
-                break;
+        /// <summary>
+        /// Also deals knockback
+        /// </summary>
+        /// <param name="target">self-documenting</param>
+        protected override void Hit(Mob target) {
+            base.Hit(target);
+            Owner.DealKnockback(target, 0.5f * attackTime);
+            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), target.GetComponent<Collider>());
+            attackeds.Add(target);
         }
-    }
 
-    /// <summary>
-    /// Also deals knockback
-    /// </summary>
-    /// <param name="target">self-documenting</param>
-    protected override void Hit(Mob target) {
-        base.Hit(target);
-        Owner.DealKnockback(target, 0.5f * attackTime);
-        Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), target.GetComponent<Collider>());
-        attackeds.Add(target);
-    }
-
-    void OnBlockHit(GameObject obj) {
-        if (obj.TryGetComponent(out WeaponBody other) && other.IsBlockAvailable(this)) {
-            other.InterruptAttack(Owner);
+        void OnBlockHit(GameObject obj) {
+            if (obj.TryGetComponent(out WeaponBody other) && other.IsBlockAvailable(this)) {
+                other.InterruptAttack(Owner);
+            }
         }
+        public override bool IsBlockAvailable(WeaponBody blocker) => base.IsBlockAvailable(blocker) && !attackeds.Contains(blocker.Owner);
     }
-    public override bool IsBlockAvailable(WeaponBody blocker) => base.IsBlockAvailable(blocker) && !attackeds.Contains(blocker.Owner);
 }

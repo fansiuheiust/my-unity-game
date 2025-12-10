@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Combat;
 
 namespace Dungeon {
     public class MobRoom : Room {
