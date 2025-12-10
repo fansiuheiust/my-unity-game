@@ -3,34 +3,38 @@ using System;
 using NUnit.Framework;
 using System.Security.Cryptography;
 using UnityEditor.SceneManagement;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Combat {
     public abstract class WeaponObject : MonoBehaviour {
 
-        protected Mob owner;
+        /// <summary>
+        /// Whoever the closest parent that has Mob component
+        /// </summary>
+        protected Mob Owner { get; private set; } = null;
 
         /// <summary>
         /// This should be invoked even if derived objects override
         /// </summary>
         protected virtual void Awake() {
-            owner = transform.root.GetComponent<Mob>();
-            owner.OnAttackClick += AttackClicked;
-            owner.OnAttackLift += AttackLifted;
-            owner.OnBlockClick += BlockClicked;
-            owner.OnBlockLift += BlockLifted;
-            owner.OnBlockRotate += BlockRotated;
-            owner.OnWeaponUnequip += Delete;
+            Owner = Mob.FindParentingMob(transform);
+            Owner.OnAttackClick += AttackClicked;
+            Owner.OnAttackLift += AttackLifted;
+            Owner.OnBlockClick += BlockClicked;
+            Owner.OnBlockLift += BlockLifted;
+            Owner.OnBlockRotate += BlockRotated;
+            Owner.OnWeaponUnequip += Delete;
         }
 
 
         void Delete() {
-            owner.OnAttackClick -= AttackClicked;
-            owner.OnAttackLift -= AttackLifted;
-            owner.OnBlockClick -= BlockClicked;
-            owner.OnBlockLift -= BlockLifted;
-            owner.OnBlockRotate -= BlockRotated;
-            owner.OnWeaponUnequip -= Delete;
-            owner = null;
+            Owner.OnAttackClick -= AttackClicked;
+            Owner.OnAttackLift -= AttackLifted;
+            Owner.OnBlockClick -= BlockClicked;
+            Owner.OnBlockLift -= BlockLifted;
+            Owner.OnBlockRotate -= BlockRotated;
+            Owner.OnWeaponUnequip -= Delete;
+            Owner = null;
             Destroy(gameObject);
         }
 
@@ -69,37 +73,37 @@ namespace Combat {
         /// Must be called before an attack to invoke event
         /// </summary>
         protected void StartAttack() {
-            owner.OnAttackStart.Invoke(owner);
+            Owner.OnAttackStart.Invoke(Owner);
         }
         /// <summary>
         /// Must be called after an attack to invoke event
         /// </summary>
         protected void EndAttack() {
-            owner.OnAttackEnd.Invoke(owner);
+            Owner.OnAttackEnd.Invoke(Owner);
         }
         /// <summary>
         /// Raises OnAttackControlReset
         /// </summary>
         protected void ResetAttackControl() {
-            owner.ResetAttackControl();
+            Owner.ResetAttackControl();
         }
         /// <summary>
         /// Must be called after a block to invoke event
         /// </summary>
         protected void StartBlock() {
-            owner.OnBlockStart.Invoke(owner);
+            Owner.OnBlockStart.Invoke(Owner);
         }
         /// <summary>
         /// Must be called after a block to invoke event 
         /// </summary>
         protected void EndBlock() {
-            owner.OnBlockEnd.Invoke(owner);
+            Owner.OnBlockEnd.Invoke(Owner);
         }
         /// <summary>
         /// Reaises OnBlockControlReset
         /// </summary>
         protected void ResetBlockControl() {
-            owner.ResetBlockControl();
+            Owner.ResetBlockControl();
         }
     }
 }

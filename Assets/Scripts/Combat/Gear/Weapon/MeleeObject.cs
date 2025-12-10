@@ -46,12 +46,12 @@ namespace Combat {
 
             // in this part, attack will take place
 
-            owner.TakeStun(attackTime, null, true);
+            Owner.TakeStun(attackTime, null, true);
 
-            if (owner is Player p)
+            if (Owner is Player p)
                 p.RotateToCamera();
 
-            owner.OnStunStart.AddListener(AttackInterruptedByStun);
+            Owner.OnStunStart.AddListener(AttackInterruptedByStun);
 
             _blade.attackTime = attackTime;
             Swing(attackTime);
@@ -82,9 +82,9 @@ namespace Combat {
             BlockRotated(0);
 
             StartBlock();
-            owner.TakeStun(max_block_dur, null, true);
+            Owner.TakeStun(max_block_dur, null, true);
 
-            if (owner is Player p)
+            if (Owner is Player p)
                 p.RotateToCamera();
 
             StartCoroutine(BlockTire(max_block_dur));
@@ -101,7 +101,7 @@ namespace Combat {
             _model.transform.localEulerAngles = Vector3.zero;
 
             _blade.Stance = BladeStance.None;
-            owner.InterruptStun();
+            Owner.InterruptStun();
             StartCoroutine(BlockCooldown(max_block_dur));
             EndBlock();
             ResetBlockControl();
@@ -185,7 +185,7 @@ namespace Combat {
             _model.localEulerAngles = Vector3.zero;
             _blade.Stance = BladeStance.None;
 
-            owner.OnStunStart.RemoveListener(AttackInterruptedByStun);
+            Owner.OnStunStart.RemoveListener(AttackInterruptedByStun);
 
             EndAttack();
             ResetAttackControl();
@@ -199,7 +199,7 @@ namespace Combat {
             StopCoroutine(_attackAnimation);
             CancelAttack();
             _attackAnimation = null;
-            owner.OnAttackInterrupt.Invoke(owner, src);
+            Owner.OnAttackInterrupt.Invoke(Owner, src);
         }
         /// <summary>
         /// What happens when stunned during attack

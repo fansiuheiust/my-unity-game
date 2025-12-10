@@ -4,10 +4,12 @@ using Combat;
 
 namespace Dungeon {
     public class MobRoom : Room {
+        Transform _mobParent;
         List<Mob> mobs = new();
         void Awake() {
-            for (int i = 0; i < transform.childCount; i++) {
-                if (transform.GetChild(i).TryGetComponent(out Mob m) && IsValidEnemy(m)) {
+            _mobParent = transform.Find("Targets");
+            for (int i = 0; i < _mobParent.childCount; i++) {
+                if (_mobParent.GetChild(i).TryGetComponent(out Mob m) && IsValidEnemy(m)) {
                     mobs.Add(m);
                     m.OnDeath.AddListener(OnMobDied);
                 }
@@ -30,8 +32,10 @@ namespace Dungeon {
         /// <param name="killer">irrelevant</param>
         void OnMobDied(Mob m, Mob killer) {
             mobs.Remove(m);
-            if (mobs.Count == 0)
+            if (mobs.Count == 0) {
                 Cleared = true;
+                Debug.Log("Cleared a room");
+            }
         }
     }
 }

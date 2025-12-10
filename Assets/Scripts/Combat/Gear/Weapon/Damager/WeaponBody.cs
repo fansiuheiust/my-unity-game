@@ -8,13 +8,16 @@ namespace Combat {
     public abstract class WeaponBody : MonoBehaviour {
 
         // basic info and their initialization
-        public Mob Owner { get; private set; }
+        /// <summary>
+        /// Whoever the closest parent that has Mob component
+        /// </summary>
+        public Mob Owner { get; private set; } = null;
         protected Collider Collider { get; private set; }
 
         protected abstract DamageType DamageType { get; }
 
         private void Awake() {
-            Owner = transform.root.GetComponent<Mob>();
+            Owner = Mob.FindParentingMob(transform);
             Collider = GetComponent<Collider>();
         }
 
