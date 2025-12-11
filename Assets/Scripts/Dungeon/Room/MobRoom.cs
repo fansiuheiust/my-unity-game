@@ -5,7 +5,7 @@ using Combat;
 namespace Dungeon {
     public class MobRoom : Room {
         Transform _mobParent;
-        List<Mob> mobs = new();
+        readonly List<Mob> mobs = new();
         void Awake() {
             _mobParent = transform.Find("Targets");
             for (int i = 0; i < _mobParent.childCount; i++) {

@@ -8,7 +8,7 @@ namespace Combat {
         protected override void Awake() {
             base.Awake();
             _camera = transform.Find("Camera");
-            faction = Faction.Ally;
+            Faction = Faction.Ally;
         }
 
 

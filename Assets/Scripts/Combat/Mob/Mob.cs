@@ -15,7 +15,7 @@ namespace Combat {
     /// <c>Enemy</c>: Any Non-enemy
     /// </summary>
     public enum Faction {
-        Ally, Neutral, Enemy
+        Ally, Neutral, Enemy, Indeterminate
     }
     public class Mob : MonoBehaviour {
         [SerializeField]
@@ -24,11 +24,20 @@ namespace Combat {
         [SerializeField]
         SerializedMobStats initialStats;
 
+        Faction _faction = Faction.Indeterminate;
+
         /// <summary>
         /// Set by mob bevaiour script or Player script
         /// </summary>
-        public Faction faction;
-        public bool CanAttack(Mob m) => faction == Faction.Neutral || faction != m.faction;
+        public Faction Faction {
+            get {
+                return _faction;
+            }
+            set {
+                _faction = _faction == Faction.Indeterminate ? value : _faction;
+            }
+        }
+        public bool CanAttack(Mob m) => Faction == Faction.Neutral || Faction != m.Faction;
 
         /// <summary>
         /// Parent of objects that store gameObject's that rotate about the mob
