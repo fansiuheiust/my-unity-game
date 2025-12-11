@@ -6,6 +6,8 @@ namespace Combat {
         [SerializeField] protected float moveRadius = 2.5f;
         [SerializeField] protected float attackRadius = 2;
         [SerializeField] protected float stateChangeInterval = 2;
+
+        protected override Faction Faction => Faction.Enemy;
         protected override bool Predicate(Mob m) => m is Player;
 
         protected override Mob Target {

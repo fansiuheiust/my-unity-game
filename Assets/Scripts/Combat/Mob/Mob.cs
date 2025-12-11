@@ -8,12 +8,27 @@ using System;
 using JetBrains.Annotations;
 
 namespace Combat {
+    /// <summary>
+    /// <para>Determines what the mob can damage</para>
+    /// <c>Ally</c>: Any non-ally<br />
+    /// <c>Neutral</c>: Anyone <br />
+    /// <c>Enemy</c>: Any Non-enemy
+    /// </summary>
+    public enum Faction {
+        Ally, Neutral, Enemy
+    }
     public class Mob : MonoBehaviour {
         [SerializeField]
         public MobStats Stats { get; private set; }
 
         [SerializeField]
         SerializedMobStats initialStats;
+
+        /// <summary>
+        /// Set by mob bevaiour script or Player script
+        /// </summary>
+        public Faction faction;
+        public bool CanAttack(Mob m) => faction == Faction.Neutral || faction != m.faction;
 
         /// <summary>
         /// Parent of objects that store gameObject's that rotate about the mob

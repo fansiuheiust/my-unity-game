@@ -71,8 +71,13 @@ namespace Combat {
         /// base method for handling mob interaction, only deals damage to the target mob
         /// </summary>
         /// <param name="target">the mob that it hit</param>
-        protected virtual void Hit(Mob target) {
-            Owner.DealDamage(target, DamageType);
+        /// <returns>Whether the damage is dealt</returns>
+        protected virtual bool Hit(Mob target) {
+            if (Owner.CanAttack(target)) {
+                Owner.DealDamage(target, DamageType);
+                return true;
+            }
+            return false;
         }
 
     }

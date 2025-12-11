@@ -919,7 +919,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1726462402}
   m_Layer: 0
-  m_Name: Mobs
+  m_Name: Targets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

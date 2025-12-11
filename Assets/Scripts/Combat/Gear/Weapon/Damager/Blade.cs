@@ -75,11 +75,15 @@ namespace Combat {
         /// Also deals knockback
         /// </summary>
         /// <param name="target">self-documenting</param>
-        protected override void Hit(Mob target) {
-            base.Hit(target);
-            Owner.DealKnockback(target, 0.5f * attackTime);
+        /// <returns>Whether the target was damaged upon hitting</returns>
+        protected override bool Hit(Mob target) {
+
+            bool baseHit = base.Hit(target);
+            if (baseHit)
+                Owner.DealKnockback(target, 0.5f * attackTime);
             Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), target.GetComponent<Collider>());
             attackeds.Add(target);
+            return baseHit;
         }
 
         void OnBlockHit(GameObject obj) {
