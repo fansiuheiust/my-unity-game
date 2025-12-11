@@ -20,7 +20,7 @@ namespace Combat {
         /// <summary>
         /// Change to the localPosition of model when started blocking
         /// </summary>
-        Vector3 _blockChange = new(0.5f, -0.4f, 0);
+        Vector3 _blockChange = new(0.4f, -0.4f, 0);
 
         /// <summary>
         /// The active attack animation
@@ -54,7 +54,11 @@ namespace Combat {
             Owner.OnStunStart.AddListener(AttackInterruptedByStun);
 
             _blade.attackTime = attackTime;
-            Swing(attackTime);
+            if (Owner is Player) {
+                Swing(attackTime);
+            } else {
+                CourteousSwing(attackTime);
+            }
         }
         /// <summary>
         /// Nothing
@@ -64,7 +68,7 @@ namespace Combat {
             // blank
         }
 
-        const float max_block_dur = 0.5f;
+        const float max_block_dur = 0.7f;
         /// <summary>
         /// indicates if action block is undergoing cooldown
         /// </summary>
@@ -126,13 +130,15 @@ namespace Combat {
             // [90, 180) \cup [-180, -150):   90
             // [-150, -90): -90
             // [-90, -30):    90
-            transform.localEulerAngles = new Vector3(0, 0, angle);
-            _model.transform.localEulerAngles = new Vector3(-30 <= angle && angle < 90 || -150 <= angle && angle < -90 ? -90 : 90, 0, 0);
+            transform.localEulerAngles = new Vector3(0, -90 <= angle && angle < 90? -30: 30, angle);
+            _model.transform.localEulerAngles = new Vector3(-30 <= angle && angle < 90 || -150 <= angle && angle < -90 ? -90 : 90, 0, 0) ;
         }
 
 
 
 
+
+        // swing blade
         /// <summary>
         /// Swing time distribution: 33.33333...% 180 degree movement (from right to left), 66.66666...% stay at left 
         /// </summary>
@@ -209,6 +215,30 @@ namespace Combat {
             if (_attackAnimation != null) StopCoroutine(_attackAnimation);
             CancelAttack();
             _attackAnimation = null;
+        }
+
+        void CourteousSwing(float time) {
+            _attackAnimation = StartCoroutine(CourteousSwingAnimation(time));
+        }
+
+        /// <summary>
+        /// 33.3333%: positioning sword to 90 degrees
+        /// 66.6667%: swing animation
+        /// </summary>
+        /// <param name="time">self-documenting</param>
+        IEnumerator CourteousSwingAnimation(float time) {
+            _blade.Stance = BladeStance.Idle;
+            _model.localEulerAngles = new(0, 0, 90);
+            float courtesyDur = time / 3f;
+            float angularVelocity = 90f/courtesyDur;
+            for (float raiseTime = 0; raiseTime < courtesyDur; raiseTime += Time.deltaTime) {
+                _model.localEulerAngles += new Vector3(0, angularVelocity * Time.deltaTime, 0);
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+
+            _attackAnimation = StartCoroutine(SwingAnimation(2f * time / 3f));
+
+            yield return null;
         }
     }
 }
