@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System;
+using Dungeon.Generator;
 
 namespace Combat {
     /// <summary>
@@ -49,7 +50,7 @@ namespace Combat {
             _playerInput.actions["blockrotate"].Disable();
 
             // temp stuff
-            _playerInput.actions["tempstun"].performed += x => { _player.TakeStun(1, null); };
+            _playerInput.actions["tempstun"].performed += x => { Driver.Main(); };
             _playerInput.actions["tempstuninterrupt"].performed += x => { _player.InterruptStun(); };
         }
 

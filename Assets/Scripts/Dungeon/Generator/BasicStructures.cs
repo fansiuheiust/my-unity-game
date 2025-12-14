@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace Dungeon.Generator {
 
@@ -25,30 +26,31 @@ namespace Dungeon.Generator {
     }
 
     class Room {
-        public List<Block> Blocks { get; private set; } = new();
+        public List<Block> Blocks { get; private set; }
 
 
         public Room(Block[] blocks) {
-            foreach (Block b in blocks) {
-                Blocks.Add(b);
-            }
+            Blocks = blocks.ToList();
+
             // TODO: check if all blocks are vertically xor horizontally next to e.o.
         }
         
         public List<Vector2Int> Edges {
             get {
-                List<Vector2Int> ri = new();
-                // this chunk of code is O(n^2), optimize it
-                foreach (Block b in Blocks) {
-                    List<Vector2Int> result = b.Edges;
-                    foreach (Vector2Int edge in result) {
-                        if (!Blocks.Any(x=>x.coordinate == edge))
-                            ri.Add(edge);
-                    }
-                }
+                // a list of distinct edges of all blocks that are not in the block itself
+                List<Vector2Int> ri = Blocks.Select(b=>b.Edges)
+                                            .Aggregate(new List<Vector2Int>(), (c, acc) => acc.Union(c).ToList())
+                                            .Where(x=>!Blocks.Any(b=>b.coordinate == x))
+                                            .ToList();
                 return ri;
             }
         }
         
+    }
+
+    public static class Driver {
+        public static void Main() {
+            new Room(new Block[] { new Block(new(0, 0)), new(new(0, 1)), new(new(1, 0)) }).Edges.ForEach(x=>Debug.Log(x));
+        }
     }
 }
