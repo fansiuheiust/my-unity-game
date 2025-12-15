@@ -87,10 +87,17 @@ namespace Dungeon.Generator {
         public Room(int x, int y, params Block[] blocks) : this(new Vector2Int(x, y), blocks) { }
 
         /// <summary>
+        /// Checks whether the room occupies a coordinate
+        /// </summary>
+        /// <param name="coordinate">the coordinate to check</param>
+        /// <returns>self-documenting</returns>
+        public bool Contains(Vector2Int coordinate) => Blocks.Any(b=>b.coordinate==coordinate); 
+
+        /// <summary>
         /// The list of edges 
         /// </summary>
-        public IEnumerable<Vector2Int> Edges => Blocks.Select(b => b.Edges)
-                                                    .Aggregate(new List<Vector2Int>(), (c, acc) => acc.Union(c).ToList())
+        public IEnumerable<Vector2Int> Edges => UnfilteredEdges
+                                                    .Distinct()
                                                     .Where(x => !Blocks.Any(b => b.coordinate == x));
         /// <summary>
         /// The list of edges in the room, WITHOUT filtering out overlaps and those inside of blocks, obviously faster (O(n))
@@ -117,13 +124,28 @@ namespace Dungeon.Generator {
         
         
     }
-    
+
+    /// <summary>
+    /// The generator
+    /// </summary>
     public class Floor {
-        IEnumerable<Room> rooms;
-        public Floor() {
-            rooms = new List<Room>();
+        List<Room> rooms = new();
+
+        /// <summary>
+        /// The big thing that generates the dungeon
+        /// </summary>
+        /// <param name="options">Basically the list of rooms the program can choose from</param>
+        /// <param name="minimums">The minimum number of each type of room, no entry if no minimum for the type; null if no minimum at all</param>
+        /// <param name="maximums">The minimum number of each type of room, no entry if no maximum for the type; null if no maximum at all</param>
+        public void Generate((RoomType, Vector2Int[])[] options, Dictionary<RoomType, uint> minimums = null, Dictionary<RoomType, uint> maximums = null) {
+            // for now, treat this segment as a black box
         }
-        
+
+        IEnumerable<Vector2Int> Edges => rooms.Select(r => r.Edges)
+                                            .SelectMany(list=>list)
+                                            .Distinct()
+                                            .Where(c=>!rooms.Any(r=>r.Contains(c)));
+        IEnumerable<Vector2Int> RandomizedEdges => Edges.OrderBy(_ => Random.value);
     }
 
     public static class Driver {
