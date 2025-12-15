@@ -6,6 +6,16 @@ using Unity.VisualScripting;
 namespace Dungeon.Generator {
 
     /// <summary>
+    /// <para>Self-documenting</para>
+    /// <c>Start</c>: Self-documenting<br />
+    /// <c>Mob</c>: Rooms where you kill mobs to clear it<br />
+    /// <c>Final</c>: The room that leads you to the final boss<br />
+    /// </summary>
+    public enum RoomType {
+        Start, Mob, Final
+    }
+
+    /// <summary>
     /// A square block
     /// </summary>
     struct Block {
@@ -13,11 +23,12 @@ namespace Dungeon.Generator {
         public Block(Vector2Int coordinate) {
             this.coordinate = coordinate;
         }
+        public Block(int x, int y) : this(new Vector2Int(x, y)) { }
 
         /// <summary>
         /// An array of the coordinates horizontally xor vertically next to the block
         /// </summary>
-        public List<Vector2Int> Edges => new() {
+        public Vector2Int[] Edges => new Vector2Int[] {
             new Vector2Int(coordinate.x+1, coordinate.y),
             new Vector2Int(coordinate.x-1, coordinate.y),
             new Vector2Int(coordinate.x, coordinate.y+1),
@@ -27,40 +38,97 @@ namespace Dungeon.Generator {
         public int HammingDistance(Block other) => System.Math.Abs(coordinate.x-other.coordinate.x) + System.Math.Abs(coordinate.y-other.coordinate.y);
     }
 
+    /// <summary>
+    /// A collection of blocks 
+    /// </summary>
     class Room {
+        public RoomType Type { get; private set; }
         public Vector2Int Center { get; private set; }
-        public List<Block> Blocks { get; private set; }
+        public Block[] Blocks { get; private set; }
+        /// <summary>
+        /// Rotation/90
+        /// </summary>
+        public int NormalizedRotation { get; private set; } = 0;
+        /// <summary>
+        /// Blocks with origin=(0,0)
+        /// </summary>
+        public IEnumerable<Block> LocalBlocks => Blocks.Select(b => new Block(b.coordinate - Center));
 
         /// <summary>
         /// Self-documenting
         /// </summary>
         /// <param name="center">Where (0,0) of <c>blocks</c> should be</param>
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
-        /// <exception cref="System.Exception"></exception>
+        /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
         public Room(Vector2Int center, params Block[] blocks) {
-            Center = center;
-            Blocks = blocks.Select(b=>new Block(b.coordinate+center)).ToList();
 
-            if (Blocks.Count != 1 && Blocks.Any(x => !Blocks.Any(y => x.HammingDistance(y) == 1)))
-                throw new System.Exception("Blocks must be next to each other");
+            if (blocks is null || blocks.Length == 0)
+                throw new System.Exception("No blocks given");
+
+            if (!blocks.Any(x=>x.coordinate==Vector2Int.zero))
+                throw new System.Exception("There must exist a block at the origin");
+
+            if (blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
+                throw new System.Exception("Blocks must be next to each other horizontally XOR vertically");
+
+            Center = center;
+            Blocks = blocks.Select(b=>new Block(b.coordinate+center)).ToArray();
+
+            
+
+        }
+        /// <summary>
+        /// Self-documenting
+        /// </summary>
+        /// <param name="x">Where (0,0)'s x of <c>blocks</c> should be</param>
+        /// <param name="y">Where (0,0)'s y of <c>blocks</c> should be</param>
+        /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
+        /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
+        public Room(int x, int y, params Block[] blocks) : this(new Vector2Int(x, y), blocks) { }
+
+        /// <summary>
+        /// The list of edges 
+        /// </summary>
+        public IEnumerable<Vector2Int> Edges => Blocks.Select(b => b.Edges)
+                                                    .Aggregate(new List<Vector2Int>(), (c, acc) => acc.Union(c).ToList())
+                                                    .Where(x => !Blocks.Any(b => b.coordinate == x));
+        /// <summary>
+        /// The list of edges in the room, WITHOUT filtering out overlaps and those inside of blocks, obviously faster (O(n))
+        /// </summary>
+        public IEnumerable<Vector2Int> UnfilteredEdges => Blocks.Select(b => b.Edges)
+                                                        .SelectMany(e=>e);
+
+        /// <summary>
+        /// Rotates the entire room about the center
+        /// </summary>
+        /// <param name="degreeNormalized">actual degree/90</param>
+        public void Rotate(uint degreeNormalized) {
+            if (degreeNormalized >= 4) degreeNormalized %= 4;
+            // [cosx, -sinx] [x]   [xcosx-ysinx]
+            // [sinx, cosx ] [y] = [xsinx+ycosx]
+            // 0: (+x, +y)
+            // 1: (-y, +x)
+            // 2: (-x, -y)
+            // 3: (+y, -x)
+            System.Array.ForEach(Blocks, b=>b.coordinate = new Vector2Int(degreeNormalized%3==0? 1: -1 * degreeNormalized%2==0? b.coordinate.x-Center.x: b.coordinate.y-Center.y,
+                                                                            degreeNormalized < 2? 1: -1 * degreeNormalized%2 == 0? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
+                                                            + Center);
         }
         
-        public List<Vector2Int> Edges {
-            get {
-                // a list of distinct edges of all blocks that are not in the block itself
-                List<Vector2Int> ri = Blocks.Select(b=>b.Edges)
-                                            .Aggregate(new List<Vector2Int>(), (c, acc) => acc.Union(c).ToList())
-                                            .Where(x=>!Blocks.Any(b=>b.coordinate == x))
-                                            .ToList();
-                return ri;
-            }
+        
+    }
+    
+    public class Floor {
+        IEnumerable<Room> rooms;
+        public Floor() {
+            rooms = new List<Room>();
         }
         
     }
 
     public static class Driver {
         public static void Main() {
-            new Room(new(5,4),new Block[] { new Block(new(0, 0)) }).Edges.ForEach(x=>Debug.Log(x));
+            new Room(new(5,4), new Block(0, 0), new Block(0,1)).Edges.ToList().ForEach(x=>Debug.Log(x));
         }
     }
 }
