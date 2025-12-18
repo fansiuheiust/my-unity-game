@@ -44,6 +44,10 @@ namespace Dungeon.Generator {
     class Room {
         public RoomType Type { get; private set; }
         public Vector2Int Center { get; private set; }
+
+        /// <summary>
+        /// Self-documenting, you can assume that this must contain at least 1 element
+        /// </summary>
         public Block[] Blocks { get; private set; }
         /// <summary>
         /// Rotation/90
@@ -121,36 +125,16 @@ namespace Dungeon.Generator {
                                                                             degreeNormalized < 2? 1: -1 * degreeNormalized%2 == 0? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
                                                             + Center);
         }
-        
-        
-    }
-
-    /// <summary>
-    /// The generator
-    /// </summary>
-    public class Floor {
-        List<Room> rooms = new();
 
         /// <summary>
-        /// The big thing that generates the dungeon
+        /// Vector that contains the smallest X and Y of the entire room
         /// </summary>
-        /// <param name="options">Basically the list of rooms the program can choose from</param>
-        /// <param name="minimums">The minimum number of each type of room, no entry if no minimum for the type; null if no minimum at all</param>
-        /// <param name="maximums">The minimum number of each type of room, no entry if no maximum for the type; null if no maximum at all</param>
-        public void Generate((RoomType, Vector2Int[])[] options, Dictionary<RoomType, uint> minimums = null, Dictionary<RoomType, uint> maximums = null) {
-            // for now, treat this segment as a black box
-        }
+        public Vector2Int Min => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y));
 
-        IEnumerable<Vector2Int> Edges => rooms.Select(r => r.Edges)
-                                            .SelectMany(list=>list)
-                                            .Distinct()
-                                            .Where(c=>!rooms.Any(r=>r.Contains(c)));
-        IEnumerable<Vector2Int> RandomizedEdges => Edges.OrderBy(_ => Random.value);
-    }
-
-    public static class Driver {
-        public static void Main() {
-            new Room(new(5,4), new Block(0, 0), new Block(0,1)).Edges.ToList().ForEach(x=>Debug.Log(x));
-        }
+        /// <summary>
+        /// Vector that contains the largest X and Y of the entire room
+        /// </summary>
+        public Vector2Int Max => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y));
+        
     }
 }
