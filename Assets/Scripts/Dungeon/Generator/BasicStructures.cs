@@ -50,7 +50,7 @@ namespace Dungeon.Generator {
         /// </summary>
         public Block[] Blocks { get; private set; }
 
-        uint _normalizedRotation;
+        uint _normalizedRotation = 0;
 
         /// <summary>
         /// Blocks with origin=(0,0)
@@ -111,7 +111,8 @@ namespace Dungeon.Generator {
         public Vector2Int Center {
             get => _center;
             set {
-                System.Array.ForEach(Blocks, b => b.coordinate += value - _center);
+                for (int i = 0; i < Blocks.Length; i++)
+                    Blocks[i].coordinate += value - _center;
                 _center = value;
             }
         }
@@ -131,9 +132,13 @@ namespace Dungeon.Generator {
                 // 2: (-x, -y)
                 // 3: (+y, -x)
                 uint toRotate = (4 + value - _normalizedRotation) % 4;
-                System.Array.ForEach(Blocks, b => b.coordinate = new Vector2Int(toRotate % 3 == 0 ? 1 : -1 * toRotate % 2 == 0 ? b.coordinate.x - Center.x : b.coordinate.y - Center.y,
-                                                                            toRotate < 2 ? 1 : -1 * toRotate % 2 == 0 ? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
-                                                            + Center);
+                for (int i = 0; i < Blocks.Length; i++) {
+                    ref Block b = ref Blocks[i];
+                    b.coordinate -= Center;
+                    b.coordinate = new Vector2Int((toRotate % 3 == 0 ? 1 : -1) * (toRotate % 2 == 0 ? b.coordinate.x : b.coordinate.y),
+                                                  (toRotate < 2 ? 1 : -1) * (toRotate % 2 == 0 ? b.coordinate.y : b.coordinate.x))
+                                 + Center;
+                }
                 _normalizedRotation = value; 
             }
         }

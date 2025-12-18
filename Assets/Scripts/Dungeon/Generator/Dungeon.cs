@@ -75,6 +75,7 @@ namespace Dungeon.Generator {
             // the starting room
             rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0, 0)));
             Room prev = rooms[new(0, 0)];
+            int failCount = 0;
             // generate main path
             for (int i = 0; i < MainPathLength; i++) {
                 bool createdRoom = false;
@@ -112,6 +113,7 @@ namespace Dungeon.Generator {
                                     rooms.Add(toSpawn.Center, toSpawn);
                                     Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
                                     createdRoom = true;
+                                    prev = toSpawn;
                                     break;
                                 }
                             }
@@ -124,6 +126,14 @@ namespace Dungeon.Generator {
                     if (createdRoom) break;
                 }
 
+                if (!createdRoom) {
+                    i--;
+                    failCount++;
+                    if (failCount >= 1000) {
+                        Debug.Log("Too many failures, aborting...");
+                        return;
+                    }
+                }
             }
         }
 
@@ -140,12 +150,39 @@ namespace Dungeon.Generator {
 
 
         public void Print() {
+            char[] roomTypeIndicators = new char[] {'s', 'm', 'f'};
             Vector2Int min = MinCorner, max = MaxCorner;
+            Dictionary<Vector2Int, string> indicator = new Dictionary<Vector2Int, string>();
             string toPrint = "";
             for (int y = max.y; y >= min.y; y--) {
                 for (int x = min.x; x <= max.x; x++) {
+                    IEnumerable<Room> targetRoom = rooms.Where(r => r.Value.Contains(new Vector2Int(x, y))).Select(r=>r.Value);
+                    if (targetRoom.Count() != 0) {
+                        Room target = targetRoom.FirstOrDefault();
+                        if (!indicator.ContainsKey(target.Center)) {
+                            string toAdd = "";
+                            int num = indicator.Count();
+                            // translate indicator.count to aaa, aab, ...
+                            for (int i = 0; i < Mathf.Ceil(Mathf.Log(rooms.Count(), 26)); i++) {
+                                toAdd = (char)('a' + num % 26) + toAdd;
+                                num /= 26;
+                            }
+                            indicator.Add(target.Center, toAdd);
+                        }
 
+                        toPrint += roomTypeIndicators[(int)target.Type] + indicator[target.Center];
+
+                    }
+                    else {
+                        // print spaces to cover room type indicator + characters representing a dungeon room
+                        for (int i = 0; i < 1+Mathf.Ceil(Mathf.Log(rooms.Count, 26)); i++) {
+                            toPrint += " ";
+                        }
+                    }
+
+                    toPrint += " ";
                 }
+                toPrint += "\n";
             }
             Debug.Log(toPrint);
         }
@@ -153,7 +190,27 @@ namespace Dungeon.Generator {
 
     public static class Driver {
         public static void Main() {
-            new Room(new(5, 4), RoomType.Mob, new Block(0, 0), new Block(0, 1)).Edges.ToList().ForEach(x => Debug.Log(x));
+            (RoomType, Vector2Int[])[] options = {
+                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero}), // 1x1
+                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right}), // 1x2
+                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.up, Vector2Int.right}), // L
+                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right, Vector2Int.right+Vector2Int.right}) // 1x3
+            };
+            // Dungeon d = new Dungeon(options, 5, null, null, 10000);
+            // d.Print();
+            Room r = new Room(0, 0, RoomType.Mob, new Block(0, 0), new Block(0, 1));
+
+            r.Center = new(5, 6);
+
+            r.NormalizedRotation = 1;
+            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
+            r.NormalizedRotation = 0;
+            r.NormalizedRotation = 2;
+            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
+            r.NormalizedRotation = 0;
+            r.NormalizedRotation = 3;
+            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
+            r.NormalizedRotation = 0;
         }
     }
 }
