@@ -43,7 +43,7 @@ namespace Dungeon.Generator {
     /// </summary>
     class Room {
         public RoomType Type { get; private set; }
-        public Vector2Int Center { get; private set; }
+        Vector2Int _center;
 
         /// <summary>
         /// Self-documenting, you can assume that this must contain at least 1 element
@@ -73,10 +73,9 @@ namespace Dungeon.Generator {
 
             if (blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
                 throw new System.Exception("Blocks must be next to each other horizontally XOR vertically");
-
+            Blocks = blocks;
             Center = center;
             Type = type;
-            Blocks = blocks.Select(b=>new Block(b.coordinate+center)).ToArray();
         }
         /// <summary>
         /// Self-documenting
@@ -92,7 +91,9 @@ namespace Dungeon.Generator {
         /// </summary>
         /// <param name="coordinate">the coordinate to check</param>
         /// <returns>self-documenting</returns>
-        public bool Contains(Vector2Int coordinate) => Blocks.Any(b=>b.coordinate==coordinate); 
+        public bool Contains(Vector2Int coordinate) => Blocks.Any(b=>b.coordinate==coordinate);
+
+        public bool Collides(Room other) => Blocks.Any(b => other.Contains(b.coordinate));
 
         /// <summary>
         /// The list of edges 
@@ -105,7 +106,15 @@ namespace Dungeon.Generator {
         /// </summary>
         public IEnumerable<Vector2Int> UnfilteredEdges => Blocks.Select(b => b.Edges)
                                                         .SelectMany(e=>e);
-
+        
+        
+        public Vector2Int Center {
+            get => _center;
+            set {
+                System.Array.ForEach(Blocks, b => b.coordinate += value - _center);
+                _center = value;
+            }
+        }
 
         /// <summary>
         /// floor(Rotation/90), only support 4 rotations
@@ -114,14 +123,16 @@ namespace Dungeon.Generator {
             get => _normalizedRotation;
             set {
                 value %= 4;
+                // rotate by 90*n degrees:
                 // [cosx, -sinx] [x]   [xcosx-ysinx]
                 // [sinx, cosx ] [y] = [xsinx+ycosx]
                 // 0: (+x, +y)
                 // 1: (-y, +x)
                 // 2: (-x, -y)
                 // 3: (+y, -x)
-                System.Array.ForEach(Blocks, b => b.coordinate = new Vector2Int(value % 3 == 0 ? 1 : -1 * value % 2 == 0 ? b.coordinate.x - Center.x : b.coordinate.y - Center.y,
-                                                                            value < 2 ? 1 : -1 * value % 2 == 0 ? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
+                uint toRotate = (4 + value - _normalizedRotation) % 4;
+                System.Array.ForEach(Blocks, b => b.coordinate = new Vector2Int(toRotate % 3 == 0 ? 1 : -1 * toRotate % 2 == 0 ? b.coordinate.x - Center.x : b.coordinate.y - Center.y,
+                                                                            toRotate < 2 ? 1 : -1 * toRotate % 2 == 0 ? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
                                                             + Center);
                 _normalizedRotation = value; 
             }
@@ -130,13 +141,12 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Vector that contains the smallest X and Y of the entire room
         /// </summary>
-        public Vector2Int Min => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y));
+        public Vector2Int MinCorner => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y));
 
         /// <summary>
         /// Vector that contains the largest X and Y of the entire room
         /// </summary>
-        public Vector2Int Max => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y));
-        
+        public Vector2Int MaxCorner => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y));
     }
 
     struct Connection {
@@ -148,5 +158,12 @@ namespace Dungeon.Generator {
         /// The coordinate of the connection point of the connectinf rooms
         /// </summary>
         public Vector2 posA, posB;
+
+        public Connection(Room a, Room b, Vector2 posA, Vector2 posB) {
+            this.a = a;
+            this.b = b;
+            this.posA = posA;
+            this.posB = posB;
+        }
     }
 }

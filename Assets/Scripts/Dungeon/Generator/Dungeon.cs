@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection.Emit;
 using UnityEngine;
+using UnityEngine.TerrainUtils;
 
 namespace Dungeon.Generator {
     /// <summary>
@@ -57,11 +60,11 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The smallest XY coordinates in the entire dungeon
         /// </summary>
-        public Vector2Int Min => new(rooms.Min(r => r.Value.Min.x), rooms.Min(r => r.Value.Min.y));
+        public Vector2Int MinCorner => new(rooms.Min(r => r.Value.MinCorner.x), rooms.Min(r => r.Value.MinCorner.y));
         /// <summary>
         /// The largest XY coordinates in the entire dungeon
         /// </summary>
-        public Vector2Int Max => new(rooms.Max(r => r.Value.Max.x), rooms.Max(r => r.Value.Max.y));
+        public Vector2Int MaxCorner => new(rooms.Max(r => r.Value.MaxCorner.x), rooms.Max(r => r.Value.MaxCorner.y));
 
 
 
@@ -70,9 +73,61 @@ namespace Dungeon.Generator {
         /// </summary>
         void Generate() {
             // the starting room
-            rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0,0)));
+            rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0, 0)));
+            Room prev = rooms[new(0, 0)];
+            // generate main path
+            for (int i = 0; i < MainPathLength; i++) {
+                bool createdRoom = false;
+                // insert callback hell meme but for loop
 
+                // loop through blk where blk = each block of the previous room
+                IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
+                foreach (Block blk in shuffledPrevBlocks) {
+                    // loop through edg where edg = all valid edges of blk
+                    IEnumerable<Vector2Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
+                    foreach (Vector2Int edg in shuffledEdges) {
+                
+                        Vector2Int dist = edg - blk.coordinate;
+
+                        // make a room at the origin using a chosen room
+                        int chosenRoom = Random.Range(0, Options.Length - 1);
+                        Room toSpawn = new(0, 0, Options[chosenRoom].Item1, Options[chosenRoom].Item2.Select(x=>new Block(x)).ToArray());
+
+                        // loop through rot where rot = all rotations for the room
+                        IEnumerable<uint> rotations = new uint[] { 0, 1, 2, 3 }.OrderBy(x => Random.value);
+                        foreach (uint rot in rotations) {
+                            // blocks that can join the chosen block from prev
+                            toSpawn.NormalizedRotation = rot;
+                            
+                            // loop through com where com = all block coordinates of the rotated chosen room that can be connected to blk
+                            IEnumerable<Vector2Int> compatibleBlockCoords = toSpawn.Blocks.Select(b => b.coordinate).Where(c => !toSpawn.Contains(c - dist)).OrderBy( c => Random.value);
+                            foreach (Vector2Int com in compatibleBlockCoords) {
+                                // set the room's center s.t. com == edg
+                                // center + com = edg
+                                // => center = edg - com
+                                toSpawn.Center = edg - com;
+                                
+                                if (!rooms.Any(r=>r.Value.Collides(toSpawn))) {
+                                    // finally, spawn the room
+                                    rooms.Add(toSpawn.Center, toSpawn);
+                                    Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
+                                    createdRoom = true;
+                                    break;
+                                }
+                            }
+
+                            toSpawn.Center = Vector2Int.zero;
+                            if (createdRoom) break;
+                        }
+                        if (createdRoom) break;
+                    }
+                    if (createdRoom) break;
+                }
+
+            }
         }
+
+        IEnumerable<Vector2Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Value.Contains(e)));
 
 
         IEnumerable<Vector2Int> Edges => rooms.Select(r => r.Value.UnfilteredEdges)
@@ -80,6 +135,20 @@ namespace Dungeon.Generator {
                                             .Distinct()
                                             .Where(c => !rooms.Any(r => r.Value.Contains(c)));
         IEnumerable<Vector2Int> RandomizedEdges => Edges.OrderBy(_ => Random.value);
+
+
+
+
+        public void Print() {
+            Vector2Int min = MinCorner, max = MaxCorner;
+            string toPrint = "";
+            for (int y = max.y; y >= min.y; y--) {
+                for (int x = min.x; x <= max.x; x++) {
+
+                }
+            }
+            Debug.Log(toPrint);
+        }
     }
 
     public static class Driver {
