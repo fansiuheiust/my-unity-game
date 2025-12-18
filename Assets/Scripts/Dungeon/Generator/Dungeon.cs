@@ -7,7 +7,7 @@ namespace Dungeon.Generator {
     /// The dungeon
     /// </summary>
     public class Dungeon {
-        Dictionary<Vector2Int, Room> rooms = new();
+        internal Dictionary<Vector2Int, Room> rooms = new();
 
         // variables controlling the room's generation
         /// <summary>
@@ -35,12 +35,18 @@ namespace Dungeon.Generator {
         /// </summary>
         public uint MaxTotalRooms { get; private set; }
 
+        internal Dictionary<(Room, Room), Connection> Connections { get; private set; } = new();
+
+        /// <summary>
+        /// Generates the dungeon
+        /// </summary>
         public Dungeon((RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> minNumRooms, Dictionary<RoomType, uint> maxNumRooms, uint maxTotalRooms) {
             Options = options;
             MainPathLength = mainPathLength;
             MinNumRooms = minNumRooms;
             MaxNumRooms = maxNumRooms;
             MaxTotalRooms = maxTotalRooms;
+            Generate();
         }
 
         /// <summary>
@@ -62,8 +68,10 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The big thing that generates the dungeon
         /// </summary>
-        public void Generate() {
-            // for now, treat this segment as a black box
+        void Generate() {
+            // the starting room
+            rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0,0)));
+
         }
 
 
@@ -76,7 +84,7 @@ namespace Dungeon.Generator {
 
     public static class Driver {
         public static void Main() {
-            new Room(new(5, 4), new Block(0, 0), new Block(0, 1)).Edges.ToList().ForEach(x => Debug.Log(x));
+            new Room(new(5, 4), RoomType.Mob, new Block(0, 0), new Block(0, 1)).Edges.ToList().ForEach(x => Debug.Log(x));
         }
     }
 }

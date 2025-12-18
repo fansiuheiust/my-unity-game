@@ -49,10 +49,9 @@ namespace Dungeon.Generator {
         /// Self-documenting, you can assume that this must contain at least 1 element
         /// </summary>
         public Block[] Blocks { get; private set; }
-        /// <summary>
-        /// Rotation/90
-        /// </summary>
-        public int NormalizedRotation { get; private set; } = 0;
+
+        uint _normalizedRotation;
+
         /// <summary>
         /// Blocks with origin=(0,0)
         /// </summary>
@@ -64,7 +63,7 @@ namespace Dungeon.Generator {
         /// <param name="center">Where (0,0) of <c>blocks</c> should be</param>
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
-        public Room(Vector2Int center, params Block[] blocks) {
+        public Room(Vector2Int center, RoomType type, params Block[] blocks) {
 
             if (blocks is null || blocks.Length == 0)
                 throw new System.Exception("No blocks given");
@@ -76,19 +75,17 @@ namespace Dungeon.Generator {
                 throw new System.Exception("Blocks must be next to each other horizontally XOR vertically");
 
             Center = center;
+            Type = type;
             Blocks = blocks.Select(b=>new Block(b.coordinate+center)).ToArray();
-
-            
-
         }
         /// <summary>
         /// Self-documenting
         /// </summary>
-        /// <param name="x">Where (0,0)'s x of <c>blocks</c> should be</param>
-        /// <param name="y">Where (0,0)'s y of <c>blocks</c> should be</param>
+        /// <param name="centerX">Where (0,0)'s x of <c>blocks</c> should be</param>
+        /// <param name="centerY">Where (0,0)'s y of <c>blocks</c> should be</param>
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
-        public Room(int x, int y, params Block[] blocks) : this(new Vector2Int(x, y), blocks) { }
+        public Room(int centerX, int centerY, RoomType type, params Block[] blocks) : this(new Vector2Int(centerX, centerY), type, blocks) { }
 
         /// <summary>
         /// Checks whether the room occupies a coordinate
@@ -109,21 +106,25 @@ namespace Dungeon.Generator {
         public IEnumerable<Vector2Int> UnfilteredEdges => Blocks.Select(b => b.Edges)
                                                         .SelectMany(e=>e);
 
+
         /// <summary>
-        /// Rotates the entire room about the center
+        /// floor(Rotation/90), only support 4 rotations
         /// </summary>
-        /// <param name="degreeNormalized">actual degree/90</param>
-        public void Rotate(uint degreeNormalized) {
-            if (degreeNormalized >= 4) degreeNormalized %= 4;
-            // [cosx, -sinx] [x]   [xcosx-ysinx]
-            // [sinx, cosx ] [y] = [xsinx+ycosx]
-            // 0: (+x, +y)
-            // 1: (-y, +x)
-            // 2: (-x, -y)
-            // 3: (+y, -x)
-            System.Array.ForEach(Blocks, b=>b.coordinate = new Vector2Int(degreeNormalized%3==0? 1: -1 * degreeNormalized%2==0? b.coordinate.x-Center.x: b.coordinate.y-Center.y,
-                                                                            degreeNormalized < 2? 1: -1 * degreeNormalized%2 == 0? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
+        public uint NormalizedRotation { 
+            get => _normalizedRotation;
+            set {
+                value %= 4;
+                // [cosx, -sinx] [x]   [xcosx-ysinx]
+                // [sinx, cosx ] [y] = [xsinx+ycosx]
+                // 0: (+x, +y)
+                // 1: (-y, +x)
+                // 2: (-x, -y)
+                // 3: (+y, -x)
+                System.Array.ForEach(Blocks, b => b.coordinate = new Vector2Int(value % 3 == 0 ? 1 : -1 * value % 2 == 0 ? b.coordinate.x - Center.x : b.coordinate.y - Center.y,
+                                                                            value < 2 ? 1 : -1 * value % 2 == 0 ? b.coordinate.y - Center.y : b.coordinate.x - Center.x)
                                                             + Center);
+                _normalizedRotation = value; 
+            }
         }
 
         /// <summary>
@@ -136,5 +137,16 @@ namespace Dungeon.Generator {
         /// </summary>
         public Vector2Int Max => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y));
         
+    }
+
+    struct Connection {
+        /// <summary>
+        /// The rooms that are connected to each other
+        /// </summary>
+        public Room a, b;
+        /// <summary>
+        /// The coordinate of the connection point of the connectinf rooms
+        /// </summary>
+        public Vector2 posA, posB;
     }
 }
