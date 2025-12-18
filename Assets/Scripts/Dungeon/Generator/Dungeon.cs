@@ -10,6 +10,7 @@ namespace Dungeon.Generator {
     /// The dungeon
     /// </summary>
     public class Dungeon {
+        // TODO: change this back to List, Dict is redundant
         internal Dictionary<Vector2Int, Room> rooms = new();
 
         // variables controlling the room's generation
@@ -37,6 +38,8 @@ namespace Dungeon.Generator {
         /// The maximum number of rooms in the dungeon
         /// </summary>
         public uint MaxTotalRooms { get; private set; }
+
+        Dictionary<RoomType, uint> numRooms = new();
 
         internal Dictionary<(Room, Room), Connection> Connections { get; private set; } = new();
 
@@ -81,49 +84,50 @@ namespace Dungeon.Generator {
                 bool createdRoom = false;
                 // insert callback hell meme but for loop
 
-                // loop through blk where blk = each block of the previous room
-                IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
-                foreach (Block blk in shuffledPrevBlocks) {
-                    // loop through edg where edg = all valid edges of blk
-                    IEnumerable<Vector2Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
-                    foreach (Vector2Int edg in shuffledEdges) {
-                
-                        Vector2Int dist = edg - blk.coordinate;
+                // loop through rom where rom = a potential room
+                foreach ((RoomType, Vector2Int[]) rom in RoomSpawnList) {
+                    Room toSpawn = (i == MainPathLength-1)? new(0, 0, RoomType.Final, new Block(0,0)): new(0, 0, rom.Item1, rom.Item2.Select(x=>new Block(x)).ToArray());
 
-                        // make a room at the origin using a chosen room
-                        int chosenRoom = Random.Range(0, Options.Length - 1);
-                        Room toSpawn = new(0, 0, Options[chosenRoom].Item1, Options[chosenRoom].Item2.Select(x=>new Block(x)).ToArray());
+                    // loop through blk where blk = each block of the previous room
+                    IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
+                    foreach (Block blk in shuffledPrevBlocks) {
+                        // loop through edg where edg = all valid edges of blk
+                        IEnumerable<Vector2Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
+                        foreach (Vector2Int edg in shuffledEdges) {
 
-                        // loop through rot where rot = all rotations for the room
-                        IEnumerable<uint> rotations = new uint[] { 0, 1, 2, 3 }.OrderBy(x => Random.value);
-                        foreach (uint rot in rotations) {
-                            // blocks that can join the chosen block from prev
-                            toSpawn.NormalizedRotation = rot;
-                            
-                            // loop through com where com = all block coordinates of the rotated chosen room that can be connected to blk
-                            IEnumerable<Vector2Int> compatibleBlockCoords = toSpawn.Blocks.Select(b => b.coordinate).Where(c => !toSpawn.Contains(c - dist)).OrderBy( c => Random.value);
-                            foreach (Vector2Int com in compatibleBlockCoords) {
-                                // set the room's center s.t. com == edg
-                                // center + com = edg
-                                // => center = edg - com
-                                toSpawn.Center = edg - com;
-                                
-                                if (!rooms.Any(r=>r.Value.Collides(toSpawn))) {
-                                    // finally, spawn the room
-                                    rooms.Add(toSpawn.Center, toSpawn);
-                                    Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
-                                    createdRoom = true;
-                                    prev = toSpawn;
-                                    break;
+                            Vector2Int dist = edg - blk.coordinate;
+
+                            // loop through rot where rot = all rotations for the room
+                            IEnumerable<uint> rotations = new uint[] { 0, 1, 2, 3 }.OrderBy(x => Random.value);
+                            foreach (uint rot in rotations) {
+                                // blocks that can join the chosen block from prev
+                                toSpawn.NormalizedRotation = rot;
+
+                                // loop through com where com = all block coordinates of the rotated chosen room that can be connected to blk
+                                IEnumerable<Vector2Int> compatibleBlockCoords = toSpawn.Blocks.Select(b => b.coordinate).Where(c => !toSpawn.Contains(c - dist)).OrderBy(c => Random.value);
+                                foreach (Vector2Int com in compatibleBlockCoords) {
+                                    // set the room's center s.t. com == edg
+                                    // center + com = edg
+                                    // => center = edg - com
+                                    toSpawn.Center = edg - com;
+
+                                    if (!rooms.Any(r => r.Value.Collides(toSpawn))) {
+                                        // finally, spawn the room
+                                        rooms.Add(toSpawn.Center, toSpawn);
+                                        Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
+                                        createdRoom = true;
+                                        prev = toSpawn;
+                                        break;
+                                    }
                                 }
+                                if (createdRoom) break;
+                                toSpawn.Center = Vector2Int.zero;
                             }
-
-                            toSpawn.Center = Vector2Int.zero;
                             if (createdRoom) break;
+                            toSpawn.NormalizedRotation = 0;
                         }
                         if (createdRoom) break;
                     }
-                    if (createdRoom) break;
                 }
 
                 if (!createdRoom) {
@@ -136,6 +140,10 @@ namespace Dungeon.Generator {
                 }
             }
         }
+
+
+        IEnumerable<(RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => MaxNumRooms is null || !MaxNumRooms.ContainsKey(x.Item1) || !numRooms.ContainsKey(x.Item1) || numRooms[x.Item1] <= MaxNumRooms[x.Item1])
+            .OrderBy(x=>Random.value);
 
         IEnumerable<Vector2Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Value.Contains(e)));
 
@@ -180,7 +188,7 @@ namespace Dungeon.Generator {
                         }
                     }
 
-                    toPrint += " ";
+                    toPrint += "\t";
                 }
                 toPrint += "\n";
             }
@@ -196,21 +204,8 @@ namespace Dungeon.Generator {
                 (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.up, Vector2Int.right}), // L
                 (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right, Vector2Int.right+Vector2Int.right}) // 1x3
             };
-            // Dungeon d = new Dungeon(options, 5, null, null, 10000);
-            // d.Print();
-            Room r = new Room(0, 0, RoomType.Mob, new Block(0, 0), new Block(0, 1));
-
-            r.Center = new(5, 6);
-
-            r.NormalizedRotation = 1;
-            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
-            r.NormalizedRotation = 0;
-            r.NormalizedRotation = 2;
-            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
-            r.NormalizedRotation = 0;
-            r.NormalizedRotation = 3;
-            System.Array.ForEach(r.Blocks, b => { Debug.Log(b.coordinate); });
-            r.NormalizedRotation = 0;
+            Dungeon d = new Dungeon(options, 5, null, null, 10000);
+            d.Print();
         }
     }
 }
