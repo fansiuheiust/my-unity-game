@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TerrainUtils;
 
@@ -19,39 +20,30 @@ namespace Dungeon.Generator {
         /// </summary>
         public (RoomType, Vector2Int[])[] Options { get; private set; }
         /// <summary>
-        /// The length of the path from start room to end room
+        /// The length of the path from start room to final room, including the start and final room
         /// </summary>
         public uint MainPathLength { get; private set; }
         /// <summary>
-        /// <para>The minimum number of rooms for each roomtype.</para>
-        /// If a roomtype is not hashed to anything, it is considered as unrestricted (i.e. no minimum).<br />
-        /// If the dictionary is empty, it is considered as no minimum for all rooms
+        /// Number of rooms to include for each room type, do not include start and final room
         /// </summary>
-        public Dictionary<RoomType, uint> MinNumRooms { get; private set; }
+        public Dictionary<RoomType, uint> NumRooms = new();
         /// <summary>
-        /// <para>The maximum number of rooms for each roomtype.</para>
-        /// If a roomtype is not hashed to anything, it is considered as unlimited (i.e. no maximum).<br />
-        /// If the dictionary is empty, it is considered as no minimum for all rooms
+        /// number of rooms left to spawn for each room type
         /// </summary>
-        public Dictionary<RoomType, uint> MaxNumRooms { get; private set; }
-        /// <summary>
-        /// The maximum number of rooms in the dungeon
-        /// </summary>
-        public uint MaxTotalRooms { get; private set; }
-
-        Dictionary<RoomType, uint> numRooms = new();
+        Dictionary<RoomType, uint> spawnRequirement;
 
         internal Dictionary<(Room, Room), Connection> Connections { get; private set; } = new();
 
         /// <summary>
         /// Generates the dungeon
         /// </summary>
-        public Dungeon((RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> minNumRooms, Dictionary<RoomType, uint> maxNumRooms, uint maxTotalRooms) {
+        public Dungeon((RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms) {
+            if (!options.All(x =>numRooms.ContainsKey(x.Item1)))
+                throw new System.Exception("all roomtypes in options must appear in numRooms once");
             Options = options;
             MainPathLength = mainPathLength;
-            MinNumRooms = minNumRooms;
-            MaxNumRooms = maxNumRooms;
-            MaxTotalRooms = maxTotalRooms;
+            NumRooms = numRooms;
+            spawnRequirement = numRooms.ToDictionary(x=>x.Key, x=>x.Value);
             Generate();
         }
 
@@ -78,15 +70,15 @@ namespace Dungeon.Generator {
             // the starting room
             rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0, 0)));
             Room prev = rooms[new(0, 0)];
-            int failCount = 0;
+            int consecutiveFailCount = 0;
             // generate main path
-            for (int i = 0; i < MainPathLength; i++) {
+            for (int i = 0; i < MainPathLength-1; i++) { // -1 as startRoom counts as a room
                 bool createdRoom = false;
                 // insert callback hell meme but for loop
 
                 // loop through rom where rom = a potential room
                 foreach ((RoomType, Vector2Int[]) rom in RoomSpawnList) {
-                    Room toSpawn = (i == MainPathLength-1)? new(0, 0, RoomType.Final, new Block(0,0)): new(0, 0, rom.Item1, rom.Item2.Select(x=>new Block(x)).ToArray());
+                    Room toSpawn = (i == MainPathLength-2)? new(0, 0, RoomType.Final, new Block(0,0)): new(0, 0, rom.Item1, rom.Item2.Select(x=>new Block(x)).ToArray());
 
                     // loop through blk where blk = each block of the previous room
                     IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
@@ -115,6 +107,7 @@ namespace Dungeon.Generator {
                                         // finally, spawn the room
                                         rooms.Add(toSpawn.Center, toSpawn);
                                         Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
+                                        if (toSpawn.Type != RoomType.Final) spawnRequirement[toSpawn.Type] -= 1;
                                         createdRoom = true;
                                         prev = toSpawn;
                                         break;
@@ -128,21 +121,22 @@ namespace Dungeon.Generator {
                         }
                         if (createdRoom) break;
                     }
+                    if (createdRoom) break;
                 }
 
                 if (!createdRoom) {
                     i--;
-                    failCount++;
-                    if (failCount >= 1000) {
-                        Debug.Log("Too many failures, aborting...");
+                    consecutiveFailCount++;
+                    if (consecutiveFailCount >= 5) {
+                        Debug.Log("Too many consecutive failures, aborting...");
                         return;
                     }
-                }
+                } else consecutiveFailCount = 0;
             }
         }
 
 
-        IEnumerable<(RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => MaxNumRooms is null || !MaxNumRooms.ContainsKey(x.Item1) || !numRooms.ContainsKey(x.Item1) || numRooms[x.Item1] <= MaxNumRooms[x.Item1])
+        IEnumerable<(RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => !(spawnRequirement[x.Item1] > 0))
             .OrderBy(x=>Random.value);
 
         IEnumerable<Vector2Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Value.Contains(e)));
@@ -204,7 +198,7 @@ namespace Dungeon.Generator {
                 (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.up, Vector2Int.right}), // L
                 (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right, Vector2Int.right+Vector2Int.right}) // 1x3
             };
-            Dungeon d = new Dungeon(options, 5, null, null, 10000);
+            Dungeon d = new Dungeon(options, 5, new(){ { RoomType.Mob, 15 }});
             d.Print();
         }
     }
