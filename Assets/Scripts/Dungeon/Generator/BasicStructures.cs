@@ -43,6 +43,7 @@ namespace Dungeon.Generator {
     /// </summary>
     class Room {
         public RoomType Type { get; private set; }
+        public string Name { get; private set; }
         Vector2Int _center;
 
         /// <summary>
@@ -61,18 +62,19 @@ namespace Dungeon.Generator {
         /// Self-documenting
         /// </summary>
         /// <param name="center">Where (0,0) of <c>blocks</c> should be</param>
-        /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
+        /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks.<br />An implicit (0,0) will be generated if not given</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
-        public Room(Vector2Int center, RoomType type, params Block[] blocks) {
+        public Room(Vector2Int center, string name, RoomType type, params Block[] blocks) {
 
             if (blocks is null || blocks.Length == 0)
-                throw new System.Exception("No blocks given");
+                blocks = new Block[1] { new Block(0,0) };
 
             if (!blocks.Any(x=>x.coordinate==Vector2Int.zero))
-                throw new System.Exception("There must exist a block at the origin");
+                blocks = blocks.Append(new Block(0,0)).ToArray();
 
             if (blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
                 throw new System.Exception("Blocks must be next to each other horizontally XOR vertically");
+            Name = name;
             Blocks = blocks;
             Center = center;
             Type = type;
@@ -84,7 +86,7 @@ namespace Dungeon.Generator {
         /// <param name="centerY">Where (0,0)'s y of <c>blocks</c> should be</param>
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
-        public Room(int centerX, int centerY, RoomType type, params Block[] blocks) : this(new Vector2Int(centerX, centerY), type, blocks) { }
+        public Room(int centerX, int centerY, string name, RoomType type, params Block[] blocks) : this(new Vector2Int(centerX, centerY), name, type, blocks) { }
 
         /// <summary>
         /// Checks whether the room occupies a coordinate

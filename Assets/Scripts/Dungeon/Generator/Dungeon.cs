@@ -18,7 +18,7 @@ namespace Dungeon.Generator {
         /// <summary>
         /// List of rooms the generator can choose from
         /// </summary>
-        public (RoomType, Vector2Int[])[] Options { get; private set; }
+        public (string, RoomType, Vector2Int[])[] Options { get; private set; }
         /// <summary>
         /// The length of the path from start room to final room, including the start and final room
         /// </summary>
@@ -37,8 +37,8 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Generates the dungeon
         /// </summary>
-        public Dungeon((RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms) {
-            if (!options.All(x =>numRooms.ContainsKey(x.Item1)))
+        public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms) {
+            if (!options.All(x =>numRooms.ContainsKey(x.Item2)))
                 throw new System.Exception("all roomtypes in options must appear in numRooms once");
             Options = options;
             MainPathLength = mainPathLength;
@@ -68,7 +68,7 @@ namespace Dungeon.Generator {
         /// </summary>
         void Generate() {
             // the starting room
-            rooms.Add(new(0, 0), new(0, 0, RoomType.Start, new Block(0, 0)));
+            rooms.Add(new(0, 0), new(0, 0, "start", RoomType.Start, new Block(0, 0)));
             Room prev = rooms[new(0, 0)];
             int consecutiveFailCount = 0;
             // generate main path
@@ -77,8 +77,8 @@ namespace Dungeon.Generator {
                 // insert callback hell meme but for loop
 
                 // loop through rom where rom = a potential room
-                foreach ((RoomType, Vector2Int[]) rom in RoomSpawnList) {
-                    Room toSpawn = (i == MainPathLength-2)? new(0, 0, RoomType.Final, new Block(0,0)): new(0, 0, rom.Item1, rom.Item2.Select(x=>new Block(x)).ToArray());
+                foreach ((string, RoomType, Vector2Int[]) rom in RoomSpawnList) {
+                    Room toSpawn = (i == MainPathLength-2)? new(0, 0, "final", RoomType.Final, new Block(0,0)): new(0, 0, rom.Item1, rom.Item2, rom.Item3.Select(x=>new Block(x)).ToArray());
 
                     // loop through blk where blk = each block of the previous room
                     IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
@@ -107,7 +107,7 @@ namespace Dungeon.Generator {
                                         // finally, spawn the room
                                         rooms.Add(toSpawn.Center, toSpawn);
                                         Connections.Add((prev, toSpawn), new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
-                                        if (toSpawn.Type != RoomType.Final) spawnRequirement[toSpawn.Type] -= 1;
+                                        if (toSpawn.Type != RoomType.Final) spawnRequirement[toSpawn.Type]--;
                                         createdRoom = true;
                                         prev = toSpawn;
                                         break;
@@ -136,7 +136,7 @@ namespace Dungeon.Generator {
         }
 
 
-        IEnumerable<(RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => !(spawnRequirement[x.Item1] > 0))
+        IEnumerable<(string, RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => spawnRequirement[x.Item2] > 0)
             .OrderBy(x=>Random.value);
 
         IEnumerable<Vector2Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Value.Contains(e)));
@@ -192,13 +192,15 @@ namespace Dungeon.Generator {
 
     public static class Driver {
         public static void Main() {
-            (RoomType, Vector2Int[])[] options = {
-                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero}), // 1x1
-                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right}), // 1x2
-                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.up, Vector2Int.right}), // L
-                (RoomType.Mob, new Vector2Int[]{Vector2Int.zero, Vector2Int.right, Vector2Int.right+Vector2Int.right}) // 1x3
+            (string, RoomType, Vector2Int[])[] options = {
+                ("1x1mob", RoomType.Mob, new Vector2Int[]{}), // 1x1
+                ("1x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right}), // 1x2
+                ("Lmob", RoomType.Mob, new Vector2Int[]{Vector2Int.up, Vector2Int.right}), // L
+                ("1x3mob", RoomType.Mob, new Vector2Int[]{Vector2Int.left, Vector2Int.right}), // 1x3
+                ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
+                ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 5, new(){ { RoomType.Mob, 15 }});
+            Dungeon d = new Dungeon(options, 20, new(){ { RoomType.Mob, 40 }});
             d.Print();
         }
     }
