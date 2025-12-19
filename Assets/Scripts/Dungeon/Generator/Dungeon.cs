@@ -65,7 +65,8 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The big thing that generates the dungeon
         /// </summary>
-        void Generate() {
+        void Generate(bool redoIfFail = true) {
+            Redo:
             // the starting room
             rooms.Add(new(0, 0, "start", RoomType.Start, new Block(0, 0)));
             Room prev = rooms[0];
@@ -126,8 +127,12 @@ namespace Dungeon.Generator {
                 if (!createdRoom) {
                     i--;
                     consecutiveFailCount++;
-                    if (consecutiveFailCount >= 5) {
+                    if (consecutiveFailCount >= 20) {
                         Debug.Log("Too many consecutive failures, aborting...");
+                        spawnRequirement = NumRooms.ToDictionary(x=>x.Key, x => x.Value);
+                        rooms.Clear();
+                        Connections.Clear();
+                        if (redoIfFail) goto Redo;
                         return;
                     }
                 } else consecutiveFailCount = 0;
@@ -141,10 +146,12 @@ namespace Dungeon.Generator {
         IEnumerable<Vector2Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Contains(e)));
 
 
-        IEnumerable<Vector2Int> Edges => rooms.Select(r => r.UnfilteredEdges)
-                                            .SelectMany(list => list)
-                                            .Distinct()
-                                            .Where(c => !rooms.Any(r => r.Contains(c)));
+        IEnumerable<Vector2Int> Edges => rooms
+                                        .Where(r=>r.Type != RoomType.Start && r.Type != RoomType.Final)
+                                        .Select(r => r.UnfilteredEdges)
+                                        .SelectMany(list => list)
+                                        .Distinct()
+                                        .Where(c => !rooms.Any(r => r.Contains(c)));
         IEnumerable<Vector2Int> RandomizedEdges => Edges.OrderBy(_ => Random.value);
 
 
@@ -197,7 +204,7 @@ namespace Dungeon.Generator {
             foreach (Room r in rooms) {
                 GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/{r.Name}"));
                 go.transform.position = new(r.Center.x,0,r.Center.y);
-                go.transform.localEulerAngles = new(0,-90*r.NormalizedRotation,0);
+                go.transform.localEulerAngles = new(0, r.RotationInGame,0);
             }
             foreach (Connection c in Connections.Values) {
                 GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>("RoomVisualizer/connection"));
@@ -216,7 +223,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 33, new(){ { RoomType.Mob, 40 }});
+            Dungeon d = new Dungeon(options, 255, new(){ { RoomType.Mob, 300 }});
             d.Print();
             d.Visualize();
         }

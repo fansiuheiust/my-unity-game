@@ -146,6 +146,11 @@ namespace Dungeon.Generator {
         }
 
         /// <summary>
+        /// Rotation in the game
+        /// </summary>
+        public int RotationInGame => -90 * (int)_normalizedRotation;
+
+        /// <summary>
         /// Vector that contains the smallest X and Y of the entire room
         /// </summary>
         public Vector2Int MinCorner => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y));
