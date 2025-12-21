@@ -66,13 +66,16 @@ namespace Dungeon.Generator {
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
         public Room(Vector3Int center, string name, RoomType type, params Block[] blocks) {
 
+            if (type != RoomType.Ladder && blocks.Any(b => b.coordinate.y != 0))
+                throw new System.Exception("Only ladders can have non-zero y coordinated blocks");
+
             if (blocks is null || blocks.Length == 0)
                 blocks = new Block[1] { new Block(0,0) };
 
             if (!blocks.Any(x=>x.coordinate==Vector3Int.zero))
                 blocks = blocks.Append(new Block(0,0)).ToArray();
 
-            if (blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
+            if (type != RoomType.Ladder && blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
                 throw new System.Exception("Blocks must be next to each other in x XOR z");
             Name = name;
             Blocks = blocks;
@@ -153,12 +156,12 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Vector that contains the smallest X and Y of the entire room
         /// </summary>
-        public Vector3Int MinCorner => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y));
+        public Vector3Int MinCorner => new(Blocks.Min(b => b.coordinate.x), Blocks.Min(b => b.coordinate.y), Blocks.Min(b => b.coordinate.z));
 
         /// <summary>
         /// Vector that contains the largest X and Y of the entire room
         /// </summary>
-        public Vector3Int MaxCorner => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y));
+        public Vector3Int MaxCorner => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y), Blocks.Max(b => b.coordinate.z));
     }
 
     struct Connection {
@@ -169,9 +172,9 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The coordinate of the connection point of the connectinf rooms
         /// </summary>
-        public Vector3 posA, posB;
+        public Vector3Int posA, posB;
 
-        public Connection(Room a, Room b, Vector3 posA, Vector3 posB) {
+        public Connection(Room a, Room b, Vector3Int posA, Vector3Int posB) {
             this.a = a;
             this.b = b;
             this.posA = posA;
