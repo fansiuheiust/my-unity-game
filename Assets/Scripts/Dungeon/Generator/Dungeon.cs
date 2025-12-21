@@ -87,6 +87,10 @@ namespace Dungeon.Generator {
                         IEnumerable<Vector2Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
                         foreach (Vector2Int edg in shuffledEdges) {
 
+                            // int maxRoomSize = Options.Max(o=>o.Item3.Length);
+
+                            // if (!HasEnoughSpace(edg, maxRoomSize*(int)(MainPathLength-1-i))) continue;
+
                             Vector2Int dist = edg - blk.coordinate;
 
                             // loop through rot where rot = all rotations for the room
@@ -129,16 +133,55 @@ namespace Dungeon.Generator {
                     consecutiveFailCount++;
                     if (consecutiveFailCount >= 20) {
                         Debug.Log("Too many consecutive failures, aborting...");
-                        spawnRequirement = NumRooms.ToDictionary(x=>x.Key, x => x.Value);
-                        rooms.Clear();
-                        Connections.Clear();
-                        if (redoIfFail) goto Redo;
+                        if (redoIfFail) {
+                            spawnRequirement = NumRooms.ToDictionary(x => x.Key, x => x.Value);
+                            rooms.Clear();
+                            Connections.Clear();
+                            terminationCount++;
+                            goto Redo;
+                        }
                         return;
                     }
                 } else consecutiveFailCount = 0;
             }
+            Debug.Log("Number of terminations: " + terminationCount);
+            terminationCount = 0;
         }
 
+        static int terminationCount = 0;
+
+        /// <summary>
+        /// Checks if the number of free spaces in a place has enough space
+        /// </summary>
+        /// <param name="edge">Search position</param>
+        /// <param name="target">target number of space</param>
+        bool HasEnoughSpace(Vector2Int edge, int target) {
+            Vector2Int min = MinCorner, sizes = MaxCorner - min + Vector2Int.one;
+            bool[,] mapping = new bool[sizes.x, sizes.y];
+            ref bool Map(int x, int y) => ref mapping[x - min.x, y - min.y];
+
+            rooms.ForEach(r => System.Array.ForEach(r.Blocks, b => { Map(b.coordinate.x, b.coordinate.y) = true; }));
+
+            int accumulator = 0;
+
+            return HasEnoughSpace(edge, mapping, target, ref accumulator);
+        }
+
+        bool HasEnoughSpace(Vector2Int edge, bool[,] mapping, int target, ref int accumulator) {
+            Vector2Int fixedEdge = edge - MinCorner;
+
+            if (accumulator >= target) return true;
+
+            // going out of bound => infinite free space
+            if (fixedEdge.x < 0 || fixedEdge.x >= mapping.GetLength(0) || fixedEdge.y < 0 || fixedEdge.y >= mapping.GetLength(1)) return true;
+
+            if (mapping[fixedEdge.x, fixedEdge.y]) return false;
+
+            accumulator++;
+            mapping[fixedEdge.x, fixedEdge.y] = true;
+            return HasEnoughSpace(fixedEdge + Vector2Int.up, mapping, target, ref accumulator) || HasEnoughSpace(fixedEdge + Vector2Int.down, mapping, target, ref accumulator)
+                || HasEnoughSpace(fixedEdge + Vector2Int.left, mapping, target, ref accumulator) || HasEnoughSpace(fixedEdge + Vector2Int.right, mapping, target, ref accumulator);
+        }
 
         IEnumerable<(string, RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => spawnRequirement[x.Item2] > 0)
             .OrderBy(x=>Random.value);
@@ -200,21 +243,32 @@ namespace Dungeon.Generator {
             Debug.Log(toPrint);
         }
 
-        public void Visualize() {
+        public List<GameObject> Visualize() {
+            List<GameObject> objects = new();
             foreach (Room r in rooms) {
                 GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/{r.Name}"));
                 go.transform.position = new(r.Center.x,0,r.Center.y);
                 go.transform.localEulerAngles = new(0, r.RotationInGame,0);
+                objects.Add(go);
             }
             foreach (Connection c in Connections.Values) {
                 GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>("RoomVisualizer/connection"));
                 go.transform.position = new((c.posA.x+c.posB.x)/2f,0.1f,(c.posA.y+c.posB.y)/2f);
+                objects.Add(go);
             }
+            return objects;
         }
     }
 
     public static class Driver {
+
+        static List<GameObject> SpawnedObjects;
         public static void Main() {
+
+            if (SpawnedObjects != null) {
+                foreach (GameObject obj in SpawnedObjects) { MonoBehaviour.Destroy(obj);}
+            }
+
             (string, RoomType, Vector2Int[])[] options = {
                 ("1x1mob", RoomType.Mob, new Vector2Int[]{}), // 1x1
                 ("1x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right}), // 1x2
@@ -224,8 +278,7 @@ namespace Dungeon.Generator {
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
             Dungeon d = new Dungeon(options, 255, new(){ { RoomType.Mob, 300 }});
-            d.Print();
-            d.Visualize();
+            SpawnedObjects = d.Visualize();
         }
     }
 }
