@@ -66,9 +66,10 @@ namespace Dungeon.Generator {
         /// The big thing that generates the dungeon
         /// </summary>
         void Generate() {
-            // Redo:
+            List<Room> slicedRooms = new();
             // the starting room
             rooms.Add(new(0, 0, "start", RoomType.Start, new Block(0, 0)));
+            slicedRooms.Add(rooms[0]);
             Room prev = rooms[0];
             int consecutiveFailCount = 0;
             // generate main path
@@ -86,7 +87,7 @@ namespace Dungeon.Generator {
                     if (prev.Type == RoomType.Ladder) shuffledPrevBlocks = shuffledPrevBlocks.Where(b => b.coordinate != Vector3Int.zero); // skip the upper block if ladder
                     foreach (Block blk in shuffledPrevBlocks) {
                         // loop through edg where edg = all valid edges of blk
-                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
+                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk, slicedRooms).OrderBy(x => Random.value);
                         foreach (Vector3Int edg in shuffledEdges) {
 
                             // int maxRoomSize = Options.Max(o=>o.Item3.Length);
@@ -109,9 +110,10 @@ namespace Dungeon.Generator {
                                     // => center = edg - com
                                     toSpawn.Center = edg - com;
 
-                                    if (!rooms.Any(r => r.Collides(toSpawn))) {
+                                    if (!slicedRooms.Any(r => r.Collides(toSpawn))) {
                                         // finally, spawn the room
                                         rooms.Add(toSpawn);
+                                        slicedRooms.Add(toSpawn);
                                         Connections.Add(new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
                                         if (spawnRequirement.ContainsKey(toSpawn.Type)) spawnRequirement[toSpawn.Type]--;
                                         createdRoom = true;
@@ -136,12 +138,14 @@ namespace Dungeon.Generator {
                     if (consecutiveFailCount >= 10) {
 
                         if (spawnRequirement.ContainsKey(prev.Type)) spawnRequirement[prev.Type]++;
+
+                        slicedRooms.Clear();
                         int index = Connections.Count - 1;
                         Room r = new(Connections[index].posB, "ladder", RoomType.Ladder, new Block(new Vector3Int(0,-1,0)));
                         Connections[index] = new Connection(Connections[index].a, r, Connections[index].posA, Connections[index].posB);
-
                         rooms.Remove(prev);
                         rooms.Add(r);
+                        slicedRooms.Add(r);
                         prev = r;
                         i--; // this room should not be counted towards no. of rooms
 
@@ -167,6 +171,7 @@ namespace Dungeon.Generator {
             .OrderBy(x=>Random.value);
 
         IEnumerable<Vector3Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Contains(e)));
+        IEnumerable<Vector3Int> EdgeOf(in Block b, List<Room> sliced) => b.Edges.Where(e => !sliced.Any(r => r.Contains(e)));
 
 
         IEnumerable<Vector3Int> Edges => rooms
@@ -216,6 +221,7 @@ namespace Dungeon.Generator {
                 foreach (GameObject obj in SpawnedObjects) { MonoBehaviour.Destroy(obj);}
             }
 
+
             (string, RoomType, Vector2Int[])[] options = {
                 ("1x1mob", RoomType.Mob, new Vector2Int[]{}), // 1x1
                 ("1x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right}), // 1x2
@@ -224,7 +230,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 511, new(){ { RoomType.Mob, 600 }});
+            Dungeon d = new Dungeon(options, 2047, new(){ { RoomType.Mob, 50000 }});
             d.Print();
             SpawnedObjects = d.Visualize();
         }
