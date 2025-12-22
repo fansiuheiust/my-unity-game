@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.TerrainUtils;
 
@@ -12,6 +13,10 @@ namespace Dungeon.Generator {
     /// </summary>
     public class Dungeon {
         internal List<Room> rooms = new();
+        /// <summary>
+        /// jagged list of rooms grouped by abs layer (|y| - y = -1 => abs layer = |-1| = 1)
+        /// </summary>
+        internal List<List<Room>> layeredRooms = new();
 
         // variables controlling the room's generation
         /// <summary>
@@ -36,14 +41,14 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Generates the dungeon
         /// </summary>
-        public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms) {
+        public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms, bool isLayered = true) {
             if (!options.All(x =>numRooms.ContainsKey(x.Item2)))
                 throw new System.Exception("all roomtypes in options must appear in numRooms once");
             Options = options;
             MainPathLength = mainPathLength;
             NumRooms = numRooms;
             spawnRequirement = numRooms.ToDictionary(x=>x.Key, x=>x.Value);
-            Generate();
+            Generate(isLayered);
         }
 
         /// <summary>
@@ -65,11 +70,12 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The big thing that generates the dungeon
         /// </summary>
-        void Generate() {
-            List<Room> slicedRooms = new();
+        void Generate(in bool isLayered) {
+        Redo:
             // the starting room
             rooms.Add(new(0, 0, "start", RoomType.Start, new Block(0, 0)));
-            slicedRooms.Add(rooms[0]);
+            layeredRooms.Add(new());
+            layeredRooms[0].Add(rooms[0]);
             Room prev = rooms[0];
             int consecutiveFailCount = 0;
             // generate main path
@@ -84,10 +90,10 @@ namespace Dungeon.Generator {
 
                     // loop through blk where blk = each block of the previous room
                     IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
-                    if (prev.Type == RoomType.Ladder) shuffledPrevBlocks = shuffledPrevBlocks.Where(b => b.coordinate != Vector3Int.zero); // skip the upper block if ladder
+                    if (prev.Type == RoomType.Ladder) shuffledPrevBlocks = shuffledPrevBlocks.Where(b => b.coordinate != prev.Center); // skip the upper block if ladder
                     foreach (Block blk in shuffledPrevBlocks) {
                         // loop through edg where edg = all valid edges of blk
-                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk, slicedRooms).OrderBy(x => Random.value);
+                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk, layeredRooms.Count-1).OrderBy(x => Random.value);
                         foreach (Vector3Int edg in shuffledEdges) {
 
                             // int maxRoomSize = Options.Max(o=>o.Item3.Length);
@@ -110,10 +116,10 @@ namespace Dungeon.Generator {
                                     // => center = edg - com
                                     toSpawn.Center = edg - com;
 
-                                    if (!slicedRooms.Any(r => r.Collides(toSpawn))) {
+                                    if (!layeredRooms[layeredRooms.Count - 1].Any(r => r.Collides(toSpawn))) {
                                         // finally, spawn the room
                                         rooms.Add(toSpawn);
-                                        slicedRooms.Add(toSpawn);
+                                        layeredRooms[layeredRooms.Count - 1].Add(toSpawn);
                                         Connections.Add(new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
                                         if (spawnRequirement.ContainsKey(toSpawn.Type)) spawnRequirement[toSpawn.Type]--;
                                         createdRoom = true;
@@ -137,29 +143,30 @@ namespace Dungeon.Generator {
                     consecutiveFailCount++;
                     if (consecutiveFailCount >= 10) {
 
-                        if (spawnRequirement.ContainsKey(prev.Type)) spawnRequirement[prev.Type]++;
+                        if (isLayered)
+                        {
 
-                        slicedRooms.Clear();
-                        int index = Connections.Count - 1;
-                        Room r = new(Connections[index].posB, "ladder", RoomType.Ladder, new Block(new Vector3Int(0,-1,0)));
-                        Connections[index] = new Connection(Connections[index].a, r, Connections[index].posA, Connections[index].posB);
-                        rooms.Remove(prev);
-                        rooms.Add(r);
-                        slicedRooms.Add(r);
-                        prev = r;
-                        i--; // this room should not be counted towards no. of rooms
+                            if (spawnRequirement.ContainsKey(prev.Type)) spawnRequirement[prev.Type]++;
 
-                        /*
-                        Debug.Log("Too many consecutive failures, aborting...");
-                        if (redoIfFail) {
+                            layeredRooms.Add(new());
+                            int index = Connections.Count - 1;
+                            Room r = new(Connections[index].posB, "ladder", RoomType.Ladder, new Block(new Vector3Int(0, -1, 0)));
+                            Connections[index] = new Connection(Connections[index].a, r, Connections[index].posA, Connections[index].posB);
+                            rooms.Remove(prev);
+                            rooms.Add(r);
+                            // a ladder room will appear in both both y = -i-1 and y = -i
+                            layeredRooms[layeredRooms.Count - 1].Add(r);
+                            layeredRooms[layeredRooms.Count - 2].Add(r);
+                            prev = r;
+                            i--; // this room should not be counted towards no. of rooms
+                        }
+
+                        else {
                             spawnRequirement = NumRooms.ToDictionary(x => x.Key, x => x.Value);
                             rooms.Clear();
                             Connections.Clear();
-                            terminationCount++;
                             goto Redo;
                         }
-                        return;
-                        */
                     }
                 } else consecutiveFailCount = 0;
             }
@@ -171,7 +178,7 @@ namespace Dungeon.Generator {
             .OrderBy(x=>Random.value);
 
         IEnumerable<Vector3Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Contains(e)));
-        IEnumerable<Vector3Int> EdgeOf(in Block b, List<Room> sliced) => b.Edges.Where(e => !sliced.Any(r => r.Contains(e)));
+        IEnumerable<Vector3Int> EdgeOf(in Block b, int absLayer) => b.Edges.Where(e => !layeredRooms[absLayer].Any(r => r.Contains(e)));
 
 
         IEnumerable<Vector3Int> Edges => rooms
@@ -180,7 +187,6 @@ namespace Dungeon.Generator {
                                         .SelectMany(list => list)
                                         .Distinct()
                                         .Where(c => !rooms.Any(r => r.Contains(c)));
-        IEnumerable<Vector3Int> RandomizedEdges => Edges.OrderBy(_ => Random.value);
 
 
 
@@ -230,7 +236,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 2047, new(){ { RoomType.Mob, 50000 }});
+            Dungeon d = new Dungeon(options, 204, new(){ { RoomType.Mob, 50000 }}, isLayered: true);
             d.Print();
             SpawnedObjects = d.Visualize();
         }
