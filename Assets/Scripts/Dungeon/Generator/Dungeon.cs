@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -35,15 +36,30 @@ namespace Dungeon.Generator {
         /// number of rooms left to spawn for each room type
         /// </summary>
         Dictionary<RoomType, uint> spawnRequirement;
+        /// <summary>
+        /// The expected length of a side path *when it is generated* (i.e. if another side path links from a side path, the original one's length is expected to be doubled)
+        /// </summary>
+        public uint ExpectedSidePathLength { get; private set; }
+        /// <summary>
+        /// E(X) = Expected number of side rooms | 1 side room has already been spawned<br />
+        ///      = s+1<br />
+        /// s+1 = 1/(1-p) => 1-p = 1/(s+1) => p =1-1/(s+1)
+        /// </summary>
+        float SideRoomChainProbability => 1 - 1 / (ExpectedSidePathLength + 1);
+
 
         internal List<Connection> Connections { get; private set; } = new();
 
         /// <summary>
         /// Generates the dungeon
         /// </summary>
-        public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms, bool isLayered = true) {
+        public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms, bool isLayered = true, uint expectedSidePathLength = 2) {
             if (!options.All(x =>numRooms.ContainsKey(x.Item2)))
-                throw new System.Exception("all roomtypes in options must appear in numRooms once");
+                throw new System.Exception("All roomtypes in options must appear in numRooms once");
+            if (mainPathLength > numRooms.Sum(x=>x.Value))
+                throw new System.Exception("The main path's length cannot be larger than the number of rooms");
+            if (mainPathLength != numRooms.Sum(x=>x.Value) && expectedSidePathLength == 0)
+                throw new System.Exception("If the main paths's length is smaller than the number of rooms, expectedSidePathLength must be non-zero");
             Options = options;
             MainPathLength = mainPathLength;
             NumRooms = numRooms;
@@ -70,7 +86,16 @@ namespace Dungeon.Generator {
         /// <summary>
         /// The big thing that generates the dungeon
         /// </summary>
+        /// <param name="isLayered">Whether the dungeon should expand vertically (y)</param>
         void Generate(in bool isLayered) {
+            GenerateMainPath(in isLayered);
+        }
+
+        /// <summary>
+        /// Main path generator
+        /// </summary>
+        /// <param name="isLayered">whether</param>
+        void GenerateMainPath(in bool isLayered) {
         Redo:
             // the starting room
             rooms.Add(new(0, 0, "start", RoomType.Start, new Block(0, 0)));
@@ -95,43 +120,11 @@ namespace Dungeon.Generator {
                         // loop through edg where edg = all valid edges of blk
                         IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk, layeredRooms.Count-1).OrderBy(x => Random.value);
                         foreach (Vector3Int edg in shuffledEdges) {
-
-                            // int maxRoomSize = Options.Max(o=>o.Item3.Length);
-
-                            // if (!HasEnoughSpace(edg, maxRoomSize*(int)(MainPathLength-1-i))) continue;
-
-                            Vector3Int dist = edg - blk.coordinate;
-
-                            // loop through rot where rot = all rotations for the room
-                            IEnumerable<uint> rotations = new uint[] { 0, 1, 2, 3 }.OrderBy(x => Random.value);
-                            foreach (uint rot in rotations) {
-                                // blocks that can join the chosen block from prev
-                                toSpawn.NormalizedRotation = rot;
-
-                                // loop through com where com = all block coordinates of the rotated chosen room that can be connected to blk
-                                IEnumerable<Vector3Int> compatibleBlockCoords = toSpawn.Blocks.Select(b => b.coordinate).Where(c => !toSpawn.Contains(c - dist)).OrderBy(c => Random.value);
-                                foreach (Vector3Int com in compatibleBlockCoords) {
-                                    // set the room's center s.t. com == edg
-                                    // center + com = edg
-                                    // => center = edg - com
-                                    toSpawn.Center = edg - com;
-
-                                    if (!layeredRooms[layeredRooms.Count - 1].Any(r => r.Collides(toSpawn))) {
-                                        // finally, spawn the room
-                                        rooms.Add(toSpawn);
-                                        layeredRooms[layeredRooms.Count - 1].Add(toSpawn);
-                                        Connections.Add(new(prev, toSpawn, blk.coordinate, edg)); // since edg will be where toSpawn's connector is at
-                                        if (spawnRequirement.ContainsKey(toSpawn.Type)) spawnRequirement[toSpawn.Type]--;
-                                        createdRoom = true;
-                                        prev = toSpawn;
-                                        break;
-                                    }
-                                }
-                                if (createdRoom) break;
-                                toSpawn.Center = Vector3Int.zero;
+                            createdRoom = TrySpawnRoom(toSpawn, prev, blk, edg);
+                            if (createdRoom) {
+                                prev = rooms[rooms.Count - 1];
+                                break;
                             }
-                            if (createdRoom) break;
-                            toSpawn.NormalizedRotation = 0;
                         }
                         if (createdRoom) break;
                     }
@@ -173,6 +166,48 @@ namespace Dungeon.Generator {
             Debug.Log("Number of non-ladders: " + (rooms.Count(r=>r.Type != RoomType.Ladder)));
         }
 
+        void GenerateSidePath() {
+            // choose an edge
+
+        }
+
+
+        /// <summary>
+        /// <para>Tries to spawn a room given a predetermined edge and block to spawn it at.</para>
+        /// The algorithm will try to fit the room into the dungeon by trying: <br />
+        /// -all rotation <br />
+        /// -all positions of each rotation such that a block of the room is both in <c>e</c> and is next to <c>b</c>
+        /// </summary>
+        /// <param name="r">The candidate room</param>
+        /// <param name="connector">The room that should be connected to the new room</param>
+        /// <param name="b">Block the new room should be next to</param>
+        /// <param name="e"></param>
+        /// <returns>Whether the room is successfully spawned</returns>
+        bool TrySpawnRoom(Room r, Room connector, Block b, Vector3Int e) {
+            r.Center = Vector3Int.zero;
+            r.NormalizedRotation = 0;
+            foreach (uint rotation in new uint[]{ 0, 1, 2, 3}.OrderBy(x=>Random.value)) {
+                r.NormalizedRotation = rotation;
+                Vector3Int dist = b.coordinate-e;
+                // for some reason, this thing returned an enumerable of references to coordinates of r's blocks wtf
+                IEnumerable<Vector3Int> compatibleBlockPositions = r.Blocks.Select(b => b.coordinate).Where(c => !r.Contains(c + dist));
+                foreach(Vector3Int pos in compatibleBlockPositions) {
+                    // center + pos = edge => 
+                    r.Center = e - pos;
+                    if (layeredRooms[-e.y].All(r2=>!r2.Collides(r))) {
+                        rooms.Add(r);
+                        layeredRooms[-e.y].Add(r);
+                        Connections.Add(new(connector, r, b.coordinate, e));
+                        if (spawnRequirement.ContainsKey(r.Type)) spawnRequirement[r.Type]--;
+                        return true;
+                    }
+                    r.Center = Vector3Int.zero;
+                }
+                
+            }
+
+            return false;
+        }
 
         IEnumerable<(string, RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => spawnRequirement[x.Item2] > 0)
             .OrderBy(x=>Random.value);
@@ -236,7 +271,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 204, new(){ { RoomType.Mob, 50000 }}, isLayered: true);
+            Dungeon d = new Dungeon(options, 10, new(){ { RoomType.Mob, 50000 }}, isLayered: true);
             d.Print();
             SpawnedObjects = d.Visualize();
         }
