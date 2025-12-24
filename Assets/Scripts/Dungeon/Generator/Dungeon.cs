@@ -93,7 +93,7 @@ namespace Dungeon.Generator {
         /// <param name="isLayered">Whether the dungeon should expand vertically (y)</param>
         void Generate(in bool isLayered) {
             GenerateMainPath(in isLayered);
-            GenerateSidePath();
+            GenerateSideRooms();
         }
 
         /// <summary>
@@ -151,6 +151,7 @@ namespace Dungeon.Generator {
                             Room r = new(Connections[index].posB, "ladder", RoomType.Ladder, new Block(new Vector3Int(0, -1, 0)));
                             Connections[index] = new Connection(Connections[index].a, r, Connections[index].posA, Connections[index].posB);
                             rooms.Remove(prev);
+                            layeredRooms[-prev.Center.y].Remove(prev);
                             rooms.Add(r);
                             // a ladder room will appear in both both y = -i-1 and y = -i
                             layeredRooms[^1].Add(r);
@@ -170,15 +171,36 @@ namespace Dungeon.Generator {
             }
         }
 
-        void GenerateSidePath() {
+        void GenerateSideRooms() {
             // for each iteration, always try to extend the first element of it if it is not empty
             Room extendCandidate = null;
-            while (spawnRequirement.Sum(x => x.Value) > 0) {
 
+            int[] edgeCounts = new int[layeredRooms.Count];
+            for (int i = 0; i < layeredRooms.Count; i++)
+                edgeCounts[i] = GetEdges(i).Count();
+
+            while (spawnRequirement.Sum(x => x.Value) > 0) {
+                // choose a layer first such that the dungeon generator only needs to consider rooms in the same layer instead of the entire room
+                // the probability of a layer to be chosen = no. of edges for the layer/total no. of edges
+                int chosenLayer = 0;
+                if (extendCandidate is null) {
+                    float accumulator = edgeCounts[0];
+                    float rng = Random.value;
+                    for (int i = 1; i < edgeCounts.Length; i++) {
+                        if (accumulator / edgeCounts.Sum() < rng && rng <= (accumulator + edgeCounts[i]) / edgeCounts.Sum()) {
+                            chosenLayer = i;
+                            break;
+                        }
+                        accumulator += edgeCounts[i];
+                    }
+                } else {
+                    chosenLayer = -extendCandidate.Center.y;
+                }
                 // choose an edge
                 Vector3Int chosenEdge = extendCandidate is not null ?
                     EdgeOf(extendCandidate).OrderBy(_ => Random.value).FirstOrDefault() :
-                    Edges.OrderBy(_ => Random.value).FirstOrDefault();
+                    GetEdges(chosenLayer).OrderBy(_ => Random.value).FirstOrDefault();
+
                 // associate the edge with the correct random block
                 Room associatedRoom = extendCandidate is not null?
                     extendCandidate:
@@ -196,6 +218,8 @@ namespace Dungeon.Generator {
                 foreach (Room toSpawn in RoomCandidates) {
                     spawnedRoom = TrySpawnRoom(toSpawn, associatedRoom, associatedBlock, chosenEdge);
                     if (spawnedRoom) {
+                        // also needs to uppdate no. of edges for the corresponding room
+                        edgeCounts[chosenLayer]++;
                         extendCandidate = Random.value < SideRoomChainProbability? toSpawn: null;
                         break;
                     }
@@ -248,7 +272,7 @@ namespace Dungeon.Generator {
 
         Room[] RoomCandidates => RoomSpawnList.Select(x => new Room(x)).ToArray();
 
-        IEnumerable<Vector3Int> EdgeOf(in Block b) => b.Edges.Where(e => !rooms.Any(r => r.Contains(e)));
+        IEnumerable<Vector3Int> EdgeOf(in Block b) => b.Edges.Where(e => !layeredRooms[-e.y].Any(r => r.Contains(e)));
         IEnumerable<Vector3Int> EdgeOf(in Block b, int absLayer) => b.Edges.Where(e => !layeredRooms[absLayer].Any(r => r.Contains(e)));
 
         IEnumerable<Vector3Int> EdgeOf(in Room r) => r.UnfilteredEdges
@@ -257,11 +281,15 @@ namespace Dungeon.Generator {
 
         IEnumerable<Vector3Int> Edges => rooms
                                         .Where(r=>r.Type != RoomType.Start && r.Type != RoomType.Final)
-                                        .Select(r => r.UnfilteredEdges)
-                                        .SelectMany(list => list)
+                                        .SelectMany(r => r.UnfilteredEdges)
                                         .Distinct()
-                                        .Where(c => !rooms.Any(r => r.Contains(c)));
+                                        .Where(c => !layeredRooms[-c.y].Any(r => r.Contains(c)));
 
+        IEnumerable<Vector3Int> GetEdges(int absLayer) => layeredRooms[absLayer]
+            .Where(r => r.Type != RoomType.Start && r.Type != RoomType.Final)
+            .SelectMany(r => r.UnfilteredEdges)
+            .Distinct()
+            .Where(c => layeredRooms[absLayer].All(r => !r.Contains(c)));
 
 
 
@@ -312,7 +340,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 25, new(){ { RoomType.Mob, 40 }}, isLayered: true);
+            Dungeon d = new Dungeon(options, 467, new(){ { RoomType.Mob, 698 }}, isLayered: true);
             d.Print();
             SpawnedObjects = d.Visualize();
         }
