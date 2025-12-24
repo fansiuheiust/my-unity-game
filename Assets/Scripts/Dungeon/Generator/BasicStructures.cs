@@ -34,8 +34,8 @@ namespace Dungeon.Generator {
             new Vector3Int(coordinate.x, coordinate.y, coordinate.z+1),
             new Vector3Int(coordinate.x, coordinate.y, coordinate.z-1)
         };
-
-        public int HammingDistance(Block other) => System.Math.Abs(coordinate.x-other.coordinate.x) + System.Math.Abs(coordinate.z-other.coordinate.z);
+        public int HammingDistance(Vector3Int other) => System.Math.Abs(coordinate.x - other.x) + System.Math.Abs(coordinate.z - other.z);
+        public int HammingDistance(Block other) => HammingDistance(other.coordinate);
     }
 
     /// <summary>
@@ -90,6 +90,12 @@ namespace Dungeon.Generator {
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
         public Room(int centerX, int centerZ, string name, RoomType type, params Block[] blocks) : this(new Vector3Int(centerX, 0, centerZ), name, type, blocks) { }
+
+        /// <summary>
+        /// Self-documenting
+        /// </summary>
+        /// <param name="aggregated">A block that contains the name, room type, and the x-z coordinates of all blocks</param>
+        public Room((string, RoomType, Vector2Int[]) aggregated) : this(0, 0, aggregated.Item1, aggregated.Item2, aggregated.Item3.Select(x=>new Block(x.x, x.y)).ToArray()) { }
 
         /// <summary>
         /// Checks whether the room occupies a coordinate
@@ -162,6 +168,7 @@ namespace Dungeon.Generator {
         /// Vector that contains the largest X and Y of the entire room
         /// </summary>
         public Vector3Int MaxCorner => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y), Blocks.Max(b => b.coordinate.z));
+        
     }
 
     struct Connection {
