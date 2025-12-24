@@ -34,8 +34,14 @@ namespace Dungeon.Generator {
             new Vector3Int(coordinate.x, coordinate.y, coordinate.z+1),
             new Vector3Int(coordinate.x, coordinate.y, coordinate.z-1)
         };
-        public int HammingDistance(Vector3Int other) => System.Math.Abs(coordinate.x - other.x) + System.Math.Abs(coordinate.z - other.z);
-        public int HammingDistance(Block other) => HammingDistance(other.coordinate);
+        /// <summary>
+        /// The hamming distance between the block and a coordinate *only considering xz-plane* 
+        /// </summary>
+        public int HammingDistance(in Vector3Int other) => System.Math.Abs(coordinate.x - other.x) + System.Math.Abs(coordinate.z - other.z);
+        /// <summary>
+        /// The hamming distance between the block and another block *only considering xz-plane*
+        /// </summary>
+        public int HammingDistance(in Block other) => HammingDistance(other.coordinate);
     }
 
     /// <summary>
@@ -66,7 +72,7 @@ namespace Dungeon.Generator {
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
         public Room(Vector3Int center, string name, RoomType type, params Block[] blocks) {
 
-            if (type != RoomType.Ladder && blocks.Any(b => b.coordinate.y != 0))
+            if (blocks.Any(b => b.coordinate.y != 0))
                 throw new System.Exception("Only ladders can have non-zero y coordinated blocks");
 
             if (blocks is null || blocks.Length == 0)
@@ -75,7 +81,7 @@ namespace Dungeon.Generator {
             if (!blocks.Any(x=>x.coordinate==Vector3Int.zero))
                 blocks = blocks.Append(new Block(0,0)).ToArray();
 
-            if (type != RoomType.Ladder && blocks.Length != 1 && blocks.Any(x => !blocks.Any(y => x.HammingDistance(y) == 1)))
+            if (blocks.Length != 1 && blocks.Any(x => blocks.All(y => x.HammingDistance(y) != 1)))
                 throw new System.Exception("Blocks must be next to each other in x XOR z");
             Name = name;
             Blocks = blocks;
@@ -168,7 +174,27 @@ namespace Dungeon.Generator {
         /// Vector that contains the largest X and Y of the entire room
         /// </summary>
         public Vector3Int MaxCorner => new(Blocks.Max(b => b.coordinate.x), Blocks.Max(b => b.coordinate.y), Blocks.Max(b => b.coordinate.z));
-        
+        /// <summary>
+        /// A new instance of ladder room with the purpose of connecting 2 layers, its origin is at (0,0)
+        /// </summary>
+        public static Room Ladder {
+            get {
+                Room ri = new(0, 0, "ladder", RoomType.Ladder);
+                ri.Blocks = new Block[] {
+                    new(Vector3Int.zero),
+                    new(Vector3Int.down),
+                };
+                return ri;
+            }
+        }
+        /// <summary>
+        /// A new instance of start room with its origin at (0,0)
+        /// </summary>
+        public static Room Start => new(0, 0, "start", RoomType.Start);
+        /// <summary>
+        /// A new instance of final room with its origin at (0,0)
+        /// </summary>
+        public static Room Final => new(0, 0, "final", RoomType.Final);
     }
 
     struct Connection {

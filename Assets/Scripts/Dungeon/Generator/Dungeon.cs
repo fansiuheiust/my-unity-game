@@ -56,6 +56,12 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Generates the dungeon
         /// </summary>
+        /// <param name="options"><seealso cref="Options"/></param>
+        /// <param name="mainPathLength"><seealso cref="MainPathLength"/></param>
+        /// <param name="numRooms"><seealso cref="NumRooms"/></param>
+        /// <param name="isLayered">Whether the generated dungeon should consist of multiple layers (i.e. different y level)</param>
+        /// <param name="expectedSidePathLength"><seealso cref="ExpectedSidePathLength"/></param>
+        /// <exception cref="System.Exception"></exception>
         public Dungeon((string, RoomType, Vector2Int[])[] options, uint mainPathLength, Dictionary<RoomType, uint> numRooms, bool isLayered = true, uint expectedSidePathLength = 2) {
             if (!options.All(x =>numRooms.ContainsKey(x.Item2)))
                 throw new System.Exception("All roomtypes in options must appear in numRooms once");
@@ -103,7 +109,7 @@ namespace Dungeon.Generator {
         void GenerateMainPath(in bool isLayered) {
         Redo:
             // the starting room
-            rooms.Add(new(0, 0, "start", RoomType.Start, new Block(0, 0)));
+            rooms.Add(Room.Start);
             layeredRooms.Add(new());
             layeredRooms[0].Add(rooms[0]);
             Room prev = rooms[0];
@@ -115,15 +121,17 @@ namespace Dungeon.Generator {
 
                 // loop through rom where rom = a potential room
                 foreach ((string, RoomType, Vector2Int[]) rom in RoomSpawnList) {
-                    Room toSpawn = (i == MainPathLength-2)? new(0, 0, "final", RoomType.Final, new Block(0, 0)): new(0, 0, rom.Item1, rom.Item2,
-                        rom.Item3.Select(x=>new Block(x.x, x.y)).ToArray());
+                    Room toSpawn = (i == MainPathLength-2)? 
+                        Room.Final: 
+                        new(0, 0, rom.Item1, rom.Item2,
+                            rom.Item3.Select(x=>new Block(x.x, x.y)).ToArray());
 
                     // loop through blk where blk = each block of the previous room
                     IEnumerable<Block> shuffledPrevBlocks = prev.Blocks.OrderBy(b => Random.value);
                     if (prev.Type == RoomType.Ladder) shuffledPrevBlocks = shuffledPrevBlocks.Where(b => b.coordinate != prev.Center); // skip the upper block if ladder
                     foreach (Block blk in shuffledPrevBlocks) {
                         // loop through edg where edg = all valid edges of blk
-                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk, layeredRooms.Count-1).OrderBy(x => Random.value);
+                        IEnumerable<Vector3Int> shuffledEdges = EdgeOf(blk).OrderBy(x => Random.value);
                         foreach (Vector3Int edg in shuffledEdges) {
                             createdRoom = TrySpawnRoom(toSpawn, prev, blk, edg);
                             if (createdRoom) {
@@ -147,9 +155,9 @@ namespace Dungeon.Generator {
                             if (spawnRequirement.ContainsKey(prev.Type)) spawnRequirement[prev.Type]++;
 
                             layeredRooms.Add(new());
-                            int index = Connections.Count - 1;
-                            Room r = new(Connections[index].posB, "ladder", RoomType.Ladder, new Block(new Vector3Int(0, -1, 0)));
-                            Connections[index] = new Connection(Connections[index].a, r, Connections[index].posA, Connections[index].posB);
+                            Room r = Room.Ladder;
+                            r.Center = Connections[^1].posB;
+                            Connections[^1] = new Connection(Connections[^1].a, r, Connections[^1].posA, Connections[^1].posB);
                             rooms.Remove(prev);
                             layeredRooms[-prev.Center.y].Remove(prev);
                             rooms.Add(r);
@@ -177,7 +185,7 @@ namespace Dungeon.Generator {
 
             int[] edgeCounts = new int[layeredRooms.Count];
             for (int i = 0; i < layeredRooms.Count; i++)
-                edgeCounts[i] = GetEdges(i).Count();
+                edgeCounts[i] = EdgeOf(i).Count();
 
             while (spawnRequirement.Sum(x => x.Value) > 0) {
                 // choose a layer first such that the dungeon generator only needs to consider rooms in the same layer instead of the entire room
@@ -199,7 +207,7 @@ namespace Dungeon.Generator {
                 // choose an edge
                 Vector3Int chosenEdge = extendCandidate is not null ?
                     EdgeOf(extendCandidate).OrderBy(_ => Random.value).FirstOrDefault() :
-                    GetEdges(chosenLayer).OrderBy(_ => Random.value).FirstOrDefault();
+                    EdgeOf(chosenLayer).OrderBy(_ => Random.value).FirstOrDefault();
 
                 // associate the edge with the correct random block
                 Room associatedRoom = extendCandidate is not null?
@@ -272,20 +280,25 @@ namespace Dungeon.Generator {
 
         Room[] RoomCandidates => RoomSpawnList.Select(x => new Room(x)).ToArray();
 
+        /// <summary>
+        /// Gets an ordered set of valid edges of a specified block
+        /// </summary>
+        /// <param name="b">self-documenting</param>
         IEnumerable<Vector3Int> EdgeOf(in Block b) => b.Edges.Where(e => !layeredRooms[-e.y].Any(r => r.Contains(e)));
-        IEnumerable<Vector3Int> EdgeOf(in Block b, int absLayer) => b.Edges.Where(e => !layeredRooms[absLayer].Any(r => r.Contains(e)));
 
+        /// <summary>
+        /// Gets an ordered set of valid edges of a specified room
+        /// </summary>
+        /// <param name="r">self-documenting</param>
         IEnumerable<Vector3Int> EdgeOf(in Room r) => r.UnfilteredEdges
             .Distinct()
             .Where(e => layeredRooms[-e.y].All(r2=>!r2.Contains(e)));
 
-        IEnumerable<Vector3Int> Edges => rooms
-                                        .Where(r=>r.Type != RoomType.Start && r.Type != RoomType.Final)
-                                        .SelectMany(r => r.UnfilteredEdges)
-                                        .Distinct()
-                                        .Where(c => !layeredRooms[-c.y].Any(r => r.Contains(c)));
-
-        IEnumerable<Vector3Int> GetEdges(int absLayer) => layeredRooms[absLayer]
+        /// <summary>
+        /// Gets an ordered set of valid edges in the specified layer
+        /// </summary>
+        /// <param name="absLayer">the layer, note that it should be positive</param>
+        IEnumerable<Vector3Int> EdgeOf(int absLayer) => layeredRooms[absLayer]
             .Where(r => r.Type != RoomType.Start && r.Type != RoomType.Final)
             .SelectMany(r => r.UnfilteredEdges)
             .Distinct()
@@ -340,7 +353,7 @@ namespace Dungeon.Generator {
                 ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
                 ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
-            Dungeon d = new Dungeon(options, 467, new(){ { RoomType.Mob, 698 }}, isLayered: true);
+            Dungeon d = new Dungeon(options, 1024, new(){ { RoomType.Mob, 1666 }}, isLayered: true, expectedSidePathLength: 4);
             d.Print();
             SpawnedObjects = d.Visualize();
         }
