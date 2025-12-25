@@ -87,6 +87,11 @@ namespace Combat {
 
         // Events
         /// <summary>
+        /// <para>Raised when mob stats is changed</para>
+        /// <c>float0</c>: The new attack range (not a multiplier)
+        /// </summary>
+        public event Action<float> OnAttackRangeChange;
+        /// <summary>
         /// <para>Raised when a mob dies.</para>
         /// <para>
         /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob.
@@ -168,6 +173,7 @@ namespace Combat {
             _movement = GetComponent<MobMovement>();
             _rotatable = transform.Find("Rotatable");
             Stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
+            Stats.OnAttackRangeChange += ChangeAttackRange;
 
             // raises all stats change events
             Stats.ComputeFinalStats();
@@ -178,7 +184,7 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            Equip(new Melee("Test sword", new BaseStats(atk: 4), new ScalingStats(atk: 0.1f), 0.9f, WeaponSpeed.Normal));
+            Equip(new Melee("Test sword", new BaseStats(atk: 4), new ScalingStats(atk: 0.1f), 0.9f, WeaponSpeed.Normal, 2f));
         }
 
         // damage-related
@@ -344,9 +350,9 @@ namespace Combat {
         public void Equip(Weapon weapon) {
             if (EquippedWeapon is not null)
                 UnequipWeapon();
-            Stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
-            EquippedWeapon = weapon;
             Instantiate(weapon.WeaponPrefab, _rotatable);
+            EquippedWeapon = weapon;
+            Stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
         }
         /// <summary>
         /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
@@ -355,8 +361,8 @@ namespace Combat {
         public void Equip(Armor armor) {
             if (EquippedArmors[armor.Type] is not null)
                 UnequipArmor(armor.Type);
-            Stats.GainStats(armor.Base, armor.Scaling);
             EquippedArmors[armor.Type] = armor;
+            Stats.GainStats(armor.Base, armor.Scaling);
         }
 
         /// <summary>
@@ -379,6 +385,11 @@ namespace Combat {
             Armor ToLose = EquippedArmors[type];
             Stats.LoseStats(ToLose.Base, ToLose.Scaling);
             EquippedArmors[type] = null;
+        }
+
+        void ChangeAttackRange(float multiplier) {
+            if (EquippedWeapon is not null)
+                OnAttackRangeChange?.Invoke(EquippedWeapon.WeaponRange * (1+multiplier));
         }
 
         // Movement control

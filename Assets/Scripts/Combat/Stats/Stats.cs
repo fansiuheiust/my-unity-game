@@ -27,7 +27,7 @@ namespace Combat {
     }
 
     public enum HashedScalingStats {
-        PhysicalDmg, ProjectileDmg, MagicDmg
+        PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange
     }
 
 
@@ -159,8 +159,9 @@ namespace Combat {
         { HashedScalingStats.PhysicalDmg, -1 },
         { HashedScalingStats.ProjectileDmg, -1 },
         { HashedScalingStats.MagicDmg, -1 },
+        { HashedScalingStats.AttackRange, -0.75f },
     }, OtherScalingMaxs = new() {
-
+        { HashedScalingStats.AttackRange, 1.5f },
     };
         void Normalize() {
             Atk = Atk > 0 ? Atk : 0;
@@ -189,6 +190,7 @@ namespace Combat {
                 );
             }
         }
+        public new float this[HashedScalingStats scale] => OtherScaling.ContainsKey(scale)? OtherScaling[scale]: 0;
     }
 }
 

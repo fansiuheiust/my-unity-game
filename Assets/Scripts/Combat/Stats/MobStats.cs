@@ -37,6 +37,11 @@ namespace Combat {
         /// <para>arg0: the new walk speed</para>
         /// </summary>
         public event Action<float> OnMovementSpeedChange;
+        /// <summary>
+        /// <para>Invoked once per stats change if Attack Range is present</para>
+        /// <c>arg0</c>: the new attack range *scalar*
+        /// </summary>
+        public event Action<float> OnAttackRangeChange;
 
         /// <summary>
         /// Self-documenting
@@ -140,6 +145,7 @@ namespace Combat {
             Final = Base * Scaling;
             if (OnMovementSpeedChange is not null)
                 OnMovementSpeedChange(Final.WalkSpeed);
+            OnAttackRangeChange?.Invoke(Final[HashedScalingStats.AttackRange]);
         }
 
         // Damage taking

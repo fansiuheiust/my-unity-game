@@ -34,6 +34,12 @@ namespace Combat {
             _blade.OnAttackInterrupted += AttackInterruptedByBlock;
         }
 
+        protected override void ChangeAttackRange(float newRange) {
+            Debug.Log(newRange);
+            _blade.transform.localScale = new(_blade.transform.localScale.x, _blade.transform.localScale.y, newRange);
+            _blade.transform.localPosition = new(_blade.transform.localPosition.x, _blade.transform.localPosition.y, newRange / 2);
+        }
+
         /// <summary>
         /// Performs an attack
         /// </summary>

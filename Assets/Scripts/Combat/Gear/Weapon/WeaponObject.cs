@@ -24,6 +24,7 @@ namespace Combat {
             Owner.OnBlockLift += BlockLifted;
             Owner.OnBlockRotate += BlockRotated;
             Owner.OnWeaponUnequip += Delete;
+            Owner.OnAttackRangeChange += ChangeAttackRange;
         }
 
 
@@ -34,9 +35,12 @@ namespace Combat {
             Owner.OnBlockLift -= BlockLifted;
             Owner.OnBlockRotate -= BlockRotated;
             Owner.OnWeaponUnequip -= Delete;
+            Owner.OnAttackRangeChange -= ChangeAttackRange;
             Owner = null;
             Destroy(gameObject);
         }
+
+        protected abstract void ChangeAttackRange(float newRange);
 
         /// <summary>
         /// <para>This just cancels the attack action as it is not implemented</para>

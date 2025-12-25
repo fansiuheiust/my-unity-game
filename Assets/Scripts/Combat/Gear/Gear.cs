@@ -56,6 +56,7 @@ namespace Combat {
     public abstract class Weapon : Gear {
         public readonly float DmgRatio;
         public readonly WeaponSpeed WeaponSpeed;
+        public readonly float WeaponRange;
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -64,9 +65,10 @@ namespace Combat {
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Weapon</param>
         /// <param name="dmgRatio">Damage it deals in terms of percentage of the equipper's atk</param>
         /// <param name="weaponSpeed">Self-documenting</param>
-        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed) : base(name, @base, scaling) {
+        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange) : base(name, @base, scaling) {
             DmgRatio = dmgRatio;
             WeaponSpeed = weaponSpeed;
+            WeaponRange = weaponRange;
         }
 
 
@@ -93,11 +95,11 @@ namespace Combat {
     }
 
     public class Melee : Weapon {
-
-        public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed) : base(name, @base, scaling, dmgRatio, weaponSpeed) {
-
+        readonly string prefabName;
+        public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
+            this.prefabName = prefabName;
         }
 
-        public override GameObject WeaponPrefab => (GameObject)Resources.Load("Prefabs/Weapon/Melee/Default");
+        public override GameObject WeaponPrefab => (GameObject)Resources.Load($"Prefabs/Weapon/Melee/{prefabName}");
     }
 }
