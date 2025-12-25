@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System;
 using Dungeon.Generator;
+using Interactable;
 
 namespace Combat {
     /// <summary>
@@ -51,7 +52,7 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += x => { Driver.Main(); };
-            _playerInput.actions["tempstuninterrupt"].performed += x => { _player.InterruptStun(); };
+            _playerInput.actions["tempstuninterrupt"].performed += x => { InteractableSpawner.SpawnItem<StatBoostItem, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats())); };
         }
 
 
