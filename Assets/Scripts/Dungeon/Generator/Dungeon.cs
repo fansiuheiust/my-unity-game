@@ -25,11 +25,11 @@ namespace Dungeon.Generator {
         /// </summary>
         public (string, RoomType, Vector2Int[])[] Options { get; private set; }
         /// <summary>
-        /// The length of the path from start room to final room, including the start and final room
+        /// The length of the path from start room to final room, *excluding* the start and final room
         /// </summary>
         public uint MainPathLength { get; private set; }
         /// <summary>
-        /// Number of rooms to include for each room type, do not include start and final room
+        /// Number of rooms to include for each room type, do not include start, ladder and final room
         /// </summary>
         public Dictionary<RoomType, uint> NumRooms = new();
         /// <summary>
@@ -115,13 +115,13 @@ namespace Dungeon.Generator {
             Room prev = rooms[0];
             int consecutiveFailCount = 0;
             // generate main path
-            for (int i = 0; i < MainPathLength-1; i++) { // -1 as startRoom counts as a room
+            for (int i = 0; i < MainPathLength+1; i++) { // +1 as final room will also be generated here
                 bool createdRoom = false;
                 // insert callback hell meme but for loop
 
                 // loop through rom where rom = a potential room
                 foreach ((string, RoomType, Vector2Int[]) rom in RoomSpawnList) {
-                    Room toSpawn = (i == MainPathLength-2)? 
+                    Room toSpawn = (i == MainPathLength)? 
                         Room.Final: 
                         new(0, 0, rom.Item1, rom.Item2,
                             rom.Item3.Select(x=>new Block(x.x, x.y)).ToArray());
@@ -205,10 +205,14 @@ namespace Dungeon.Generator {
                     chosenLayer = -extendCandidate.Center.y;
                 }
                 // choose an edge
-                Vector3Int chosenEdge = extendCandidate is not null ?
-                    EdgeOf(extendCandidate).OrderBy(_ => Random.value).FirstOrDefault() :
-                    EdgeOf(chosenLayer).OrderBy(_ => Random.value).FirstOrDefault();
-
+                IEnumerable<Vector3Int> edgeCandidates = extendCandidate is not null ?
+                    EdgeOf(extendCandidate):
+                    EdgeOf(chosenLayer);
+                if (edgeCandidates.Count() == 0) {
+                    extendCandidate = null;
+                    continue;
+                }
+                Vector3Int chosenEdge = edgeCandidates.OrderBy(_ => Random.value).FirstOrDefault();
                 // associate the edge with the correct random block
                 Room associatedRoom = extendCandidate is not null?
                     extendCandidate:
@@ -311,7 +315,7 @@ namespace Dungeon.Generator {
             Debug.Log(toPrint);
             toPrint = "";
             foreach (Room r in rooms) {
-                toPrint += $"{r.Name}: {r.Center}, {r.NormalizedRotation*90}\n";
+                toPrint += $"{r.ShapeName}: {r.Center}, {r.NormalizedRotation*90}\n";
             }
             Debug.Log(toPrint);
         }
@@ -320,17 +324,17 @@ namespace Dungeon.Generator {
             List<GameObject> objects = new();
             int minY = MinCorner.y;
             foreach (Room r in rooms) {
-                GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/{r.Name}"));
+                GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/{r.Type}/{r.ShapeName}"));
                 go.transform.position = r.Center - new Vector3(0, minY, 0);
                 go.transform.localEulerAngles = new(0, r.RotationInGame,0);
                 objects.Add(go);
             }
-            string connSource = "connection_main";
+            string connSource = "Main";
             foreach (Connection c in Connections) {
-                GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/{connSource}"));
+                GameObject go = MonoBehaviour.Instantiate(Resources.Load<GameObject>($"RoomVisualizer/Connection/{connSource}"));
                 go.transform.position = new((c.posA.x+c.posB.x)/2f,0.1f + System.Math.Min(c.posA.y, c.posB.y) - minY,(c.posA.z+c.posB.z)/2f);
                 objects.Add(go);
-                if (c.b.Type == RoomType.Final) connSource = "connection_side";
+                if (c.b.Type == RoomType.Final) connSource = "Side";
             }
             return objects;
         }
@@ -346,12 +350,12 @@ namespace Dungeon.Generator {
 
 
             (string, RoomType, Vector2Int[])[] options = {
-                ("1x1mob", RoomType.Mob, new Vector2Int[]{}), // 1x1
-                ("1x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right}), // 1x2
-                ("Lmob", RoomType.Mob, new Vector2Int[]{Vector2Int.up, Vector2Int.right}), // L
-                ("1x3mob", RoomType.Mob, new Vector2Int[]{Vector2Int.left, Vector2Int.right}), // 1x3
-                ("2x2mob", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
-                ("+mob", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
+                ("1x1", RoomType.Mob, new Vector2Int[]{}), // 1x1
+                ("1x2", RoomType.Mob, new Vector2Int[]{Vector2Int.right}), // 1x2
+                ("L", RoomType.Mob, new Vector2Int[]{Vector2Int.up, Vector2Int.right}), // L
+                ("1x3", RoomType.Mob, new Vector2Int[]{Vector2Int.left, Vector2Int.right}), // 1x3
+                ("2x2", RoomType.Mob, new Vector2Int[]{Vector2Int.right, Vector2Int.up, Vector2Int.one}), // 2x2
+                ("Plus", RoomType.Mob, new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down }) // +
             };
             Dungeon d = new Dungeon(options, 1024, new(){ { RoomType.Mob, 1666 }}, isLayered: true, expectedSidePathLength: 4);
             d.Print();

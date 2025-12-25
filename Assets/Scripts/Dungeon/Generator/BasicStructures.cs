@@ -49,7 +49,7 @@ namespace Dungeon.Generator {
     /// </summary>
     class Room {
         public RoomType Type { get; private set; }
-        public string Name { get; private set; }
+        public string ShapeName { get; private set; }
         Vector3Int _center;
 
         /// <summary>
@@ -67,10 +67,11 @@ namespace Dungeon.Generator {
         /// <summary>
         /// Self-documenting
         /// </summary>
+        /// <param name="shapeName">How a shape should be identified as</param>
         /// <param name="center">Where (0,0) of <c>blocks</c> should be</param>
         /// <param name="blocks">blocks with origin at (0,0), a version that is centered around <c>center</c> will be created for Room.Blocks.<br />An implicit (0,0) will be generated if not given</param>
         /// <exception cref="System.Exception">Thrown when blocks are invalid</exception>
-        public Room(Vector3Int center, string name, RoomType type, params Block[] blocks) {
+        public Room(Vector3Int center, string shapeName, RoomType type, params Block[] blocks) {
 
             if (blocks.Any(b => b.coordinate.y != 0))
                 throw new System.Exception("Only ladders can have non-zero y coordinated blocks");
@@ -83,7 +84,7 @@ namespace Dungeon.Generator {
 
             if (blocks.Length != 1 && blocks.Any(x => blocks.All(y => x.HammingDistance(y) != 1)))
                 throw new System.Exception("Blocks must be next to each other in x XOR z");
-            Name = name;
+            ShapeName = shapeName;
             Blocks = blocks;
             Center = center;
             Type = type;
@@ -179,7 +180,7 @@ namespace Dungeon.Generator {
         /// </summary>
         public static Room Ladder {
             get {
-                Room ri = new(0, 0, "ladder", RoomType.Ladder);
+                Room ri = new(0, 0, "1x1x2", RoomType.Ladder);
                 ri.Blocks = new Block[] {
                     new(Vector3Int.zero),
                     new(Vector3Int.down),
@@ -190,11 +191,11 @@ namespace Dungeon.Generator {
         /// <summary>
         /// A new instance of start room with its origin at (0,0)
         /// </summary>
-        public static Room Start => new(0, 0, "start", RoomType.Start);
+        public static Room Start => new(0, 0, "1x1", RoomType.Start);
         /// <summary>
         /// A new instance of final room with its origin at (0,0)
         /// </summary>
-        public static Room Final => new(0, 0, "final", RoomType.Final);
+        public static Room Final => new(0, 0, "1x1", RoomType.Final);
     }
 
     struct Connection {
