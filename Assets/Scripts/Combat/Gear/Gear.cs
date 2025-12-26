@@ -12,32 +12,40 @@ namespace Combat {
     /// <summary>
     /// Base class for gears like weapon and armor
     /// </summary>
+    [System.Serializable]
     public class Gear {
         /// <summary>
         /// For now, ID is irrelevant
         /// </summary>
+        
         public readonly string Id = "";
-        public readonly string Name;
-        public readonly BaseStats Base;
-        public readonly ScalingStats Scaling;
+        [field: SerializeField] public readonly string Name;
+        [field: SerializeField] public readonly BaseStats Base;
+        [field: SerializeField] public readonly ScalingStats Scaling;
         /// <summary>
         /// Self-documenting
         /// </summary>
         /// <param name="name">Name of the gear</param>
         /// <param name="base">Base stats of the gear, null if no base stats, it will be owned by Gear</param>
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Gear</param>
-        public Gear(string name, BaseStats @base, ScalingStats scaling) {
+        public Gear(string name, BaseStats @base, ScalingStats scaling): this("", name, @base, scaling) {
+        }
+        public Gear(string id, string name, BaseStats @base, ScalingStats scaling) {
+            Id = id;
             Name = name;
             Base = @base;
             Scaling = scaling;
         }
+
+        protected Gear() { }
     }
 
     /// <summary>
     /// Self-documenting
     /// </summary>
+    [System.Serializable]
     public class Armor : Gear {
-        public readonly ArmorType Type;
+        [field: SerializeField] public readonly ArmorType Type;
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -45,18 +53,22 @@ namespace Combat {
         /// <param name="base">Base stats of the gear, null if no base stats, it will be owned by Armor</param>
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Armor</param>
         /// <param name="type">Type of the armor (helmet, chestplate, leggings, boots)</param>
-        public Armor(string name, BaseStats @base, ScalingStats scaling, ArmorType type) : base(name, @base, scaling) {
+        public Armor(string id, string name, BaseStats @base, ScalingStats scaling, ArmorType type) : base(name, @base, scaling) {
             Type = type;
         }
+        public Armor(string name, BaseStats @base, ScalingStats scaling, ArmorType type) : this("", name, @base, scaling, type) {
+        }
+        protected Armor() { }
     }
 
     /// <summary>
     /// Self-documenting
     /// </summary>
+    [System.Serializable]
     public abstract class Weapon : Gear {
-        public readonly float DmgRatio;
-        public readonly WeaponSpeed WeaponSpeed;
-        public readonly float WeaponRange;
+        [field: SerializeField] public readonly float DmgRatio;
+        [field: SerializeField] public readonly WeaponSpeed WeaponSpeed;
+        [field: SerializeField] public readonly float WeaponRange;
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -65,12 +77,14 @@ namespace Combat {
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Weapon</param>
         /// <param name="dmgRatio">Damage it deals in terms of percentage of the equipper's atk</param>
         /// <param name="weaponSpeed">Self-documenting</param>
-        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange) : base(name, @base, scaling) {
+        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange) : this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
+        }
+        public Weapon(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange): base(id, name, @base, scaling) {
             DmgRatio = dmgRatio;
             WeaponSpeed = weaponSpeed;
             WeaponRange = weaponRange;
         }
-
+        protected Weapon() { }
 
         /// <returns>
         /// The base attack speed of the weapon
@@ -94,12 +108,16 @@ namespace Combat {
         public abstract GameObject WeaponPrefab { get; }
     }
 
+    [System.Serializable]
     public class Melee : Weapon {
         readonly string prefabName;
-        public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
+        public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+
+        }
+        public Melee(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
             this.prefabName = prefabName;
         }
-
+        protected Melee() { }
         public override GameObject WeaponPrefab => (GameObject)Resources.Load($"Prefabs/Weapon/Melee/{prefabName}");
     }
 }

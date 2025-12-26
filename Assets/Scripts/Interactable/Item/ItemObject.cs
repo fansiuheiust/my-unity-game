@@ -3,7 +3,7 @@ using Combat;
 
 
 namespace Interactable {
-    public abstract class Item<T> : MonoBehaviour, IInteractable {
+    public abstract class ItemObject<T> : MonoBehaviour, IInteractable {
         public T Value { get; private set; }
         public bool IsInteractable => true;
         public void Interact(Mob interacter) {
@@ -17,7 +17,7 @@ namespace Interactable {
     /// <summary>
     /// T2: <c>Gear</c>
     /// </summary>
-    public class GearItem: Item<Gear> {
+    public class GearObject: ItemObject<Gear> {
         protected override void Pick(Mob picker) {
             picker.Equip(Value);
         }
@@ -25,7 +25,7 @@ namespace Interactable {
     /// <summary>
     /// T2: <c>(BaseStats, ScalingStats)</c>
     /// </summary>
-    public class StatBoostItem: Item<(BaseStats, ScalingStats)> {
+    public class BuffObject: ItemObject<(BaseStats, ScalingStats)> {
         protected override void Pick(Mob picker) {
             picker.Stats.GainStats(Value.Item1, Value.Item2);
         }

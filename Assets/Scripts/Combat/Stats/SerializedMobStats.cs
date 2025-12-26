@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -14,7 +15,12 @@ namespace Combat {
         [field: SerializeField]
         public InitialHashedScaling[] hashedScaling;
 
-
+        public void InsertHasedStats() {
+            Dictionary<HashedScalingStats, float> keyValuePairs = new();
+            foreach (var hash in hashedScaling)
+                keyValuePairs.Add(hash.stats, hash.data);
+            scaling.InitializeHash(keyValuePairs);
+        }
 
         [System.Serializable]
         public struct InitialHashedScaling {
@@ -23,7 +29,6 @@ namespace Combat {
             [field: SerializeField]
             public float data;
         }
-
 
 
     }

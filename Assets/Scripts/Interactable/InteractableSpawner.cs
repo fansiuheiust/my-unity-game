@@ -12,7 +12,7 @@ namespace Interactable {
         /// <param name="pos">Where the game object should be at</param>
         /// <param name="item">What the item should consist of</param>
         /// <returns></returns>
-        public static GameObject SpawnItem<T1, T2>(Vector3 pos, T2 item) where T1: Item<T2>, new() {
+        public static GameObject SpawnItem<T1, T2>(Vector3 pos, T2 item) where T1: ItemObject<T2>, new() {
             GameObject go = MonoBehaviour.Instantiate((GameObject)Resources.Load(path+"Item"));
             go.transform.position = pos;
             go.AddComponent<T1>().Init(item);

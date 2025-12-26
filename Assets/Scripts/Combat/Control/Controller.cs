@@ -62,7 +62,7 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => { Driver.Main(); };
-            _playerInput.actions["tempstuninterrupt"].performed += _ => { InteractableSpawner.SpawnItem<StatBoostItem, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats(otherScaling: new() { { HashedScalingStats.AttackRange, -0.1f } }))); };
+            _playerInput.actions["tempstuninterrupt"].performed += _ => { InteractableSpawner.SpawnItem<BuffObject, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats(otherScaling: new() { { HashedScalingStats.AttackRange, -0.1f } }))); };
         }
 
         void Start() {
@@ -179,16 +179,14 @@ namespace Combat {
         }
 
         /// <summary>
-        /// Interacts
+        /// Interacts with the item closest to where the player's camera is looking at
         /// </summary>
-        /// <param name="_"></param>
         void OnInteraction(InputAction.CallbackContext _) {
-            // collection of interactable with available interaction in range that is in front of the camera, sorted by how close the camera is aiming at the interactable
+            // collection of interactable with available interaction in player's range that is in front of the camera, sorted by how close the camera is aiming at the interactable
             IEnumerable<IInteractable> hits = Physics.OverlapSphere(transform.position, interactionRange)
                 .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable && Vector3.Dot(h.transform.position - _camera.transform.position, _camera.forward) > 0)
                 .OrderByDescending(h => Vector3.Dot((h.transform.position - _camera.transform.position).normalized, _camera.forward))
                 .Select(h => h.GetComponent<IInteractable>());
-
             if (hits.Count() != 0)
                 hits.FirstOrDefault().Interact(_player);
         }
