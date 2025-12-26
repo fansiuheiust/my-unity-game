@@ -7,17 +7,26 @@ using System.Runtime.InteropServices;
 using System;
 using Dungeon.Generator;
 using Interactable;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace Combat {
     /// <summary>
-    /// Controls the player's movement
+    /// Controls the player's movement <br />
+    /// For now, control keys are directly ripped off from the G-word game
     /// </summary>
     public class Controller : MonoBehaviour {
         /// <summary>
         /// controls how fast look rotation is
         /// </summary>
-        [SerializeField]
-        float sensitivity = 0.1f;
+        [SerializeField] float sensitivity = 0.1f;
+        /// <summary>
+        /// How far the item can be if interacting with it
+        /// </summary>
+        [SerializeField] float interactionRange = 5f;
+
+
+
         Player _player;
         PlayerInput _playerInput;
         public Transform _camera;
@@ -49,13 +58,16 @@ namespace Combat {
             _playerInput.actions["block"].canceled += OnBlockInputCancel;
             _playerInput.actions["blockrotate"].performed += OnBlockRotation;
             _playerInput.actions["blockrotate"].Disable();
+            _playerInput.actions["interact"].performed += OnInteraction;
 
             // temp stuff
-            _playerInput.actions["tempstun"].performed += x => { Driver.Main(); };
-            _playerInput.actions["tempstuninterrupt"].performed += x => { InteractableSpawner.SpawnItem<StatBoostItem, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats())); };
+            _playerInput.actions["tempstun"].performed += _ => { Driver.Main(); };
+            _playerInput.actions["tempstuninterrupt"].performed += _ => { InteractableSpawner.SpawnItem<StatBoostItem, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats(otherScaling: new() { { HashedScalingStats.AttackRange, -0.1f } }))); };
         }
 
-
+        void Start() {
+            ResetMouse();
+        }
 
         void OnEnable() {
             _playerInput.enabled = true;
@@ -166,8 +178,19 @@ namespace Combat {
             _player.BlockRotate(Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg);
         }
 
-        void Start() {
-            ResetMouse();
+        /// <summary>
+        /// Interacts
+        /// </summary>
+        /// <param name="_"></param>
+        void OnInteraction(InputAction.CallbackContext _) {
+            // collection of interactable with available interaction in range that is in front of the camera, sorted by how close the camera is aiming at the interactable
+            IEnumerable<IInteractable> hits = Physics.OverlapSphere(transform.position, interactionRange)
+                .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable && Vector3.Dot(h.transform.position - _camera.transform.position, _camera.forward) > 0)
+                .OrderByDescending(h => Vector3.Dot((h.transform.position - _camera.transform.position).normalized, _camera.forward))
+                .Select(h => h.GetComponent<IInteractable>());
+
+            if (hits.Count() != 0)
+                hits.FirstOrDefault().Interact(_player);
         }
     }
 }
