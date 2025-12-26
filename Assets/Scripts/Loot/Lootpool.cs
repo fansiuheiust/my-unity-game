@@ -32,6 +32,8 @@ namespace Loot {
             return entries[^1].item;
         }
 
+
+
         /// <summary>
         /// Sorry for the DRY violation
         /// </summary>
@@ -52,6 +54,4 @@ namespace Loot {
             return b.entries[^1].item;
         }
     }
-    [System.Serializable]
-    public class BuffLootpool: Lootpool<Buff> { }
 }

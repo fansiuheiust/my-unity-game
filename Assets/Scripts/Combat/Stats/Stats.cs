@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -53,6 +54,16 @@ namespace Combat {
             MaxMana = maxMana;
             ManaRegen = manaRegen;
         }
+
+        /// <summary>
+        /// deep copy
+        /// </summary>
+        /// <returns></returns>
+        public BaseStats Clone() {
+            // TODO: also deep copy the dict after implementing hashed base stats
+            return (BaseStats)MemberwiseClone();
+        }
+
         public static BaseStats operator +(BaseStats a, BaseStats b) {
             return new(a.Atk + b.Atk, a.Def + b.Def, a.MaxHp + b.MaxHp, a.MaxMana + b.MaxMana, a.ManaRegen + b.ManaRegen);
         }
@@ -108,6 +119,12 @@ namespace Combat {
             KnockbackResistance = knockbackResistance;
             if (otherScaling is not null)
                 OtherScaling = otherScaling;
+        }
+
+        public new ScalingStats Clone() {
+            ScalingStats s = (ScalingStats)MemberwiseClone();
+            s.OtherScaling = OtherScaling.ToDictionary(d => d.Key, d => d.Value);
+            return s;
         }
 
         public static readonly float ScalingEpsilon = 0.00006103515625f;

@@ -7,34 +7,56 @@ using System.Collections;
 namespace Interactable {
     public class Chest : MonoBehaviour, IInteractable {
 
-        bool _isUntouched = true;
-        Transform _lid;
-        void Awake() {
-            _lid = transform.Find("Lid");
-        }
+        
 
         [SerializeField] Lootpool<GearItem> weaponLootpool;
         [SerializeField] Lootpool<Buff> buffLootpool;
+        [SerializeField] int numLoots = 1;
+
+        bool _isUntouched = true;
+        Transform _lidRotator;
+        void Awake() {
+            _lidRotator = transform.Find("LidRotator");
+        }
 
         public bool IsInteractable => _isUntouched;
         public void Interact(Mob _) {
             _isUntouched = false;
-            Item chosen = Lootpool<Item>.DrawFromTwo(weaponLootpool, buffLootpool);
-            GameObject item = chosen.Spawn(transform.position+0.4f*Vector3.up);
-            StartCoroutine(CoolAnimation(item));
+            GameObject[] items = new GameObject[numLoots];
+            for (int i = 0; i < numLoots; i++) {
+                items[i] =  Lootpool<Item>.DrawFromTwo(weaponLootpool, buffLootpool).Spawn(transform.position + 0.4f * Vector3.up);
+            }
+            StartCoroutine(CoolAnimation(items));
         }
+        protected virtual IEnumerator CoolAnimation(GameObject[] lootedItems) {
+            // open in 0.2s
+            yield return Rotate(_lidRotator, new Vector3(-90, 0, 0), .2f);
+            // move item in 0.1s
+            if (numLoots == 1)
+                yield return Move(lootedItems[0].transform, Vector3.up, .1f);
 
-        protected virtual IEnumerator CoolAnimation(GameObject lootedItem) {
-            // move lid up by 1 in 0.33s
-            yield return Move(_lid, Vector3.up, .33f);
-            // move item up by 0.2 in 0.17s
-            yield return Move(lootedItem.transform, Vector3.up * .2f, .17f);
+            else {
+                float deg = 45f;
+                foreach (GameObject item in lootedItems) {
+
+                    yield return Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
+                    deg += 90f / (numLoots-1);
+                }
+            }
             yield break;
         }
-        static IEnumerator Move(Transform x, Vector3 dest, float time) {
+        protected static IEnumerator Move(Transform x, Vector3 dest, float time) {
             for (float f = 0; f < time; f += Time.deltaTime) {
                 if (x == null) yield break;
                 x.position += dest * Time.deltaTime / time;
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+            yield break;
+        }
+        protected static IEnumerator Rotate(Transform x, Vector3 dest, float time) {
+            for (float f = 0; f < time; f += Time.deltaTime) {
+                if (x == null) yield break;
+                x.localEulerAngles += dest * Time.deltaTime / time;
                 yield return new WaitForSeconds(Time.deltaTime);
             }
             yield break;
