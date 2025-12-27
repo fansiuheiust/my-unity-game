@@ -35,34 +35,18 @@ namespace Interactable {
         }
         protected virtual IEnumerator CoolAnimation(GameObject[] lootedItems) {
             // open in 0.2s
-            yield return Rotate(_lidRotator, new Vector3(-90, 0, 0), .2f);
+            yield return SimpleAnimation.Rotate(_lidRotator, new Vector3(-90, 0, 0), .2f);
             // move item in 0.1s
             if (numLoots == 1)
-                yield return Move(lootedItems[0].transform, Vector3.up, .1f);
+                yield return SimpleAnimation.Move(lootedItems[0].transform, Vector3.up, .1f);
 
             else {
                 float deg = 45f;
                 foreach (GameObject item in lootedItems) {
 
-                    yield return Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
+                    yield return SimpleAnimation.Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
                     deg += 90f / (numLoots-1);
                 }
-            }
-            yield break;
-        }
-        protected static IEnumerator Move(Transform x, Vector3 dest, float time) {
-            for (float f = 0; f < time; f += Time.deltaTime) {
-                if (x == null) yield break;
-                x.position += dest * Time.deltaTime / time;
-                yield return null;
-            }
-            yield break;
-        }
-        protected static IEnumerator Rotate(Transform x, Vector3 dest, float time) {
-            for (float f = 0; f < time; f += Time.deltaTime) {
-                if (x == null) yield break;
-                x.localEulerAngles += dest * Time.deltaTime / time;
-                yield return null;
             }
             yield break;
         }

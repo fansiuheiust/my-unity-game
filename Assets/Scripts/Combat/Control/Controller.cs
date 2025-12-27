@@ -9,6 +9,7 @@ using Dungeon.Generator;
 using Interactable;
 using System.Linq;
 using Unity.VisualScripting;
+using Loot;
 
 namespace Combat {
     /// <summary>
@@ -62,7 +63,10 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => { Driver.Main(); };
-            _playerInput.actions["tempstuninterrupt"].performed += _ => { InteractableSpawner.SpawnItem<BuffObject, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats(otherScaling: new() { { HashedScalingStats.AttackRange, -0.1f } }))); };
+            _playerInput.actions["tempstuninterrupt"].performed += _ => {
+                Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
+                b.Spawn(transform.position);
+            };
         }
 
         void Start() {

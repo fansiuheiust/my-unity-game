@@ -33,6 +33,14 @@ namespace Loot {
 
         bool _isStatsInitialized = false;
 
+        public Buff(BaseStats @base, ScalingStats scaling) {
+            Stats = new() {
+                @base = @base,
+                scaling = scaling,
+            };
+            _isStatsInitialized = true;
+        }
+
         Buff() {  }
         protected override void Init(GameObject go) {
             BuffObject obj = go.AddComponent<BuffObject>();
