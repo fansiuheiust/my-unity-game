@@ -1,5 +1,6 @@
 using Interactable;
 using UnityEngine;
+using UnityEngine.Events;
 using Loot;
 using Combat;
 using System.Collections;
@@ -7,21 +8,25 @@ using System.Collections;
 namespace Interactable {
     public class Chest : MonoBehaviour, IInteractable {
 
-        
+        public UnityEvent OnUnlock;
+        public UnityEvent OnOpen;
 
         [SerializeField] Lootpool<GearItem> weaponLootpool;
         [SerializeField] Lootpool<Buff> buffLootpool;
         [SerializeField] int numLoots = 1;
-
+        [SerializeField] bool isLocked = false;
+        
         bool _isUntouched = true;
         Transform _lidRotator;
         void Awake() {
             _lidRotator = transform.Find("LidRotator");
+            
         }
 
-        public bool IsInteractable => _isUntouched;
+        public bool IsInteractable => !isLocked && _isUntouched;
         public void Interact(Mob _) {
             _isUntouched = false;
+            OnOpen.Invoke();
             GameObject[] items = new GameObject[numLoots];
             for (int i = 0; i < numLoots; i++) {
                 items[i] =  Lootpool<Item>.DrawFromTwo(weaponLootpool, buffLootpool).Spawn(transform.position + 0.4f * Vector3.up);
@@ -49,7 +54,7 @@ namespace Interactable {
             for (float f = 0; f < time; f += Time.deltaTime) {
                 if (x == null) yield break;
                 x.position += dest * Time.deltaTime / time;
-                yield return new WaitForSeconds(Time.deltaTime);
+                yield return null;
             }
             yield break;
         }
@@ -57,9 +62,15 @@ namespace Interactable {
             for (float f = 0; f < time; f += Time.deltaTime) {
                 if (x == null) yield break;
                 x.localEulerAngles += dest * Time.deltaTime / time;
-                yield return new WaitForSeconds(Time.deltaTime);
+                yield return null;
             }
             yield break;
+        }
+
+        public void Unlock() {
+            if (!isLocked) return;
+            isLocked = false;
+            OnUnlock.Invoke();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Combat {
         /// <summary>
         /// How far the item can be if interacting with it
         /// </summary>
-        [SerializeField] float interactionRange = 5f;
+        [SerializeField] float interactionRange = 4f;
 
 
 
@@ -184,7 +184,7 @@ namespace Combat {
         void OnInteraction(InputAction.CallbackContext _) {
             // collection of interactable with available interaction in player's range that is in front of the camera, sorted by how close the camera is aiming at the interactable
             IEnumerable<IInteractable> hits = Physics.OverlapSphere(transform.position, interactionRange)
-                .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable && Vector3.Dot(h.transform.position - _camera.transform.position, _camera.forward) > 0)
+                .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable)
                 .OrderByDescending(h => Vector3.Dot((h.transform.position - _camera.transform.position).normalized, _camera.forward))
                 .Select(h => h.GetComponent<IInteractable>());
             if (hits.Count() != 0)
