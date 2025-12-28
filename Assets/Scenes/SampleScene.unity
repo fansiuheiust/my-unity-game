@@ -658,12 +658,16 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
+      propertyPath: mobPresets.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: <ToKill>k__BackingField
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: <Duration>k__BackingField
-      value: 16
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: <SpawnRadius>k__BackingField
@@ -671,19 +675,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: <WaveDuration>k__BackingField
-      value: 3
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: waveInfos.Array.data[0].numMob
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: waveInfos.Array.data[1].numMob
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: waveInfos.Array.data[2].numMob
-      value: 4
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
+      propertyPath: mobPresets.Array.data[0].entries.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
+      propertyPath: mobPresets.Array.data[0].entries.Array.data[0].item
+      value: 
+      objectReference: {fileID: 5594697965900854007, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
+    - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
+      propertyPath: mobPresets.Array.data[0].entries.Array.data[0].weight
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: waveInfos.Array.data[0].mobOptions.entries.Array.size

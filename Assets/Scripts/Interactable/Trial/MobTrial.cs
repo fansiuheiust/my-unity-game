@@ -10,6 +10,10 @@ namespace Interactable {
     public class MobTrial : Trial {
         [field: SerializeField, Range(0f, float.MaxValue)] public float WaveDuration { get; private set; }
         /// <summary>
+        /// How long should the spawn warning time be (note that <c>WaseDuration</c> must be higher than this variable by 1 for warning to trigger
+        /// </summary>
+        [field: SerializeField, Range(1f, 5f)] public int SpawnWarnTime { get; private set; } = 2;
+        /// <summary>
         /// The area that mobs can spawn in
         /// </summary>
         [field: SerializeField, Range(1f, float.MaxValue)] public float SpawnRadius { get; private set; } = 8;
@@ -34,7 +38,7 @@ namespace Interactable {
         /// <summary>
         /// Determines whether a 3 second courtesy animation can be played
         /// </summary>
-        bool Animatable => WaveDuration >= 4f;
+        bool Warnable => WaveDuration >= SpawnWarnTime + 1f;
 
         /// <summary>
         /// an exception thrower, but will determine how many mobs need to be killed by default
@@ -76,10 +80,10 @@ namespace Interactable {
         }
 
         IEnumerator SpawnWaves() {
-            
+            _remainingThisWave = 0;
             for (; _currentWave < waveInfos.Length; _currentWave++) {
                 _canSkipWave = false;
-                _remainingThisWave = waveInfos[_currentWave].numMob;
+                _remainingThisWave += waveInfos[_currentWave].numMob;
                 // choose good random positions
                 Vector3[] spots = new Vector3[waveInfos[_currentWave].numMob];
                 _courtesies = new GameObject[waveInfos[_currentWave].numMob];
@@ -93,12 +97,12 @@ namespace Interactable {
                     if (count >= 10)
                         Debug.Log("Bad spot");
                 }
-                if (Animatable) {
+                if (Warnable) {
                     for (int i = 0; i < waveInfos[_currentWave].numMob; i++) {
                         _courtesies[i] = Instantiate(_courtesyPrefab);
                         _courtesies[i].transform.position = spots[i];
                     }
-                    for (int j = 3; j > 0; j--) {
+                    for (int j = SpawnWarnTime; j > 0; j--) {
                         Debug.Log(j);
                         yield return new WaitForSeconds(1);
                     }
@@ -114,7 +118,7 @@ namespace Interactable {
                     go.GetComponent<Mob>().OnDeath.AddListener((m, _) => { OnMobKilled(m); });
                 }
                 _canSkipWave = true;
-                yield return new WaitForSeconds(WaveDuration - (Animatable ? 3:0));
+                yield return new WaitForSeconds(WaveDuration - (Warnable ? SpawnWarnTime:0));
             }
             yield break;
         }
