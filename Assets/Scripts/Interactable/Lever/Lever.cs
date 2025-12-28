@@ -1,6 +1,7 @@
 using Combat;
 using Interactable;
 using System.Collections;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,5 +29,14 @@ public class Lever : MonoBehaviour, IInteractable {
     IEnumerator LeverAnimation() {
         yield return SimpleAnimation.Rotate(_rotatable, new(90, 0, 0), 0.3f);
         yield break;
+    }
+
+    /// <summary>
+    /// Resets the lever, only when it is not untouched
+    /// </summary>
+    public void ResetLever() {
+        if (_isUntouched) return;
+        _isUntouched = true;
+        StartCoroutine(SimpleAnimation.Rotate(_rotatable, new(-90, 0, 0), 0.1f));
     }
 }
