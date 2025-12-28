@@ -13,7 +13,7 @@ namespace Interactable {
         /// <summary>
         /// Whether the trial should be a success when the time runs out
         /// </summary>
-        [field: SerializeField] public virtual bool IsSuccessByDefault { get; private set; } = true;
+        [field: SerializeField] public bool IsSuccessByDefault { get; private set; } = true;
         /// <summary>
         /// Whether the trial can be redone after the player fails it
         /// </summary>
@@ -26,9 +26,11 @@ namespace Interactable {
 
         Coroutine _timer = null;
 
+        public bool IsOngoing => _timer != null;
+
         [DoNotSerialize] public bool IsInteractable { get; private set; } = true;
 
-        public void Interact(Mob _) {
+        public virtual void Interact(Mob _) {
             IsInteractable = false;
             // all these debug logs should be replaced by UI stuff in the future
             Debug.Log($"Begin trail: {TrialDescription} in {Duration}s");
@@ -47,11 +49,11 @@ namespace Interactable {
         /// <param name="success">Whether the trial should be successful or not</param>
         public void EarlyComplete(bool success) {
             if (_timer == null) return; // timer == null => trial not in progress
-            StopCoroutine(_timer);
+            StopCoroutinesEarly();
             Complete(success);
         }
 
-        void Complete(bool success) {
+        protected virtual void Complete(bool success) {
             _timer = null;
             if (success) {
                 OnTrialSuccess.Invoke();
@@ -64,6 +66,13 @@ namespace Interactable {
             Debug.Log("Fail!");
             IsInteractable = IsRedoable;
         }
+
+        protected virtual void StopCoroutinesEarly() {
+            StopCoroutine(_timer);
+            _timer = null;
+        }
+
+
 
     }
 }
