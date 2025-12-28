@@ -344,7 +344,7 @@ GameObject:
   - component: {fileID: 4731437328492735427}
   - component: {fileID: 1033958912911238614}
   - component: {fileID: 3894105122347543748}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -404,6 +404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.Trial
   <Duration>k__BackingField: 30
   <IsSuccessByDefault>k__BackingField: 1
+  <IsRedoable>k__BackingField: 1
   <TrialDescription>k__BackingField: 
   OnTrialSuccess:
     m_PersistentCalls:

@@ -9,7 +9,7 @@ namespace Interactable {
         /// <summary>
         /// How long the trial should last
         /// </summary>
-        [field: SerializeField] public float Duration { get; private set; } = 30f;
+        [field: SerializeField, Range(0, float.MaxValue)] public float Duration { get; private set; } = 30f;
         /// <summary>
         /// Whether the trial should be a success when the time runs out
         /// </summary>
