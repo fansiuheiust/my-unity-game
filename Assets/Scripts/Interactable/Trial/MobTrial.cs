@@ -103,6 +103,7 @@ namespace Interactable {
             }
             
             if (_remainingThisWave <= 0 && _canSkipWave) {
+                _canSkipWave = false;
                 StopCoroutine(_waveSpawnerCoroutine);
                 _currentWave++;
                 _waveSpawnerCoroutine = StartCoroutine(SpawnWaves());

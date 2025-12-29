@@ -678,6 +678,10 @@ PrefabInstance:
       value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
+      propertyPath: <SpawnWarnTime>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1955782714933628470, guid: df4ed8ab3c5308641afedb95868bf556, type: 3}
       propertyPath: waveInfos.Array.data[0].numMob
       value: 1
       objectReference: {fileID: 0}
