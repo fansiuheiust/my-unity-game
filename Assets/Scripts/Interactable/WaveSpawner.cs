@@ -48,7 +48,10 @@ namespace Interactable {
                 Collider[] hit = null;
                 int count = 0;
                 do {
-                    spots[i] = transform.position + new Vector3(Random.Range(-spawnRadius, spawnRadius), 0, Random.Range(-spawnRadius, spawnRadius));
+                    // radius then rotation
+                    float spawnMagnitude = Random.Range(1, spawnRadius);
+                    Quaternion spawnRotation = Quaternion.Euler(0, Random.Range(0, 359.875f), 0);
+                    spots[i] = transform.position + spawnRotation * new Vector3(spawnMagnitude, 0, 0);
                     count++;
                 } while (Physics.OverlapSphereNonAlloc(spots[i], count, hit) != 0 && count < 10);
                 if (count >= 10)

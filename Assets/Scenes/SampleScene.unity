@@ -931,19 +931,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
       propertyPath: <MaxMobSpawn>k__BackingField
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
       propertyPath: <MinMobSpawn>k__BackingField
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
       propertyPath: mobPreset.entries.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
+      propertyPath: <MobSpawnRadius>k__BackingField
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
+      propertyPath: <DeactivateRadius>k__BackingField
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
       propertyPath: <MaxConcurrentMob>k__BackingField
-      value: 7
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6214702065764250143, guid: daa163c0d915b844389484d81a22fd88, type: 3}
       propertyPath: <MaxSpawnInterval>k__BackingField
