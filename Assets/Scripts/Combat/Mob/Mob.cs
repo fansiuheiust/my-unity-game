@@ -169,7 +169,6 @@ namespace Combat {
 
         protected virtual void Awake() {
             Stats = new(initialStats);
-            OnDeath = new();
             _movement = GetComponent<MobMovement>();
             _rotatable = transform.Find("Rotatable");
             Stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;

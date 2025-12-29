@@ -1,5 +1,6 @@
 using Interactable;
 using UnityEngine;
+using UnityEngine.Events;
 using Loot;
 using Combat;
 using System.Collections;
@@ -7,21 +8,25 @@ using System.Collections;
 namespace Interactable {
     public class Chest : MonoBehaviour, IInteractable {
 
-        
+        public UnityEvent OnUnlock;
+        public UnityEvent OnOpen;
 
         [SerializeField] Lootpool<GearItem> weaponLootpool;
         [SerializeField] Lootpool<Buff> buffLootpool;
         [SerializeField] int numLoots = 1;
-
+        [SerializeField] bool isLocked = false;
+        
         bool _isUntouched = true;
         Transform _lidRotator;
         void Awake() {
             _lidRotator = transform.Find("LidRotator");
+            
         }
 
-        public bool IsInteractable => _isUntouched;
+        public bool IsInteractable => !isLocked && _isUntouched;
         public void Interact(Mob _) {
             _isUntouched = false;
+            OnOpen.Invoke();
             GameObject[] items = new GameObject[numLoots];
             for (int i = 0; i < numLoots; i++) {
                 items[i] =  Lootpool<Item>.DrawFromTwo(weaponLootpool, buffLootpool).Spawn(transform.position + 0.4f * Vector3.up);
@@ -30,36 +35,26 @@ namespace Interactable {
         }
         protected virtual IEnumerator CoolAnimation(GameObject[] lootedItems) {
             // open in 0.2s
-            yield return Rotate(_lidRotator, new Vector3(-90, 0, 0), .2f);
+            yield return SimpleAnimation.Rotate(_lidRotator, new Vector3(-90, 0, 0), .2f);
             // move item in 0.1s
             if (numLoots == 1)
-                yield return Move(lootedItems[0].transform, Vector3.up, .1f);
+                yield return SimpleAnimation.Move(lootedItems[0].transform, Vector3.up, .1f);
 
             else {
                 float deg = 45f;
                 foreach (GameObject item in lootedItems) {
 
-                    yield return Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
+                    yield return SimpleAnimation.Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
                     deg += 90f / (numLoots-1);
                 }
             }
             yield break;
         }
-        protected static IEnumerator Move(Transform x, Vector3 dest, float time) {
-            for (float f = 0; f < time; f += Time.deltaTime) {
-                if (x == null) yield break;
-                x.position += dest * Time.deltaTime / time;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-            yield break;
-        }
-        protected static IEnumerator Rotate(Transform x, Vector3 dest, float time) {
-            for (float f = 0; f < time; f += Time.deltaTime) {
-                if (x == null) yield break;
-                x.localEulerAngles += dest * Time.deltaTime / time;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-            yield break;
+
+        public void Unlock() {
+            if (!isLocked) return;
+            isLocked = false;
+            OnUnlock.Invoke();
         }
     }
 }

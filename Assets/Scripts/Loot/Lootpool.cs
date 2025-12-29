@@ -6,13 +6,13 @@ namespace Loot {
     [System.Serializable]
     public class Lootpool<T> {
         [System.Serializable]
-        struct LootEntry {
+        public struct LootEntry {
             
             public T item;
             public float weight;
         }
         [field: SerializeField]
-        LootEntry[] entries;
+        public LootEntry[] entries;
         public Lootpool((T loot, float weight)[] entries) {
             this.entries = entries.Select(e=>new LootEntry() { item=e.loot, weight=e.weight }).ToArray();
         }

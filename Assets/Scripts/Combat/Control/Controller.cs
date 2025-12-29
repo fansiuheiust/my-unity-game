@@ -9,6 +9,7 @@ using Dungeon.Generator;
 using Interactable;
 using System.Linq;
 using Unity.VisualScripting;
+using Loot;
 
 namespace Combat {
     /// <summary>
@@ -23,7 +24,7 @@ namespace Combat {
         /// <summary>
         /// How far the item can be if interacting with it
         /// </summary>
-        [SerializeField] float interactionRange = 5f;
+        [SerializeField] float interactionRange = 4f;
 
 
 
@@ -62,7 +63,10 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => { Driver.Main(); };
-            _playerInput.actions["tempstuninterrupt"].performed += _ => { InteractableSpawner.SpawnItem<BuffObject, (BaseStats, ScalingStats)>(_player.transform.position, (new BaseStats(), new ScalingStats(otherScaling: new() { { HashedScalingStats.AttackRange, -0.1f } }))); };
+            _playerInput.actions["tempstuninterrupt"].performed += _ => {
+                Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
+                b.Spawn(transform.position);
+            };
         }
 
         void Start() {
@@ -184,7 +188,7 @@ namespace Combat {
         void OnInteraction(InputAction.CallbackContext _) {
             // collection of interactable with available interaction in player's range that is in front of the camera, sorted by how close the camera is aiming at the interactable
             IEnumerable<IInteractable> hits = Physics.OverlapSphere(transform.position, interactionRange)
-                .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable && Vector3.Dot(h.transform.position - _camera.transform.position, _camera.forward) > 0)
+                .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable)
                 .OrderByDescending(h => Vector3.Dot((h.transform.position - _camera.transform.position).normalized, _camera.forward))
                 .Select(h => h.GetComponent<IInteractable>());
             if (hits.Count() != 0)
