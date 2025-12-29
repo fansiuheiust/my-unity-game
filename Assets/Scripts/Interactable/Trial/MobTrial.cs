@@ -12,7 +12,7 @@ namespace Interactable {
         /// <summary>
         /// How long should the spawn warning time be (note that <c>WaseDuration</c> must be higher than this variable by 1 for warning to trigger
         /// </summary>
-        [field: SerializeField, Range(1f, 5f)] public int SpawnWarnTime { get; private set; } = 2;
+        [field: SerializeField, Range(1f, 5f)] public uint SpawnWarnTime { get; private set; } = 2;
         /// <summary>
         /// The area that mobs can spawn in
         /// </summary>
@@ -21,19 +21,18 @@ namespace Interactable {
         /// Number of mobs to kill, kindly set it to 0 if it should be determined automatically
         /// </summary>
         [field: SerializeField] public uint ToKill { get; private set; } = 0;
-        uint _remaining = 0;
-        uint _currentWave = 0;
-        uint _remainingThisWave = 0;
-        bool _canSkipWave = false;
         
         [SerializeField] MobWaveInfo[] waveInfos;
 
         public Lootpool<GameObject>[] mobPresets;
 
-        GameObject[] _courtesies = null;
-        static GameObject _courtesyPrefab = null;
-        List<Mob> _remainingMobs = new();
-        Coroutine _waveSpawer = null;
+        uint _remaining = 0;
+        uint _currentWave = 0;
+        uint _remainingThisWave = 0;
+        bool _canSkipWave = false;
+
+        Coroutine _waveSpawnerCoroutine = null;
+        WaveSpawner _waveSpawner = null;
 
         /// <summary>
         /// Determines whether a 3 second courtesy animation can be played
@@ -58,23 +57,19 @@ namespace Interactable {
             uint totalMobs = (uint)waveInfos.Sum(x => x.numMob);
             if (ToKill == 0)
                 ToKill = totalMobs;
-            if (_courtesyPrefab == null)
-                _courtesyPrefab = (GameObject)Resources.Load("Prefabs/Interactable/MobCourtesy");
+            _waveSpawner = gameObject.AddComponent<WaveSpawner>();
+            _waveSpawner.preserveMobs = false;
+            _waveSpawner.OnMobKill.AddListener(OnMobKilled);
         }
 
         public override void Interact(Mob _) {
             base.Interact(_);
             _remaining = ToKill;
-            _waveSpawer = StartCoroutine(SpawnWaves());
+            _waveSpawnerCoroutine = StartCoroutine(SpawnWaves());
         }
 
         protected override void Complete(bool success) {
-            if (_courtesies is not null) foreach (GameObject go in _courtesies)
-                Destroy(go);
-            _courtesies = null;
-            foreach (Mob m in _remainingMobs)
-                Destroy(m.gameObject);
-            _remainingMobs.Clear();
+            _waveSpawner.Clean();
             _currentWave = 0; // reset current wave such that redo is not cooked
             base.Complete(success);
         }
@@ -84,39 +79,7 @@ namespace Interactable {
             for (; _currentWave < waveInfos.Length; _currentWave++) {
                 _canSkipWave = false;
                 _remainingThisWave += waveInfos[_currentWave].numMob;
-                // choose good random positions
-                Vector3[] spots = new Vector3[waveInfos[_currentWave].numMob];
-                _courtesies = new GameObject[waveInfos[_currentWave].numMob];
-                for (int i = 0; i < waveInfos[_currentWave].numMob; i++) {
-                    Collider[] hit = null;
-                    int count = 0;
-                    do {
-                        spots[i] = transform.position + new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0, Random.Range(-SpawnRadius, SpawnRadius));
-                        count++;
-                    } while (Physics.OverlapSphereNonAlloc(spots[i], count, hit) != 0 && count < 10);
-                    if (count >= 10)
-                        Debug.Log("Bad spot");
-                }
-                if (Warnable) {
-                    for (int i = 0; i < waveInfos[_currentWave].numMob; i++) {
-                        _courtesies[i] = Instantiate(_courtesyPrefab);
-                        _courtesies[i].transform.position = spots[i];
-                    }
-                    for (int j = SpawnWarnTime; j > 0; j--) {
-                        Debug.Log(j);
-                        yield return new WaitForSeconds(1);
-                    }
-                    for (int i = 0; i < waveInfos[_currentWave].numMob; i++) {
-                        Destroy(_courtesies[i]);
-                    }
-                    _courtesies = null;
-                }
-                for (int i = 0; i < waveInfos[_currentWave].numMob; i++) {
-                    GameObject go = Instantiate(mobPresets[waveInfos[_currentWave].presetIndex].Draw());
-                    go.transform.position = spots[i];
-                    _remainingMobs.Add(go.GetComponent<Mob>());
-                    go.GetComponent<Mob>().OnDeath.AddListener((m, _) => { OnMobKilled(m); });
-                }
+                yield return _waveSpawner.Spawn(mobPresets[waveInfos[_currentWave].presetIndex], waveInfos[_currentWave].numMob, SpawnRadius, Warnable, SpawnWarnTime);
                 _canSkipWave = true;
                 yield return new WaitForSeconds(WaveDuration - (Warnable ? SpawnWarnTime:0));
             }
@@ -126,13 +89,12 @@ namespace Interactable {
 
         protected override void StopCoroutinesEarly() {
             base.StopCoroutinesEarly();
-            StopCoroutine(_waveSpawer);
-            _waveSpawer = null;
+            StopCoroutine(_waveSpawnerCoroutine);
+            _waveSpawnerCoroutine = null;
         }
 
-        void OnMobKilled(Mob m) {
+        void OnMobKilled() {
             if (!IsOngoing) return;
-            _remainingMobs.Remove(m);
             _remainingThisWave--;
             _remaining--;
             if (_remaining <= 0) {
@@ -141,9 +103,9 @@ namespace Interactable {
             }
             
             if (_remainingThisWave <= 0 && _canSkipWave) {
-                StopCoroutine(_waveSpawer);
+                StopCoroutine(_waveSpawnerCoroutine);
                 _currentWave++;
-                _waveSpawer = StartCoroutine(SpawnWaves());
+                _waveSpawnerCoroutine = StartCoroutine(SpawnWaves());
             }
         }
 
