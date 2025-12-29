@@ -1012,26 +1012,6 @@ PrefabInstance:
       propertyPath: numLoots
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 1530606616792161633, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
-      propertyPath: buffLootpool.entries.Array.data[0].weight
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1530606616792161633, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
-      propertyPath: buffLootpool.entries.Array.data[0].item.<Stats>k__BackingField.hashedScaling.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1530606616792161633, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
-      propertyPath: buffLootpool.entries.Array.data[0].item.<Stats>k__BackingField.hashedScaling.Array.data[0].data
-      value: 0.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 1530606616792161633, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
-      propertyPath: buffLootpool.entries.Array.data[0].item.<Stats>k__BackingField.hashedScaling.Array.data[0].stats
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1530606616792161633, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
-      propertyPath: buffLootpool.entries.Array.data[0].item.<Stats>k__BackingField.scaling.<WalkSpeed>k__BackingField
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5591793883415892014, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.21
@@ -1341,11 +1321,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].data
