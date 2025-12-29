@@ -58,7 +58,6 @@ namespace Interactable {
             if (ToKill == 0)
                 ToKill = totalMobs;
             _waveSpawner = gameObject.AddComponent<WaveSpawner>();
-            _waveSpawner.preserveMobs = false;
             _waveSpawner.OnMobKill.AddListener(OnMobKilled);
         }
 
@@ -69,7 +68,7 @@ namespace Interactable {
         }
 
         protected override void Complete(bool success) {
-            _waveSpawner.Clean();
+            _waveSpawner.Clean(false);
             _currentWave = 0; // reset current wave such that redo is not cooked
             base.Complete(success);
         }

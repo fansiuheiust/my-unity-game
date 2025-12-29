@@ -13,10 +13,6 @@ namespace Interactable {
         
         GameObject[] _courtesies = null;
         List<Mob> _remainingMobs = new();
-        /// <summary>
-        /// Whether the WaveSpawner will keep the spawned mobs after it has been disabled
-        /// </summary>
-        public bool preserveMobs = false;
 
 
         static GameObject _courtesyPrefab = null;
@@ -28,7 +24,8 @@ namespace Interactable {
         /// <summary>
         /// Invoked when the spawning mechanic should be turned off
         /// </summary>
-        public void Clean() {
+        /// <param name="preserveMobs">Whether spawned mobs stay after cleaning</param>
+        public void Clean(bool preserveMobs) {
             if (!preserveMobs) foreach (Mob m in _remainingMobs)
                     Destroy(m.gameObject);
             _remainingMobs.Clear();
@@ -43,7 +40,7 @@ namespace Interactable {
         /// <param name="numMobs"></param>
         /// <param name="hasWarning">Warn before spawning mobs?</param>
         /// <param name="warnTime">How long a warning should be</param>
-        public IEnumerator Spawn(Lootpool<GameObject> mobPreset, uint numMobs, float spawnRadius, bool hasWarning, uint warnTime) {
+        public IEnumerator Spawn(Lootpool<GameObject> mobPreset, uint numMobs, float spawnRadius, bool hasWarning, uint warnTime, bool showWarnMsg = true) {
             // choose good random positions
             Vector3[] spots = new Vector3[numMobs];
             _courtesies = new GameObject[numMobs];
@@ -63,7 +60,7 @@ namespace Interactable {
                     _courtesies[i].transform.position = spots[i];
                 }
                 for (uint j = warnTime; j > 0; j--) {
-                    Debug.Log(j);
+                    if (showWarnMsg) Debug.Log(j);
                     yield return new WaitForSeconds(1);
                 }
                 for (int i = 0; i < numMobs; i++) {
