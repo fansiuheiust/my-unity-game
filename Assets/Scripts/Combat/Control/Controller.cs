@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System;
 using Dungeon.Generator;
-using Interactable;
+using BuildingBlocks;
 using System.Linq;
 using Unity.VisualScripting;
 using Loot;

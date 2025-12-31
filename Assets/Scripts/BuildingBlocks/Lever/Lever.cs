@@ -1,5 +1,5 @@
 using Combat;
-using Interactable;
+using BuildingBlocks;
 using System.Collections;
 using TMPro.EditorUtilities;
 using UnityEngine;

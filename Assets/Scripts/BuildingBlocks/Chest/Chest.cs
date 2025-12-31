@@ -1,11 +1,11 @@
-using Interactable;
+using BuildingBlocks;
 using UnityEngine;
 using UnityEngine.Events;
 using Loot;
 using Combat;
 using System.Collections;
 
-namespace Interactable {
+namespace BuildingBlocks {
     public class Chest : MonoBehaviour, IInteractable {
 
         public UnityEvent OnUnlock;

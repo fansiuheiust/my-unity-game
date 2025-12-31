@@ -6,7 +6,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Interactable {
+namespace BuildingBlocks {
     public class MobTrial : Trial {
         [field: SerializeField, Range(0f, float.MaxValue)] public float WaveDuration { get; private set; }
         /// <summary>

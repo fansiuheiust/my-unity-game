@@ -2,7 +2,7 @@ using UnityEngine;
 using Combat;
 
 
-namespace Interactable {
+namespace BuildingBlocks {
     public abstract class ItemObject<T> : MonoBehaviour, IInteractable {
         public T Value { get; private set; }
         public bool IsInteractable => true;

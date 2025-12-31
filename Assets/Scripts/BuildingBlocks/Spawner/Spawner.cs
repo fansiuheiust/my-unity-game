@@ -6,14 +6,13 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Interactable {
+namespace BuildingBlocks {
     /// <summary>
     /// Borrowed mechanics from Trial
     /// </summary>
     public class Spawner: Trial {
 
-        [ReadOnly, SerializeField]
-        string inspectorWarnText = "Please do NOT change IsSuccessByDefault (true) or IsRedoable (true) unless absolutely necessary";
+        public readonly string inspectorWarnText = "Please do NOT change IsSuccessByDefault (true) or IsRedoable (true) unless absolutely necessary";
         [field: SerializeField, Min(0), Tooltip("Smallest amount of mobs spawned in a single wave")] public uint MinMobSpawn { get; private set; } = 1;
         [field: SerializeField, Min(1), Tooltip("Largest amount of mobs spawned in a single wave")] public uint MaxMobSpawn { get; private set; } = 1;
         [field: SerializeField, Min(1), Tooltip("How many surviving spawned mobs can there be at any time")] public uint MaxConcurrentMob { get; private set; } = 12;

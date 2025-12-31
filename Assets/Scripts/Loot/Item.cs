@@ -1,6 +1,6 @@
 using UnityEngine;
 using Combat;
-using Interactable;
+using BuildingBlocks;
 
 namespace Loot {
     [System.Serializable]

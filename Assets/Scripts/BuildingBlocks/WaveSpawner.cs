@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace Interactable {
+namespace BuildingBlocks {
     public class WaveSpawner : MonoBehaviour {
         public UnityEvent OnMobKill = new();
         

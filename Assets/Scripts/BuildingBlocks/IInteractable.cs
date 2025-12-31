@@ -1,7 +1,7 @@
 using UnityEngine;
 using Combat;
  
-namespace Interactable {
+namespace BuildingBlocks {
     public interface IInteractable {
         /// <summary>
         /// Whether the user can interact with the object or not

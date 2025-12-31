@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Interactable {
+namespace BuildingBlocks {
     public class Trial : MonoBehaviour, IInteractable {
         /// <summary>
         /// How long the trial should last
