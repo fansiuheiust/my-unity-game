@@ -144,7 +144,7 @@ namespace Combat {
         }
 
         /// <summary>
-        /// self-explanatory
+        /// self-documenting
         /// </summary>
         void Jump() {
             // _canFloat = false;
