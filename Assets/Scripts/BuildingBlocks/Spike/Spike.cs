@@ -24,15 +24,15 @@ namespace BuildingBlocks {
             }
         }
 
-        void OnCollisionEnter(Collision collision) {
-            if (collision.collider.TryGetComponent(out Mob m) && !_affecteds.Contains(m)) {
+        void OnTriggerEnter(Collider collider) {
+            if (collider.TryGetComponent(out Mob m) && !_affecteds.Contains(m)) {
                 _affecteds.AddLast(m);
                 StartCoroutine(Step(m));
             }
         }
 
-        private void OnCollisionExit(Collision collision) {
-            if (collision.collider.TryGetComponent(out Mob m)) {
+        private void OnTriggerExit(Collider collider) {
+            if (collider.TryGetComponent(out Mob m)) {
                 _affecteds.Remove(m);
             }
         }
