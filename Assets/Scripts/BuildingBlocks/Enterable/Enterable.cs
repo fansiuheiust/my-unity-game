@@ -1,15 +1,24 @@
 using Combat;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace BuildingBlocks {
     /// <summary>
-    /// An abstract class that allows blocks to do something when mobs enter it
+    /// An abstract class that allows blocks to do something when mobs enter it, do not directly from it
     /// </summary>
     public abstract class Enterable: MonoBehaviour {
+        [field: SerializeField, Tooltip("Time between trigger, if it is 0, it only triggers once per collision"), Min(0f)]
+        public float Interval { get; private set; }
+
+        /// <summary>
+        /// Mobs that are currently triggering effect from the Enterable
+        /// </summary>
+        LinkedList<Mob> _affecteds = new();
+
         /// <summary>
         /// Triggers when a mob enters the block
         /// </summary>
@@ -24,67 +33,57 @@ namespace BuildingBlocks {
         public UnityEvent<Mob> OnEffectTrigger = new();
 
         /// <summary>
-        /// Not for coding behaviour of the enterable
+        /// only called when a mob enters the enterable
         /// </summary>
         /// <param name="m"></param>
-        protected virtual void MobEnteredInternal(Mob m) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void MobEnteredInternal(Mob m) {
             OnMobEnter.Invoke(m);
             OnMobEntered(m);
-            TriggerEffect(m);
+            _affecteds.AddLast(m);
+            
+            
+            if (Interval == 0f)
+                TriggerEffectInternal(m);
+            else
+                StartCoroutine(EffectTriggerer(m));
         }
 
         /// <summary>
-        /// Called when a mob entered
+        /// Coded behaviour of the enterable when a mob enters the block
         /// </summary>
-        /// <param name="m"></param>
-        protected abstract void OnMobEntered(Mob m);
+        /// <param name="m">mob that enters</param>
+        protected virtual void OnMobEntered(Mob m) {
+
+        }
 
         /// <summary>
-        /// Not for coding behaviour of the enterable
+        /// only called when a mob exits the enterable
         /// </summary>
-        /// <param name="m"></param>
-        protected virtual void MobExitedInternal(Mob m) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void MobExitedInternal(Mob m) {
             OnMobExit.Invoke(m);
             OnMobExited(m);
+            _affecteds.Remove(m);
         }
         /// <summary>
-        /// Called when a mob exits
+        /// Behaviour of the enterable when mob exits
         /// </summary>
-        /// <param name="m"></param>
-        protected abstract void OnMobExited(Mob m);
+        /// <param name="m">mob that exits</param>
+        protected virtual void OnMobExited(Mob m) {
 
-        protected void TriggerEffectInternal(Mob m) {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void TriggerEffectInternal(Mob m) {
             OnEffectTrigger.Invoke(m);
             TriggerEffect(m);
         }
         /// <summary>
-        /// Triggers the effect on the said mob
+        /// Behaviour of the enterable when the effect should be triggered on the mob
         /// </summary>
         /// <param name="m">The target mob</param>
         protected abstract void TriggerEffect(Mob m);
-    }
-
-    /// <summary>
-    /// Enterables that triggers its effect continuously (i.e. once per interval)
-    /// </summary>
-    public abstract class EnterableContinuous : Enterable {
-        [field: SerializeField, Tooltip("Time between trigger"), Min(0.01f)] public float Interval { get; private set; }
-
-        /// <summary>
-        /// Mobs that are currently triggering effect from the Enterable
-        /// </summary>
-        LinkedList<Mob> _affecteds = new();
-
-        protected override void MobEnteredInternal(Mob m) {
-            base.MobEnteredInternal(m);
-            _affecteds.AddLast(m);
-            StartCoroutine(EffectTriggerer(m));
-        }
-
-        protected override void MobExitedInternal(Mob m) {
-            base.MobExitedInternal(m);
-            _affecteds.Remove(m);
-        }
 
         IEnumerator EffectTriggerer(Mob m) {
             do {
@@ -97,6 +96,34 @@ namespace BuildingBlocks {
                 yield return new WaitForSeconds(Interval);
             } while (_affecteds.Contains(m));
             yield break;
+        }
+    }
+
+    /// <summary>
+    /// Enterable via collision. TODO: make collision from above possible even with floating
+    /// </summary>
+    public abstract class CollisionEnterable: Enterable {
+        void OnCollisionEnter(Collision collision) {
+            if (collision.collider.TryGetComponent(out Mob m))
+                MobEnteredInternal(m);
+        }
+
+        void OnCollisionExit(Collision collision) {
+            if (collision.collider.TryGetComponent(out Mob m))
+                MobExitedInternal(m);
+        }
+    }
+
+    public abstract class TriggerEnterable: Enterable {
+        void OnTriggerEnter(Collider other) {
+            if (other.TryGetComponent(out Mob m)) {
+                MobEnteredInternal(m);
+            }
+        }
+
+        void OnTriggerExit(Collider other) {
+            if (other.TryGetComponent(out Mob m))
+                MobExitedInternal(m);
         }
     }
 }
