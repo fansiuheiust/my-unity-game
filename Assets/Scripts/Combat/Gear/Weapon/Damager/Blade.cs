@@ -62,11 +62,11 @@ namespace Combat {
 
         protected override void Hit(GameObject target) {
             switch (Stance) {
-                case BladeStance.Attack:
-                    base.Hit(target);
-                    break;
                 case BladeStance.Block:
                     OnBlockHit(target);
+                    break;
+                case BladeStance.Attack:
+                    base.Hit(target);
                     break;
             }
         }

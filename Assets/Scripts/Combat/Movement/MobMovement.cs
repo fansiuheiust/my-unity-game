@@ -29,6 +29,7 @@ namespace Combat {
         Rigidbody _rb;
 
         Transform _rotatable;
+        Transform _groundCollider;
 
         /// <summary>
         /// The direction the mob moves to
@@ -81,6 +82,12 @@ namespace Combat {
         void Awake() {
             _rotatable = transform.Find("Rotatable");
             _rb = gameObject.GetComponent<Rigidbody>();
+            _groundCollider = transform.Find("GroundCollider");
+
+            CapsuleCollider c = GetComponent<CapsuleCollider>();
+
+            _groundCollider.transform.localPosition = new(0, (-c.height-thresholdFloatDistance)/2f, 0);
+            _groundCollider.transform.localScale = new(c.radius*2f, thresholdFloatDistance, c.radius*2f);
         }
 
         // Update is called once per frame

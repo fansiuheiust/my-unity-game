@@ -38,6 +38,8 @@ namespace BuildingBlocks {
         /// <param name="m"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void MobEnteredInternal(Mob m) {
+            // failsafe as double trigger can happen with GroundCollider
+            if (_affecteds.Contains(m)) return;
             OnMobEnter.Invoke(m);
             OnMobEntered(m);
             _affecteds.AddLast(m);
@@ -62,6 +64,8 @@ namespace BuildingBlocks {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void MobExitedInternal(Mob m) {
+            // failsafe as double trigger can happen with GroundCollider
+            if (!_affecteds.Contains(m)) return;
             OnMobExit.Invoke(m);
             OnMobExited(m);
             _affecteds.Remove(m);
@@ -97,6 +101,17 @@ namespace BuildingBlocks {
             } while (_affecteds.Contains(m));
             yield break;
         }
+
+
+        protected virtual void OnTriggerEnter(Collider c) {
+            if (c.CompareTag("GroundCollider"))
+                MobEnteredInternal(Mob.FindParentingMob(c.transform));
+        }
+
+        protected virtual void OnTriggerExit(Collider c) {
+            if (c.CompareTag("GroundCollider"))
+                MobExitedInternal(Mob.FindParentingMob(c.transform));
+        }
     }
 
     /// <summary>
@@ -115,13 +130,15 @@ namespace BuildingBlocks {
     }
 
     public abstract class TriggerEnterable: Enterable {
-        void OnTriggerEnter(Collider other) {
+        protected override void OnTriggerEnter(Collider other) {
+            base.OnTriggerEnter(other);
             if (other.TryGetComponent(out Mob m)) {
                 MobEnteredInternal(m);
             }
         }
 
-        void OnTriggerExit(Collider other) {
+        protected override void OnTriggerExit(Collider other) {
+            base.OnTriggerExit(other);
             if (other.TryGetComponent(out Mob m))
                 MobExitedInternal(m);
         }

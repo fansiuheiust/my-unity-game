@@ -4,7 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Unwalkable
+  - GroundCollider
   layers:
   - Default
   - TransparentFX
