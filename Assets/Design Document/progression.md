@@ -14,9 +14,9 @@
 * Progression points can be gained by opening loot chests, dropped from mobs, or from end of floor rewards
 * Progression points can be used to buy perks, for the following:
 
-1. &nbsp;	Choose to either skip (no or less rewards), or increase the difficulty (more rewards) of floors of lower difficulty
-2. &nbsp;	Predetermine items or buffs from the starting chest/loot chests in the dungeon to a category, rarity, or even specify items
-3. &nbsp;	Gain miscellaneous stat boosts
+1.  	Choose to either skip (no or less rewards), or increase the difficulty (more rewards) of floors of lower difficulty
+2.  	Predetermine items or buffs from the starting chest/loot chests in the dungeon to a category, rarity, or even specify items
+3.  	Gain miscellaneous stat boosts
 
 * Perks of each category will be presented as a tree
 * Each player has a level, determined by number of progression points
@@ -71,4 +71,15 @@ For buffing, the progression is as follows:
 
 * Scaler: The difficulty and rewards of this floor is 1/2/3 floors higher
 * Master Scaler: The difficulty and rewards of this floor is the highest floor you have cleared (floor 7+: +4 floors)
-* Bossier Boss: The final boss has 1/2/3 more abilities, while end-of-dungeon rewards are increased by 20/40/75%
+* Bossier Boss: The final boss has 1/2/3 more abilities, while end-of-dungeon rewards are increased by 30/65/120%
+
+
+
+#### 2.2. Coin of RNG (predetermine loots)
+
+Upgrades:
+
+* <class> Fixation: Gears can only be generic or <class>-oriented
+* Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive
+* Fated <gear type>: <gear type> obtained from starter chest must be at least rare/epic/legendary/mythical
+* Selective <gear type>: <gear type> obtained from starter can be selected from all common/rare/epic/legendary/mythical <gear type>s that you have obtained once
