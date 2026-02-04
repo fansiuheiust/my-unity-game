@@ -19,7 +19,7 @@
 3.  	Gain miscellaneous stat boosts
 
 * Perks of each category will be presented as a tree
-* Each player has a level, determined by number of progression points
+* Each player has a level from 1 to 20, determined by number of progression points
 * Gears and buffs will be stronger as the player levels up
 
 
@@ -42,7 +42,17 @@ Each rarity spans 2 floors, i.e.:
 
 
 
-### 2\. Progression Points and their Perks
+### 2\. Leveling
+
+There will be 20 levels.
+
+The player levels up as he collects progression points.
+
+The level curve follows a quadratic shape from level 1 to 20.
+
+
+
+### 3\. Progression Points and their Perks
 
 Progression points are points that will be kept permanently once the player leaves the dungeon either by failing or clearing it.
 
@@ -54,7 +64,7 @@ Higher tier coins can be decomposed to lower tier ones, but lower tier coins can
 
 
 
-#### 2.1. Coin of Clearance (skip/buff lower floors)
+#### 3.1. Coin of Clearance (skip/buff lower floors)
 
 Mainly gained from completing a floor, but can appear in loot chests or mob drops.
 
@@ -65,7 +75,8 @@ For skipping, the progression is as follows:
 * Floor Skipper: The floor will consist of 10/25/50/100% less rooms, with there being only the start room and final room in the final tier
 * Scavenge: Gain 1/2/3/4 coin(s) per skipped room, can only trigger once per hour (Req: Floor Skipper 1)
 * Rebuff: Gain 1/2/4/6 buff(s) after entering the floor (Req: Floor skipper 4)
-* Autoslay: Final boss is spawned with 10/25/50/100% less HP. (Req: Floor Skipper 4)
+* Autoslay: Final boss is spawned with 10/25/50% less HP. (Req: Floor Skipper 4)
+* Ultimate Skipper: When entering the dungeon, automatically enters the next floor, and choose 3 buffs from Rebuff (Req: Autoslay 3)
 
 For buffing, the progression is as follows:
 
@@ -75,7 +86,7 @@ For buffing, the progression is as follows:
 
 
 
-#### 2.2. Coin of RNG (predetermine loots)
+#### 3.2. Coin of RNG (predetermine loots)
 
 Upgrades:
 
@@ -83,3 +94,20 @@ Upgrades:
 * Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive
 * Fated <gear type>: <gear type> obtained from starter chest must be at least rare/epic/legendary/mythical
 * Selective <gear type>: <gear type> obtained from starter can be selected from all common/rare/epic/legendary/mythical <gear type>s that you have obtained once
+
+
+
+### 4\. Gear and Buff Progression
+
+A gear's or a buff's stats is determined by its base stats, scaled by the player's level.
+
+All scaling stats will be locked from being scaled by the player's level.
+
+The stats multiplier will follow a sigmoid-like shape from 1 to a greater value.
+
+
+
+### 5\. Enemy Stats Increase
+
+The enemies' base stats and their weapons' base stats will be scaled by the floor's level.
+The scaling will be linear.
