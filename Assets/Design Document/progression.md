@@ -99,9 +99,7 @@ Upgrades:
 
 ### 4\. Gear and Buff Progression
 
-A gear's or a buff's stats is determined by its base stats, scaled by the player's level.
-
-All scaling stats will be locked from being scaled by the player's level.
+A gear's or a buff's base stats will be scaled by the player's level.
 
 The stats multiplier will follow a sigmoid-like shape from 1 to a greater value.
 
@@ -111,3 +109,4 @@ The stats multiplier will follow a sigmoid-like shape from 1 to a greater value.
 
 The enemies' base stats and their weapons' base stats will be scaled by the floor's level.
 The scaling will be linear.
+
