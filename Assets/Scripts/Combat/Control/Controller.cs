@@ -62,7 +62,7 @@ namespace Combat {
             _playerInput.actions["interact"].performed += OnInteraction;
 
             // temp stuff
-            _playerInput.actions["tempstun"].performed += _ => { Driver.Main(); };
+            _playerInput.actions["tempstun"].performed += _ => { Progression.Driver.Main(); };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
                 Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
                 b.Spawn(transform.position);
