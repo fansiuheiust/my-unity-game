@@ -7,20 +7,21 @@ using Unity.VisualScripting;
 
 namespace Progression {
     public class PerkTree {
-        readonly Perk[] perks;
+        readonly Dictionary<string, Perk> perks;
         public PerkTree(Perk[] perks) {
             if (perks.Any(x => perks.Any(y => (x != y && x.id == y.id))))
                 throw new System.Exception("2 perks cannot have the same ID.");
-            this.perks = perks;
+            foreach (Perk p in perks)
+                this.perks.Add(p.id, p);
         }
 
         public bool Unlockable(Perk toCheck) {
             if (toCheck == null) return false;
-            if (!perks.Contains(toCheck)) return false;
+            if (!perks.ContainsKey(toCheck.id)) return false;
             if (toCheck.Level == toCheck.maxLevel) return false;
             foreach (Dependency d in toCheck.dependencies) {
-                Perk dependent = perks.Where(x => x.id == d.id).FirstOrDefault();
-                if (dependent == null) return false; // it is impossible to unlock if the dependency is not a valid perk anyways
+                if (!perks.ContainsKey(d.id)) return false; // it is impossible to unlock if the dependency is not a valid perk anyways
+                Perk dependent = perks[d.id];
                 switch (d.type) {
                     case DependencyType.Existential:
                         if (dependent.Level == 0) return false;
@@ -36,17 +37,19 @@ namespace Progression {
             return true;
         }
 
-        public bool Unlockable(string id) =>
-            Unlockable(perks.Where(x => x.id == id).FirstOrDefault());
+        public bool Unlockable(string id) {
+            if (!perks.ContainsKey(id)) return false;
+            return Unlockable(perks[id]);
+        }
 
         public void LevelUp(Perk p) {
             if (p == null) return;
-            if (!perks.Contains(p)) return;
+            if (!perks.ContainsKey(p.id)) return;
             if (!Unlockable(p)) return;
             p.LevelUp();
         }
         public void LevelUp(string id) =>
-            LevelUp(perks.Where(x => x.id == id).FirstOrDefault());
+            LevelUp(perks[id]);
     }
 
     /// <summary>
@@ -70,6 +73,8 @@ namespace Progression {
     /// </summary>
     public class Perk {
         public readonly string id;
+        public readonly string name = "";
+        public readonly string rawDescription = "";
         public readonly PerkStats stats = new();
         public int Level { get; private set; } = 0;
         public readonly int maxLevel;
@@ -82,7 +87,13 @@ namespace Progression {
             this.maxLevel = maxLevel;
             this.dependencies = dependencies;
         }
-        public Perk(string id, PerkStats stats, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
+        public Perk(string id, string name, string rawDescription, PerkStats stats, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+            this.name = name;
+            this.rawDescription = rawDescription;
             this.stats = stats;
         }
 
@@ -145,10 +156,10 @@ namespace Progression {
             pt.LevelUp("d");
             Debug.Assert(pt.Unlockable("d") == false);
 
-            Perk p = new("tester", new PerkStats(
+            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new PerkStats(
                 new IntAttribute("Targets", 3, 5, 10),
                 new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
-                new PercentageAttribute("Bonus Damage", 0.1f, 0.3f, 0.6f)
+                new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)
                 ),
                 3, new Dependency("prereq", DependencyType.Existential));
         }
