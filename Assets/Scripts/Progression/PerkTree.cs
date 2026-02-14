@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using Unity.VisualScripting;
 
 namespace Progression {
     public class PerkTree {
@@ -69,15 +70,22 @@ namespace Progression {
     /// </summary>
     public class Perk {
         public readonly string id;
+        public readonly PerkStats stats = new();
         public int Level { get; private set; } = 0;
         public readonly int maxLevel;
         public readonly Dependency[] dependencies;
+        /// <summary>
+        /// should only be used for testing purpose
+        /// </summary>
         public Perk(string id, int maxLevel = 1, params Dependency[] dependencies) {
             this.id = id;
             this.maxLevel = maxLevel;
             this.dependencies = dependencies;
         }
-           
+        public Perk(string id, PerkStats stats, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+            this.stats = stats;
+        }
+
         public void LevelUp() {
             if (++Level > maxLevel)
                 Level--;
@@ -136,6 +144,13 @@ namespace Progression {
             Debug.Assert(pt.Unlockable("d") == true);
             pt.LevelUp("d");
             Debug.Assert(pt.Unlockable("d") == false);
+
+            Perk p = new("tester", new PerkStats(
+                new IntAttribute("Targets", 3, 5, 10),
+                new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
+                new PercentageAttribute("Bonus Damage", 0.1f, 0.3f, 0.6f)
+                ),
+                3, new Dependency("prereq", DependencyType.Existential));
         }
     }
 }
