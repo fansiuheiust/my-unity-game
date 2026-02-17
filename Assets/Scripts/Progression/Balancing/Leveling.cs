@@ -8,6 +8,6 @@ namespace Progression.Balance {
         [field: SerializeField, Tooltip("Determines how much progression points are needed to level up for each level.")]
         public AnimationCurve LevelCurve { get; private set; }
         [field: SerializeField, Tooltip("Multiplier of base stats of items for each level")]
-        public AnimationCurve BaseStatMultiplier { get; private set; }
+        public AnimationCurve ItemBaseStatsMultiplier { get; private set; }
     }
 }

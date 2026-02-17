@@ -62,6 +62,8 @@ Each type of coin has 5 tiers: Common, Rare, Epic, Legendary, Mythical (as in my
 
 Higher tier coins can be decomposed to lower tier ones, but lower tier coins cannot be upgraded to higher tier ones (this is to discourage grinding low floors repetitively).
 
+The higher the floor, the higher tier the dropped coins are (linear)
+
 
 
 #### 3.1. Coin of Clearance (skip/buff lower floors)
