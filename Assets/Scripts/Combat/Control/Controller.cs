@@ -10,6 +10,7 @@ using BuildingBlocks;
 using System.Linq;
 using Unity.VisualScripting;
 using Loot;
+using Progression;
 
 namespace Combat {
     /// <summary>
@@ -62,7 +63,9 @@ namespace Combat {
             _playerInput.actions["interact"].performed += OnInteraction;
 
             // temp stuff
-            _playerInput.actions["tempstun"].performed += _ => { Progression.Driver.Main(); };
+            _playerInput.actions["tempstun"].performed += _ => { 
+                Dungeon.Generator.Driver.Main(); 
+            };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
                 Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
                 b.Spawn(transform.position);
