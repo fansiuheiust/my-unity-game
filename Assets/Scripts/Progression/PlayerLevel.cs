@@ -3,7 +3,7 @@ using Progression.Balance;
 using UnityEngine;
 
 namespace Progression {
-    public class PlayerLevel : MonoBehaviour {
+    public class PlayerLevel {
         public readonly Leveling levelingData;
         
         public PlayerLevel(Leveling levelingData) {
