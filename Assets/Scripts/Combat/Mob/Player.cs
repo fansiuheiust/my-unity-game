@@ -1,3 +1,5 @@
+using Progression;
+using Progression.Balance;
 using UnityEngine;
 
 namespace Combat {
@@ -5,8 +7,12 @@ namespace Combat {
 
         Transform _camera;
 
+        public PlayerLevel Level { get; private set; }
+        [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
+        Leveling levelingData;
         protected override void Awake() {
             base.Awake();
+            Level = new(levelingData);
             _camera = transform.Find("Camera");
             Faction = Faction.Ally;
         }

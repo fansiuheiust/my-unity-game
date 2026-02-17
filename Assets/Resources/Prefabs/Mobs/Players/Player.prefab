@@ -267,7 +267,6 @@ GameObject:
   - component: {fileID: 4455657428246802049}
   - component: {fileID: 7548214735368995962}
   - component: {fileID: 6208849072461672503}
-  - component: {fileID: -3984783252320155469}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -573,19 +572,6 @@ MonoBehaviour:
   OnMovementChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &-3984783252320155469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6072634741700928726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be09951c677fa7f4c8ea04a4033b6e6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <LevelingData>k__BackingField: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}
 --- !u!1 &6251388063492618441
 GameObject:
   m_ObjectHideFlags: 0
