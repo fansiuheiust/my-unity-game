@@ -8,6 +8,7 @@ namespace Combat {
         Transform _camera;
 
         public PlayerLevel Level { get; private set; }
+        public PlayerPerk PerkManager { get; private set; } = new();
         [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
         Leveling levelingData;
         protected override void Awake() {
