@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 
 namespace Progression {
     public class PerkTree {
-        readonly Dictionary<string, Perk> perks;
+        readonly Dictionary<string, Perk> perks = new();
         public PerkTree(Perk[] perks) {
             if (perks.Any(x => perks.Any(y => (x != y && x.id == y.id))))
                 throw new System.Exception("2 perks cannot have the same ID.");
@@ -74,11 +74,22 @@ namespace Progression {
     public class Perk {
         public readonly string id;
         public readonly string name = "";
+        /// <summary>
+        /// Description that includes the {statname}
+        /// </summary>
         public readonly string rawDescription = "";
+        /// <summary>
+        /// Type of coin to update this perk
+        /// </summary>
+        public readonly CoinType type;
         public readonly PerkStats stats = new();
         public int Level { get; private set; } = 0;
         public readonly int maxLevel;
         public readonly Dependency[] dependencies;
+        /// <summary>
+        /// How much coin of rarity is needed to level up for level [l+1]
+        /// </summary>
+        readonly (Rarity, uint)[] costs;
         /// <summary>
         /// should only be used for testing purpose
         /// </summary>
@@ -91,9 +102,12 @@ namespace Progression {
         /// 
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+            if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
+            this.costs = costs;
             this.name = name;
             this.rawDescription = rawDescription;
+            this.type = type;
             this.stats = stats;
         }
 
@@ -101,6 +115,12 @@ namespace Progression {
             if (++Level > maxLevel)
                 Level--;
         }
+
+        /// <summary>
+        /// Cost to level up once
+        /// </summary>
+        public (CoinType, Rarity, uint) Cost => (type, costs[Level].Item1, costs[Level].Item2); // say I want to level up to l, i should read l-1, which is just Level
+        public (CoinType, Rarity, uint) CostAt(uint level) => (type, costs[level - 1].Item1, costs[level - 1].Item2);
     }
 
     public static class Driver {
@@ -160,7 +180,12 @@ namespace Progression {
                 new IntAttribute("Targets", 3, 5, 10),
                 new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
                 new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)
-                ),
+                ), CoinType.Floor,
+                new (Rarity, uint)[3] {
+                    (Rarity.Common, 3),
+                    (Rarity.Common, 9),
+                    (Rarity.Rare, 4)
+                }, 
                 3, new Dependency("prereq", DependencyType.Existential));
         }
     }

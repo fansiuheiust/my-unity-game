@@ -3198,6 +3198,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: perkData
+      value: 
+      objectReference: {fileID: 11400000, guid: 292fc30c17e9ad84cb7c6dd25e59ed2d, type: 2}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: levelingData
       value: 
       objectReference: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}

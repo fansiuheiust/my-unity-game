@@ -10,6 +10,7 @@ namespace Progression {
     ///  for handling coins and perk unlocking of a player
     /// </summary>
     public class PlayerPerk {
+        readonly Perks perkData;
         static Dictionary<Rarity, uint> InitialValuesPerRarity => new() {
             { Rarity.Common, 0 },
             { Rarity.Rare, 0 },
@@ -23,6 +24,10 @@ namespace Progression {
             { CoinType.MiscBuffs, InitialValuesPerRarity }
         };
         public PerkTree PerkTree { get; private set; }
+
+        public PlayerPerk(Perks perkData) {
+            this.perkData = perkData;
+        }
 
         /// <summary>
         /// Number of coins of a coin type and rarity

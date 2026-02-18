@@ -34,7 +34,7 @@ namespace BuildingBlocks {
     public class CoinObject: ItemObject<(CoinType, Rarity, uint)> {
         protected override void Pick(Mob picker) {
             if (picker is Player p) {
-                p.PerkManager.GainCoin(Value.Item1, Value.Item2, Value.Item3);
+                p.GainCoin(Value.Item1, Value.Item2, Value.Item3);
             }
         }
     }

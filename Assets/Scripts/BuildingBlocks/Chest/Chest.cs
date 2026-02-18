@@ -30,7 +30,6 @@ namespace BuildingBlocks {
             for (int i = 0; i < numLoots; i++) {
                 items[i] =  lootpool.Draw().Spawn(transform.position + 0.4f * Vector3.up);
             }
-            Debug.Log("Open!");
             StartCoroutine(CoolAnimation(items));
         }
         protected virtual IEnumerator CoolAnimation(GameObject[] lootedItems) {

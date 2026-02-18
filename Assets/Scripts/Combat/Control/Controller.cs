@@ -64,7 +64,7 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => { 
-                Dungeon.Generator.Driver.Main(); 
+                Progression.Driver.Main(); 
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
                 Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
