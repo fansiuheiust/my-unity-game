@@ -1,6 +1,8 @@
 using NUnit.Framework.Constraints;
 using Progression.Balance;
 using UnityEngine;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Progression {
     public class PlayerLevel {
@@ -9,7 +11,12 @@ namespace Progression {
         public PlayerLevel(Leveling levelingData) {
             this.levelingData = levelingData;
         }
-        public int Level { get; private set; } = 0;
+        public PlayerLevel(Leveling levelingData, uint level, uint point): this(levelingData) {
+            Level = level;
+            Point = point;
+        }
+
+        public uint Level { get; private set; } = 0;
 
         uint _point = 0;
         /// <summary>

@@ -1,22 +1,48 @@
 using Progression;
 using Progression.Balance;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 namespace Combat {
     public class Player : Mob {
 
         Transform _camera;
-
+        static string saveFilePath;
         public PlayerLevel Level { get; private set; }
-        public PlayerPerk PerkManager { get; private set; } 
+        public PlayerPerk PerkManager { get; private set; }
+        [SerializeField]
+        bool loadFromSave = false;
         [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
         Leveling levelingData;
         [SerializeField, Tooltip("This perk data will be used for the player's perks")]
         Perks perkData;
         protected override void Awake() {
             base.Awake();
-            Level = new(levelingData);
-            PerkManager = new(perkData);
+            saveFilePath = $"{Application.persistentDataPath}/PlayerData.bin";
+            if (loadFromSave && File.Exists(saveFilePath)) {
+                BinaryFormatter formatter = new();
+                FileStream stream = new(saveFilePath, FileMode.Open);
+                try {
+                    SaveData data = formatter.Deserialize(stream) as SaveData;
+
+                    Level = new(levelingData, data.level, data.point);
+                    PerkManager = new(perkData, data.coins);
+
+                } catch {
+                    Level = new(levelingData);
+                    PerkManager = new(perkData);
+                } finally {
+                    
+                    stream.Close();
+                }
+            } else {
+                Level = new(levelingData);
+                PerkManager = new(perkData);
+            }
+
             _camera = transform.Find("Camera");
             Faction = Faction.Ally;
         }
@@ -52,6 +78,35 @@ namespace Combat {
                 _ => 0
             };
             Level.AddPoint((uint)(amount * Mathf.Pow(perkData.CoinDecompositionRatio, tier) * perkData.CoinPerLevelPoint));
+            string printer = "";
+            foreach (CoinType t in new CoinType[]{ CoinType.Floor, CoinType.RNG, CoinType.MiscBuffs }) {
+                printer += $"{t}:\t";
+                foreach (Rarity r in new Rarity[] { Rarity.Common, Rarity.Rare, Rarity.Epic, Rarity.Legendary, Rarity.Mythical }) {
+                    printer += $"{PerkManager.Coin(t, r)}\t";
+                }
+                printer += "\n";
+            }
+            Debug.Log(printer + $"{Level.Level}L{Level.Point}p");
         }
+
+
+        public void SaveData() {
+            SaveData data = new() { level = Level.Level, point = Level.Point, coins = PerkManager.CoinDataForSavingOnly };
+            BinaryFormatter formatter = new();
+            FileStream fileStream = new(saveFilePath, FileMode.Create);
+            try {
+                formatter.Serialize(fileStream, data);
+            } catch { } finally {
+                fileStream.Close();
+            }
+        }
+    }
+    [System.Serializable]
+    class SaveData {
+        public uint level;
+        public uint point;
+
+        public Dictionary<CoinType, Dictionary<Rarity, uint>> coins;
+        // TODO: save unlocked perks
     }
 }

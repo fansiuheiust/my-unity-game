@@ -28,6 +28,10 @@ namespace Progression {
         public PlayerPerk(Perks perkData) {
             this.perkData = perkData;
         }
+        public PlayerPerk(Perks perkData, Dictionary<CoinType, Dictionary<Rarity, uint>> coins) : this(perkData) {
+            this.coins = coins;
+        }
+
 
         /// <summary>
         /// Number of coins of a coin type and rarity
@@ -37,5 +41,8 @@ namespace Progression {
         /// Obtains a number of quantity for a coin
         /// </summary>
         public void GainCoin(CoinType type, Rarity rarity, uint quantity = 1) => coins[type][rarity]+= quantity;
+
+
+        public Dictionary<CoinType, Dictionary<Rarity, uint>> CoinDataForSavingOnly => coins;
     }
 }

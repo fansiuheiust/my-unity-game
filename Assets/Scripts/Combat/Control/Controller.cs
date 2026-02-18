@@ -61,6 +61,7 @@ namespace Combat {
             _playerInput.actions["blockrotate"].performed += OnBlockRotation;
             _playerInput.actions["blockrotate"].Disable();
             _playerInput.actions["interact"].performed += OnInteraction;
+            _playerInput.actions["save"].performed += OnSave;
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => { 
@@ -196,6 +197,11 @@ namespace Combat {
                 .Select(h => h.GetComponent<IInteractable>());
             if (hits.Count() != 0)
                 hits.FirstOrDefault().Interact(_player);
+        }
+
+
+        void OnSave(InputAction.CallbackContext _) {
+            _player.SaveData();
         }
     }
 }
