@@ -19,7 +19,6 @@ namespace BuildingBlocks {
         }
         protected override void TriggerEffect(Mob m) {
             m.TakeDamage(Damage, null, DamageType.Melee);
-            Debug.Log("Ouch");
         }
     }
 }

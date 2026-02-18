@@ -1,6 +1,6 @@
 using UnityEngine;
 using Combat;
-
+using Progression;
 
 namespace BuildingBlocks {
     public abstract class ItemObject<T> : MonoBehaviour, IInteractable {
@@ -28,6 +28,14 @@ namespace BuildingBlocks {
     public class BuffObject: ItemObject<(BaseStats, ScalingStats)> {
         protected override void Pick(Mob picker) {
             picker.Stats.GainStats(Value.Item1, Value.Item2);
+        }
+    }
+
+    public class CoinObject: ItemObject<(CoinType, Rarity, uint)> {
+        protected override void Pick(Mob picker) {
+            if (picker is Player p) {
+                p.PerkManager.GainCoin(Value.Item1, Value.Item2, Value.Item3);
+            }
         }
     }
 }

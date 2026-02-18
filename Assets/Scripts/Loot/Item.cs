@@ -1,6 +1,8 @@
 using UnityEngine;
 using Combat;
 using BuildingBlocks;
+using Progression;
+using UnityEditor.SceneManagement;
 
 namespace Loot {
     [System.Serializable]
@@ -49,6 +51,19 @@ namespace Loot {
                 _isStatsInitialized = true;
             }
             obj.Init((Stats.@base.Clone(), Stats.scaling.Clone()));
+        }
+    }
+    [System.Serializable]
+    public class Coin: Item {
+        [field: SerializeField]
+        public CoinType Type { get; private set; }
+        [field: SerializeField]
+        public Rarity Rarity { get; private set; }
+        [field: SerializeField]
+        public uint Quantity { get; private set; }
+        protected override void Init(GameObject go) {
+            CoinObject obj = go.AddComponent<CoinObject>();
+            obj.Init((Type, Rarity, Quantity));
         }
     }
 }

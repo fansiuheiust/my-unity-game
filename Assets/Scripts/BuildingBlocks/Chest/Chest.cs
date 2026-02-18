@@ -6,13 +6,12 @@ using Combat;
 using System.Collections;
 
 namespace BuildingBlocks {
-    public class Chest : MonoBehaviour, IInteractable {
+    public class Chest<T>: MonoBehaviour, IInteractable where T: Item {
 
         public UnityEvent OnUnlock;
         public UnityEvent OnOpen;
 
-        [SerializeField] Lootpool<GearItem> weaponLootpool;
-        [SerializeField] Lootpool<Buff> buffLootpool;
+        [SerializeField] Lootpool<T> lootpool;
         [SerializeField] int numLoots = 1;
         [SerializeField] bool isLocked = false;
         
@@ -29,8 +28,9 @@ namespace BuildingBlocks {
             OnOpen.Invoke();
             GameObject[] items = new GameObject[numLoots];
             for (int i = 0; i < numLoots; i++) {
-                items[i] =  Lootpool<Item>.DrawFromTwo(weaponLootpool, buffLootpool).Spawn(transform.position + 0.4f * Vector3.up);
+                items[i] =  lootpool.Draw().Spawn(transform.position + 0.4f * Vector3.up);
             }
+            Debug.Log("Open!");
             StartCoroutine(CoolAnimation(items));
         }
         protected virtual IEnumerator CoolAnimation(GameObject[] lootedItems) {
