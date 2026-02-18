@@ -35,7 +35,6 @@ namespace Combat {
                     Level = new(levelingData);
                     PerkManager = new(perkData);
                 } finally {
-                    
                     stream.Close();
                 }
             } else {
@@ -78,15 +77,6 @@ namespace Combat {
                 _ => 0
             };
             Level.AddPoint((uint)(amount * Mathf.Pow(perkData.CoinDecompositionRatio, tier) * perkData.CoinPerLevelPoint));
-            string printer = "";
-            foreach (CoinType t in new CoinType[]{ CoinType.Floor, CoinType.RNG, CoinType.MiscBuffs }) {
-                printer += $"{t}:\t";
-                foreach (Rarity r in new Rarity[] { Rarity.Common, Rarity.Rare, Rarity.Epic, Rarity.Legendary, Rarity.Mythical }) {
-                    printer += $"{PerkManager.Coin(t, r)}\t";
-                }
-                printer += "\n";
-            }
-            Debug.Log(printer + $"{Level.Level}L{Level.Point}p");
         }
 
 
