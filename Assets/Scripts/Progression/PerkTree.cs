@@ -86,8 +86,8 @@ namespace Progression {
         /// </summary>
         public readonly CoinType type;
         public readonly PerkStats stats = new();
-        public int Level { get; private set; } = 0;
-        public readonly int maxLevel;
+        public uint Level { get; private set; } = 0;
+        public readonly uint maxLevel;
         public readonly Dependency[] dependencies;
         /// <summary>
         /// A list of IDs of abilities that this ability cannot be unlocked (level>0) with simultaneously
@@ -100,7 +100,7 @@ namespace Progression {
         /// <summary>
         /// should only be used for testing purpose
         /// </summary>
-        internal Perk(string id, int maxLevel = 1, params Dependency[] dependencies) {
+        internal Perk(string id, uint maxLevel = 1, params Dependency[] dependencies) {
             this.id = id;
             this.maxLevel = maxLevel;
             this.dependencies = dependencies;
@@ -109,7 +109,7 @@ namespace Progression {
         /// 
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, int maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
             this.costs = costs;
             this.name = name;

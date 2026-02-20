@@ -15,11 +15,55 @@ namespace Progression.Balance {
     }
 
     [System.Serializable]
-    class SerializedPerk {
+    public class SerializedPerk {
         [field: SerializeField]
         public string ID { get; private set; }
         [field: SerializeField]
         public string Name { get; private set; }
+        [field: SerializeField]
+        public string RawDescription { get; private set; }
+        [field: SerializeField]
+        public CoinType CoinType { get; private set; }
+        [field: SerializeField]
+        public Attribute[] Stats { get; private set; }
 
+        [field: SerializeField]
+        public uint MaxLevel { get; private set; }
+        [field: SerializeField]
+        public Dependency[] Dependencies { get; private set; }
+        [field: SerializeField]
+        public string[] Exclusions { get; private set; }
+        [field: SerializeField]
+        public Cost[] Costs { get; private set; }
+
+
+
+        [System.Serializable]
+        public class Attribute {
+            [field: SerializeField]
+            public PerkAttributeType Type { get; private set; }
+            [field: SerializeField]
+            public string Name { get; private set; }
+            [field: SerializeField, Tooltip("Make sure you use the data type specified in Type")]
+            public float Value { get; private set; }
+        }
+        [System.Serializable]
+        public class Dependency {
+            [field: SerializeField]
+
+            public string ID { get; private set; }
+            [field: SerializeField]
+            public DependencyType Type { get ; private set; }
+        }
+        [System.Serializable]
+        public class Cost {
+            [field: SerializeField]
+            public Rarity Rarity { get; private set; }
+            [field: SerializeField]
+            public uint Value { get; private set; }
+        }
+    }
+    public enum PerkAttributeType {
+        Integer, Decimal, Percentage
     }
 }
