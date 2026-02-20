@@ -34,6 +34,9 @@ namespace Progression {
                         break;
                 }
             }
+            foreach (string e in toCheck.exclusions) {
+                if (perks.ContainsKey(e) && perks[e].Level != 0) return false;
+            }
             return true;
         }
 
@@ -87,13 +90,17 @@ namespace Progression {
         public readonly int maxLevel;
         public readonly Dependency[] dependencies;
         /// <summary>
+        /// A list of IDs of abilities that this ability cannot be unlocked (level>0) with simultaneously
+        /// </summary>
+        public readonly string[] exclusions = new string[0];
+        /// <summary>
         /// How much coin of rarity is needed to level up for level [l+1]
         /// </summary>
         readonly (Rarity, uint)[] costs;
         /// <summary>
         /// should only be used for testing purpose
         /// </summary>
-        public Perk(string id, int maxLevel = 1, params Dependency[] dependencies) {
+        internal Perk(string id, int maxLevel = 1, params Dependency[] dependencies) {
             this.id = id;
             this.maxLevel = maxLevel;
             this.dependencies = dependencies;
@@ -102,7 +109,7 @@ namespace Progression {
         /// 
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, int maxLevel = 1, params Dependency[] dependencies): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, int maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
             this.costs = costs;
             this.name = name;
@@ -185,8 +192,8 @@ namespace Progression {
                     (Rarity.Common, 3),
                     (Rarity.Common, 9),
                     (Rarity.Rare, 4)
-                }, 
-                3, new Dependency("prereq", DependencyType.Existential));
+                }, 3, 
+                new Dependency[] { new Dependency("prereq", DependencyType.Existential) }, new string[0]);
         }
     }
 }
