@@ -94,9 +94,9 @@ namespace Progression {
         /// </summary>
         public readonly string[] exclusions = new string[0];
         /// <summary>
-        /// How much coin of rarity is needed to level up for level [l+1]
+        /// How much coin of rarity is needed to level up for level [l+1], 
         /// </summary>
-        readonly (Rarity, uint)[] costs;
+        readonly (uint tier, uint value)[] costs;
         /// <summary>
         /// should only be used for testing purpose
         /// </summary>
@@ -109,7 +109,7 @@ namespace Progression {
         /// 
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (Rarity, uint)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
             this.costs = costs;
             this.name = name;
@@ -126,8 +126,8 @@ namespace Progression {
         /// <summary>
         /// Cost to level up once
         /// </summary>
-        public (CoinType, Rarity, uint) Cost => (type, costs[Level].Item1, costs[Level].Item2); // say I want to level up to l, i should read l-1, which is just Level
-        public (CoinType, Rarity, uint) CostAt(uint level) => (type, costs[level - 1].Item1, costs[level - 1].Item2);
+        public (CoinType type, uint tier, uint value) Cost => (type, costs[Level].tier, costs[Level].value); // say I want to level up to l, i should read l-1, which is just Level
+        public (CoinType type, uint tier, uint value) CostAt(uint level) => (type, costs[level - 1].tier, costs[level - 1].value);
     }
 
     public static class Driver {
@@ -188,10 +188,10 @@ namespace Progression {
                 new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
                 new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)
                 ), CoinType.Floor,
-                new (Rarity, uint)[3] {
-                    (Rarity.Common, 3),
-                    (Rarity.Common, 9),
-                    (Rarity.Rare, 4)
+                new (uint, uint)[3] {
+                    (0, 3),
+                    (0, 9),
+                    (1, 4)
                 }, 3, 
                 new Dependency[] { new Dependency("prereq", DependencyType.Existential) }, new string[0]);
         }

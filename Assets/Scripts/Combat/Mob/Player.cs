@@ -66,16 +66,8 @@ namespace Combat {
         }
 
 
-        public void GainCoin(CoinType type, Rarity rarity, uint amount) {
-            PerkManager.GainCoin(type, rarity, amount);
-            uint tier = rarity switch {
-                Rarity.Common => 0,
-                Rarity.Rare => 1,
-                Rarity.Epic => 2,
-                Rarity.Legendary => 3,
-                Rarity.Mythical => 4,
-                _ => 0
-            };
+        public void GainCoin(CoinType type, uint tier, uint amount) {
+            PerkManager.GainCoin(type, tier, amount);
             Level.AddPoint((uint)(amount * Mathf.Pow(perkData.CoinDecompositionRatio, tier) * perkData.CoinPerLevelPoint));
         }
 
@@ -96,7 +88,7 @@ namespace Combat {
         public uint level;
         public uint point;
 
-        public Dictionary<CoinType, Dictionary<Rarity, uint>> coins;
+        public Dictionary<CoinType, uint[]> coins;
         // TODO: save unlocked perks
     }
 }

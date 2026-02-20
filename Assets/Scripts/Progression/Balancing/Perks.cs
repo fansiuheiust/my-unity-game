@@ -58,7 +58,7 @@ namespace Progression.Balance {
         [System.Serializable]
         public class Cost {
             [field: SerializeField]
-            public Rarity Rarity { get; private set; }
+            public uint Tier { get; private set; }
             [field: SerializeField]
             public uint Value { get; private set; }
         }

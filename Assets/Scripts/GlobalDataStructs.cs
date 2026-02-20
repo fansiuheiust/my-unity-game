@@ -3,6 +3,9 @@
 /// <summary>
 /// Not Mythical game engine pull
 /// </summary>
-public enum Rarity {
-    Common, Rare, Epic, Legendary, Mythical
+public static class Global {
+    public static readonly string[] Rarities = new string[] {
+        "Common", "Rare", "Epic", "Legendary", "Mythical"
+    };
+
 }

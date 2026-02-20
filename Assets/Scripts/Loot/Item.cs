@@ -58,12 +58,12 @@ namespace Loot {
         [field: SerializeField]
         public CoinType Type { get; private set; }
         [field: SerializeField]
-        public Rarity Rarity { get; private set; }
+        public uint Tier { get; private set; }
         [field: SerializeField]
         public uint Quantity { get; private set; }
         protected override void Init(GameObject go) {
             CoinObject obj = go.AddComponent<CoinObject>();
-            obj.Init((Type, Rarity, Quantity));
+            obj.Init((Type, Tier, Quantity));
         }
     }
 }

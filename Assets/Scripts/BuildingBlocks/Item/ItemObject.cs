@@ -31,7 +31,7 @@ namespace BuildingBlocks {
         }
     }
 
-    public class CoinObject: ItemObject<(CoinType, Rarity, uint)> {
+    public class CoinObject: ItemObject<(CoinType, uint, uint)> {
         protected override void Pick(Mob picker) {
             if (picker is Player p) {
                 p.GainCoin(Value.Item1, Value.Item2, Value.Item3);
