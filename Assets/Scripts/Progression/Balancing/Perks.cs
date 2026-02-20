@@ -18,68 +18,63 @@ namespace Progression.Balance {
 
     [System.Serializable]
     public class SerializedPerk {
-        [field: SerializeField]
-        public string ID { get; private set; }
-        [field: SerializeField]
-        public string Name { get; private set; }
-        [field: SerializeField]
-        public string RawDescription { get; private set; }
-        [field: SerializeField]
-        public CoinType CoinType { get; private set; }
-        [field: SerializeField]
-        public Attribute[] Stats { get; private set; }
+        [SerializeField]
+        string id;
+        [SerializeField]
+        string name;
+        [SerializeField]
+        string rawDescription;
+        [SerializeField]
+        CoinType coinType;
+        [SerializeField]
+        Attribute[] stats;
 
-        [field: SerializeField]
-        public uint MaxLevel { get; private set; }
-        [field: SerializeField]
-        public Dependency[] Dependencies { get; private set; }
-        [field: SerializeField]
-        public string[] Exclusions { get; private set; }
-        [field: SerializeField]
-        public Cost[] Costs { get; private set; }
+        [SerializeField]
+        uint maxLevel;
+        [SerializeField]
+        Dependency[] serializedDependencies;
+        [SerializeField]
+        string[] exclusions;
+        [SerializeField]
+        Cost[] serializedCosts;
 
-        public Perk ToPerk() {
-            PerkAttribute[] attributes = new PerkAttribute[Stats.Length];
-            for (int i = 0; i < Stats.Length; i++)
-                attributes[i] = Stats[i].Type switch {
-                    PerkAttributeType.Integer => new IntAttribute(Stats[i].Name, Stats[i].Values.Select(x => (int)x).ToArray()),
-                    PerkAttributeType.Percentage => new PercentageAttribute(Stats[i].Name, Stats[i].Values.Select(x => x / 100).ToArray()),
-                    _ => new DecimalAttribute(Stats[i].Name, Stats[i].Values)
+        public Perk ToPerk(CoinType coinType) {
+            PerkAttribute[] attributes = new PerkAttribute[stats.Length];
+            for (int i = 0; i < stats.Length; i++)
+                attributes[i] = stats[i].type switch {
+                    PerkAttributeType.Integer => new IntAttribute(stats[i].name, stats[i].values.Select(x => (int)x).ToArray()),
+                    PerkAttributeType.Percentage => new PercentageAttribute(stats[i].name, stats[i].values.Select(x => x / 100).ToArray()),
+                    _ => new DecimalAttribute(stats[i].name, stats[i].values)
                 };  
-            Progression.Dependency[] dependencies = new Progression.Dependency[Dependencies.Length];
+            Progression.Dependency[] dependencies = new Progression.Dependency[serializedDependencies.Length];
             for (int i = 0; i < dependencies.Length; i++)
-                dependencies[i] = new Progression.Dependency(Dependencies[i].ID, Dependencies[i].Type);
-            (uint tier, uint value)[] costs = new (uint, uint)[Costs.Length];
+                dependencies[i] = new Progression.Dependency(serializedDependencies[i].id, serializedDependencies[i].type);
+            (uint tier, uint value)[] costs = new (uint, uint)[serializedCosts.Length];
             for (int i = 0; i < costs.Length; i++) {
-                costs[i].tier = Costs[i].Tier;
-                costs[i].value = Costs[i].Value;
+                costs[i].tier = serializedCosts[i].tier;
+                costs[i].value = serializedCosts[i].value;
             }
-            return new Perk(ID, Name, RawDescription, new(attributes), CoinType, costs, MaxLevel, dependencies, Exclusions);
+            return new Perk(id, name, rawDescription, new(attributes), coinType, costs, maxLevel, dependencies, exclusions);
         }
+        public Perk ToPerk() => ToPerk(coinType);
 
         [System.Serializable]
-        public class Attribute {
-            [field: SerializeField]
-            public PerkAttributeType Type { get; private set; }
-            [field: SerializeField]
-            public string Name { get; private set; }
-            [field: SerializeField, Tooltip("Make sure you use the data type specified in Type")]
-            public float[] Values { get; private set; }
+        class Attribute {
+            public PerkAttributeType type;
+            public string name;
+            [Tooltip("Make sure you use the data type specified in Type")]
+            public float[] values;
         }
         [System.Serializable]
-        public class Dependency {
-            [field: SerializeField]
+        class Dependency {
 
-            public string ID { get; private set; }
-            [field: SerializeField]
-            public DependencyType Type { get ; private set; }
+            public string id;
+            public DependencyType type;
         }
         [System.Serializable]
-        public class Cost {
-            [field: SerializeField]
-            public uint Tier { get; private set; }
-            [field: SerializeField]
-            public uint Value { get; private set; }
+        class Cost {
+            public uint tier;
+            public uint value;
         }
     }
     public enum PerkAttributeType {
