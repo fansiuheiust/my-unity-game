@@ -5,7 +5,7 @@ using Progression.Balance;
 
 namespace Progression {
     public enum CoinType {
-        Floor, RNG, MiscBuffs
+        Floor, RNG, Class
     }
     /// <summary>
     ///  for handling coins and perk unlocking of a player
@@ -16,7 +16,7 @@ namespace Progression {
         readonly Dictionary<CoinType, uint[]> coins = new() {
             { CoinType.Floor, InitialValuesPerTier },
             { CoinType.RNG, InitialValuesPerTier },
-            { CoinType.MiscBuffs, InitialValuesPerTier }
+            { CoinType.Class, InitialValuesPerTier }
         };
         public PerkTree PerkTree { get; private set; }
 

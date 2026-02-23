@@ -56,7 +56,7 @@ The level curve follows a quadratic shape from level 1 to 20.
 
 Progression points are points that will be kept permanently once the player leaves the dungeon either by failing or clearing it.
 
-There are 3 types of progression points: namely Coin of Clearance, Coin of RNG, Coin of Buff.
+There are 3 types of progression points: namely Coin of Clearance, Coin of RNG, Coin of Class.
 
 Each type of coin has 5 tiers: Common, Rare, Epic, Legendary, Mythical (as in mythical algorithm pull).
 
@@ -96,6 +96,22 @@ Upgrades:
 * Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive
 * Fated <gear type>: <gear type> obtained from starter chest must be at least rare/epic/legendary/mythical
 * Selective <gear type>: <gear type> obtained from starter can be selected from all common/rare/epic/legendary/mythical <gear type>s that you have obtained once
+
+#### 3.3. Coin of Class (Class and Archetype (blatant name stealing from Wynncraft))
+
+Mainly gained from mob drops, but can be found in loot chests or upon completing a floor
+
+##### 3.3.1. Melee
+
+Wields a melee weapon.
+
+##### 3.3.2. Ranged
+
+Wields a ranged weapon.
+
+##### 3.3.3. Mage
+
+Manipulates mana-based items.
 
 
 

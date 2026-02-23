@@ -14,3 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <CoinDecompositionRatio>k__BackingField: 4
   <CoinPerLevelPoint>k__BackingField: 1
+  floorPerks:
+  - id: RoomSkipper
+    name: Room Skipper
+    rawDescription: The floor will consist of {Room Reduction} less rooms, with there
+      being only the start room and final room in the final tier.
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 2
+      name: Room Reduction
+      values:
+      - 10
+      - 25
+      - 50
+      - 100
+    maxLevel: 4
+    serializedDependencies: []
+    exclusions:
+    - 
+    serializedCosts:
+    - tier: 0
+      value: 5
+    - tier: 0
+      value: 6
+    - tier: 0
+      value: 8
+    - tier: 0
+      value: 10
+  rngPerks: []
+  classPerks: []

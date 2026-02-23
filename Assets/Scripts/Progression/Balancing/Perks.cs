@@ -14,6 +14,14 @@ namespace Progression.Balance {
         public uint CoinDecompositionRatio { get; private set; }
         [field: SerializeField, Tooltip("How many level points a coin is equivalent to"), Min(0f)]
         public float CoinPerLevelPoint { get; private set; }
+
+        [SerializeField]
+        SerializedPerk[] floorPerks;
+        [SerializeField]
+        SerializedPerk[] rngPerks;
+        [SerializeField]
+        SerializedPerk[] classPerks;
+        public PerkTree FloorPerkTree => new(floorPerks.Select(x=>x.UseDefaultCoinType? x.ToPerk(CoinType.Floor): x.AsPerk).ToArray());
     }
 
     [System.Serializable]
@@ -24,6 +32,8 @@ namespace Progression.Balance {
         string name;
         [SerializeField]
         string rawDescription;
+        [field: SerializeField, Tooltip("Whether the type of coin should use the coin type according to a perk tree's category")]
+        public bool UseDefaultCoinType { get; private set; } = true;
         [SerializeField]
         CoinType coinType;
         [SerializeField]
@@ -56,7 +66,7 @@ namespace Progression.Balance {
             }
             return new Perk(id, name, rawDescription, new(attributes), coinType, costs, maxLevel, dependencies, exclusions);
         }
-        public Perk ToPerk() => ToPerk(coinType);
+        public Perk AsPerk => ToPerk(coinType);
 
         [System.Serializable]
         class Attribute {
