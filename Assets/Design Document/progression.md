@@ -77,7 +77,7 @@ For skipping, the progression is as follows:
 * Floor Skipper: The floor will consist of 10/25/50/100% less rooms, with there being only the start room and final room in the final tier
 * Scavenge: Gain 1/2/3/4 coin(s) per skipped room, can only trigger once per hour (Req: Floor Skipper 1)
 * Rebuff: Gain 1/2/4/6 buff(s) after entering the floor (Req: Floor skipper 4)
-* Autoslay: Final boss is spawned with 10/25/50% less HP. (Req: Floor Skipper 4)
+* Autoslay: Final boss spawns with 10/25/50% less HP. (Req: Floor Skipper 4)
 * Ultimate Skipper: When entering the dungeon, automatically enters the next floor, and choose 3 buffs from Rebuff (Req: Autoslay 3)
 
 For buffing, the progression is as follows:

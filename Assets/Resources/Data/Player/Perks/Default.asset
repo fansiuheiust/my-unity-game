@@ -32,7 +32,7 @@ MonoBehaviour:
     maxLevel: 4
     serializedDependencies: []
     exclusions:
-    - 
+    - Scaler
     serializedCosts:
     - tier: 0
       value: 5
@@ -42,5 +42,179 @@ MonoBehaviour:
       value: 8
     - tier: 0
       value: 10
+  - id: Scavenge
+    name: Scavenge
+    rawDescription: Gain {Coin Per Skip} coin(s) per skipped room, can only trigger
+      once per hour
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 0
+      name: Coin Per Skip
+      values:
+      - 1
+      - 2
+      - 3
+      - 4
+    maxLevel: 4
+    serializedDependencies:
+    - id: RoomSkipper
+      type: 0
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 6
+    - tier: 0
+      value: 7
+    - tier: 0
+      value: 9
+    - tier: 0
+      value: 11
+  - id: Rebuff
+    name: Rebuff
+    rawDescription: Gain {Buffs} buff(s) after entering the floor
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 0
+      name: Buffs
+      values:
+      - 1
+      - 2
+      - 4
+      - 6
+    maxLevel: 4
+    serializedDependencies:
+    - id: RoomSkipper
+      type: 1
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 3
+    - tier: 0
+      value: 5
+    - tier: 0
+      value: 8
+    - tier: 0
+      value: 11
+  - id: Autoslay
+    name: Autoslay
+    rawDescription: Final boss spawns with {HP Reduction} less HP
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 2
+      name: HP Reduction
+      values:
+      - 10
+      - 25
+      - 50
+    maxLevel: 33
+    serializedDependencies:
+    - id: RoomSkipper
+      type: 1
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 7
+    - tier: 0
+      value: 10
+    - tier: 0
+      value: 14
+  - id: UltimateSkipper
+    name: Ultimte Skipper
+    rawDescription: When entering the dungeon, automatically enters the next floor,
+      and choose {Retained Buffs} buffs from Rebuff
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 0
+      name: Retained Buffs
+      values:
+      - 3
+    maxLevel: 1
+    serializedDependencies:
+    - id: Rebuff
+      type: 1
+    - id: Autoslay
+      type: 1
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 20
+  - id: Scaler
+    name: Scaler
+    rawDescription: The difficulty and rewards of this floor are 1/2/3 floors higher
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 0
+      name: Difficulty Floor Increase
+      values:
+      - 1
+      - 2
+      - 3
+    - type: 0
+      name: Reward Floor Increase
+      values:
+      - 1
+      - 2
+      - 3
+    maxLevel: 3
+    serializedDependencies: []
+    exclusions:
+    - RoomSkipper
+    serializedCosts:
+    - tier: 0
+      value: 3
+    - tier: 0
+      value: 4
+    - tier: 0
+      value: 6
+  - id: MasterScaler
+    name: Master Scaler
+    rawDescription: The difficulty and rewards of this floor is the highest floor
+      you have cleared
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats: []
+    maxLevel: 1
+    serializedDependencies:
+    - id: Scaler
+      type: 1
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 12
+  - id: BossierBoss
+    name: Bossier Boss
+    rawDescription: The final boss has {Additional Boss Abilities} more abilities,
+      while end-of-dungeon rewards are increased by {Reward Increase}
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 0
+      name: Additional Boss Abilities
+      values:
+      - 1
+      - 2
+      - 3
+    - type: 2
+      name: Reward Increase
+      values:
+      - 30
+      - 65
+      - 120
+    maxLevel: 3
+    serializedDependencies: []
+    exclusions:
+    - RoomSkipper
+    serializedCosts:
+    - tier: 0
+      value: 12
+    - tier: 0
+      value: 12
+    - tier: 0
+      value: 12
   rngPerks: []
   classPerks: []
