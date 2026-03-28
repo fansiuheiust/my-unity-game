@@ -36,8 +36,5 @@ namespace Progression {
         /// Obtains a number of quantity for a coin
         /// </summary>
         public void GainCoin(CoinType type, uint tier, uint quantity = 1) => coins[type][tier]+= quantity;
-
-
-        public Dictionary<CoinType, uint[]> CoinDataForSavingOnly => coins;
     }
 }

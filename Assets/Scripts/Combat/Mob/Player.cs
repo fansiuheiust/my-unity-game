@@ -73,7 +73,14 @@ namespace Combat {
 
 
         public void SaveData() {
-            SaveData data = new() { level = Level.Level, point = Level.Point, coins = PerkManager.CoinDataForSavingOnly };
+            Dictionary<CoinType, uint[]> coins = new();
+            foreach (CoinType t in System.Enum.GetValues(typeof(CoinType))) {
+                coins.Add(t, new uint[Global.Rarities.Length]);
+                for (uint i = 0; i < Global.Rarities.Length; i++) {
+                    coins[t][i] = PerkManager.Coin(t, i);
+                }
+            }
+            SaveData data = new() { level = Level.Level, point = Level.Point, coins = coins };
             BinaryFormatter formatter = new();
             FileStream fileStream = new(saveFilePath, FileMode.Create);
             try {
