@@ -16,8 +16,20 @@ namespace Progression.Balance {
         public float CoinMeanDungeonEnd { get; private set; }
         [field: SerializeField, Tooltip("S.D of coin getting at the end of dungeon, normal dist")]
         public float CoinSDDungeonEnd { get; private set; }
-        
+
         [field: SerializeField, Tooltip("Tier per room. Tier 0 is common, ..., 4 is mythical. decimal tier: that the decimal part is the probability of getting a coin 1 tier higher")]
         public AnimationCurve CoinTier { get; private set; }
+
+        [SerializeField, Tooltip("Number of mob rooms per floor")]
+        int[] mobRoomCounts;
+        public int MobRoomCounts(uint i) => mobRoomCounts[i];
+        [SerializeField, Tooltip("Number of puzzle rooms per floor")]
+        int[] puzzleRoomCounts;
+        public int PuzzleRoomCounts(uint i) => puzzleRoomCounts[i];
+        [SerializeField, Tooltip("Number of miniboss rooms per floor")]
+        int[] minibossRoomCounts;
+        public int MinibossRoomCounts(uint i) => minibossRoomCounts[i];
+
+
     }
 }
