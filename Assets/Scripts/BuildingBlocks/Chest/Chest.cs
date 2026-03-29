@@ -43,7 +43,7 @@ namespace BuildingBlocks {
                 float deg = 45f;
                 foreach (GameObject item in lootedItems) {
 
-                    yield return SimpleAnimation.Move(item.transform, Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right, .1f);
+                    yield return SimpleAnimation.Move(item.transform, transform.rotation * (Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right), .1f);
                     deg += 90f / (numLoots-1);
                 }
             }

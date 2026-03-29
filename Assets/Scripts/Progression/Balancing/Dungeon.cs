@@ -29,7 +29,10 @@ namespace Progression.Balance {
         [SerializeField, Tooltip("Number of miniboss rooms per floor")]
         int[] minibossRoomCounts;
         public int MinibossRoomCounts(uint i) => minibossRoomCounts[i];
-
+        [field: SerializeField, Tooltip("Length of each room")]
+        public int RoomLength { get; private set; }
+        [field: SerializeField, Tooltip("How many blocks there are between rooms")]
+        public int WallThickness { get; private set; }
 
     }
 }
