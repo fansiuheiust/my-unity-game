@@ -10,40 +10,22 @@ namespace Combat {
     public class Player : Mob {
 
         Transform _camera;
-        static string saveFilePath;
         public PlayerLevel Level { get; private set; }
         public PlayerPerk PerkManager { get; private set; }
-        [SerializeField]
-        bool loadFromSave = false;
         [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
         Leveling levelingData;
         [SerializeField, Tooltip("This perk data will be used for the player's perks")]
         Perks perkData;
         protected override void Awake() {
             base.Awake();
-            saveFilePath = $"{Application.persistentDataPath}/PlayerData.bin";
-            if (loadFromSave && File.Exists(saveFilePath)) {
-                BinaryFormatter formatter = new();
-                FileStream stream = new(saveFilePath, FileMode.Open);
-                try {
-                    SaveData data = formatter.Deserialize(stream) as SaveData;
-
-                    Level = new(levelingData, data.level, data.point);
-                    PerkManager = new(perkData, data.coins);
-
-                } catch {
-                    Level = new(levelingData);
-                    PerkManager = new(perkData);
-                } finally {
-                    stream.Close();
-                }
-            } else {
-                Level = new(levelingData);
-                PerkManager = new(perkData);
-            }
+            
 
             _camera = transform.Find("Camera");
             Faction = Faction.Ally;
+
+            while (StageController.Controller == null) ;
+            Level = StageController.Controller.PlayerLevel;
+            PerkManager = StageController.Controller.PlayerPerk;
         }
 
 
@@ -72,30 +54,6 @@ namespace Combat {
         }
 
 
-        public void SaveData() {
-            Dictionary<CoinType, uint[]> coins = new();
-            foreach (CoinType t in System.Enum.GetValues(typeof(CoinType))) {
-                coins.Add(t, new uint[Global.Rarities.Length]);
-                for (uint i = 0; i < Global.Rarities.Length; i++) {
-                    coins[t][i] = PerkManager.Coin(t, i);
-                }
-            }
-            SaveData data = new() { level = Level.Level, point = Level.Point, coins = coins };
-            BinaryFormatter formatter = new();
-            FileStream fileStream = new(saveFilePath, FileMode.Create);
-            try {
-                formatter.Serialize(fileStream, data);
-            } catch { } finally {
-                fileStream.Close();
-            }
-        }
-    }
-    [System.Serializable]
-    class SaveData {
-        public uint level;
-        public uint point;
-
-        public Dictionary<CoinType, uint[]> coins;
-        // TODO: save unlocked perks
+        
     }
 }
