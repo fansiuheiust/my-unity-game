@@ -23,6 +23,7 @@ public class StageController : MonoBehaviour
     void Awake() {
         Controller = this;
         saveFilePath = $"{Application.persistentDataPath}/PlayerData.bin";
+        LoadPlayerData();
     }
 
     void LoadPlayerData() {
