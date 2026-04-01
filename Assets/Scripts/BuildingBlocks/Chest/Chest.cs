@@ -29,6 +29,7 @@ namespace BuildingBlocks {
             GameObject[] items = new GameObject[numLoots];
             for (int i = 0; i < numLoots; i++) {
                 items[i] =  lootpool.Draw().Spawn(transform.position + 0.4f * Vector3.up);
+                items[i].GetComponent<BaseItemObject>().Lock();
             }
             StartCoroutine(CoolAnimation(items));
         }
@@ -44,6 +45,7 @@ namespace BuildingBlocks {
                 foreach (GameObject item in lootedItems) {
 
                     yield return SimpleAnimation.Move(item.transform, transform.rotation * (Quaternion.Euler(new Vector3(0, 0, deg)) * Vector3.right), .1f);
+                    item.GetComponent<BaseItemObject>().Unlock();
                     deg += 90f / (numLoots-1);
                 }
             }

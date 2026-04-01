@@ -3,10 +3,19 @@ using Combat;
 using Progression;
 
 namespace BuildingBlocks {
-    public abstract class ItemObject<T> : MonoBehaviour, IInteractable {
+    public abstract class BaseItemObject : MonoBehaviour, IInteractable {
+        // locking 
+        bool _isInteractable = true;
+        public bool IsInteractable => _isInteractable;
+        public void Lock() => _isInteractable = false;
+        public void Unlock() => _isInteractable = true;
+
+        public abstract void Interact(Mob interacter);
+
+    }
+    public abstract class ItemObject<T> : BaseItemObject {
         public T Value { get; private set; }
-        public bool IsInteractable => true;
-        public void Interact(Mob interacter) {
+        public override void Interact(Mob interacter) {
             Pick(interacter);
             Destroy(gameObject);
         }
