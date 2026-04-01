@@ -21,22 +21,28 @@ namespace Progression.Balance {
         public AnimationCurve CoinTier { get; private set; }
 
         [SerializeField, Tooltip("Number of mob rooms per floor")]
-        int[] mobRoomCounts;
-        public int MobRoomCounts(uint i) => mobRoomCounts[i];
+        uint[] mobRoomCounts;
+        public uint MobRoomCounts(uint floor) => mobRoomCounts[floor];
         [SerializeField, Tooltip("Number of puzzle rooms per floor")]
-        int[] puzzleRoomCounts;
-        public int PuzzleRoomCounts(uint i) => puzzleRoomCounts[i];
+        uint[] puzzleRoomCounts;
+        /// <param name="floor">Floor</param>
+        public uint PuzzleRoomCounts(uint floor) => puzzleRoomCounts[floor-1];
         [SerializeField, Tooltip("Number of miniboss rooms per floor")]
-        int[] minibossRoomCounts;
-        public int MinibossRoomCounts(uint i) => minibossRoomCounts[i];
+        uint[] minibossRoomCounts;
+        /// <param name="floor">Floor</param>
+        public uint MinibossRoomCounts(uint floor) => minibossRoomCounts[floor-1];
         [SerializeField, Tooltip("Number of rooms in the main path")]
-        int[] mainPathCounts;
-        public int MainPathCounts(uint i) => mainPathCounts[i];
+        uint[] mainPathCounts;
+        public uint MainPathCounts(uint floor) => mainPathCounts[floor - 1];
 
         [field: SerializeField, Tooltip("Length of each room")]
-        public int RoomLength { get; private set; }
+        public uint RoomLength { get; private set; }
         [field: SerializeField, Tooltip("How many blocks there are between rooms")]
-        public int WallThickness { get; private set; }
+        public uint WallThickness { get; private set; }
+        [SerializeField, Tooltip("Options of normal room")]
+        string[] normalRoomShapes;
+        public string NormalRoomShapes(uint floor) => normalRoomShapes[floor];
+        public uint NormalRoomShapeLength => (uint)normalRoomShapes.Length;
 
     }
 }

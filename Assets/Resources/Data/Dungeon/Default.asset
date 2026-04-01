@@ -71,3 +71,8 @@ MonoBehaviour:
   mainPathCounts: 050000000600000008000000090000000d0000000f000000160000001f000000270000002f000000
   <RoomLength>k__BackingField: 48
   <WallThickness>k__BackingField: 1
+  normalRoomShapes:
+  - 1x1
+  - 1x2
+  - 2x2
+  - Plus

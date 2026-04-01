@@ -2202,6 +2202,7 @@ MonoBehaviour:
   loadFromSave: 0
   levelingData: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}
   perkData: {fileID: 11400000, guid: 292fc30c17e9ad84cb7c6dd25e59ed2d, type: 2}
+  dungeonData: {fileID: 11400000, guid: 832a654924ef8284c9ea4f6e12602eb0, type: 2}
 --- !u!4 &1770425532
 Transform:
   m_ObjectHideFlags: 0
