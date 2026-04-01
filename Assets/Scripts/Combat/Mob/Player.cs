@@ -12,10 +12,6 @@ namespace Combat {
         Transform _camera;
         public PlayerLevel Level { get; private set; }
         public PlayerPerk PerkManager { get; private set; }
-        [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
-        Leveling levelingData;
-        [SerializeField, Tooltip("This perk data will be used for the player's perks")]
-        Perks perkData;
         protected override void Awake() {
             base.Awake();
             
@@ -23,9 +19,9 @@ namespace Combat {
             _camera = transform.Find("Camera");
             Faction = Faction.Ally;
 
-            while (StageController.Controller == null) ;
-            Level = StageController.Controller.PlayerLevel;
-            PerkManager = StageController.Controller.PlayerPerk;
+            while (StageController.instance == null) ;
+            Level = StageController.PlayerLevel;
+            PerkManager = StageController.PlayerPerk;
         }
 
 
@@ -50,7 +46,7 @@ namespace Combat {
 
         public void GainCoin(CoinType type, uint tier, uint amount) {
             PerkManager.GainCoin(type, tier, amount);
-            Level.AddPoint((uint)(amount * Mathf.Pow(perkData.CoinDecompositionRatio, tier) * perkData.CoinPerLevelPoint));
+            Level.AddPoint((uint)(amount * Mathf.Pow(StageController.PerkData.CoinDecompositionRatio, tier) * StageController.PerkData.CoinPerLevelPoint));
         }
 
 

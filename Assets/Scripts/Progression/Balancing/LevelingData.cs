@@ -2,7 +2,7 @@ using System.ComponentModel;
 using UnityEngine;
 namespace Progression.Balance {
     [CreateAssetMenu(fileName = "Leveling", menuName = "Scriptable Objects/Leveling")]
-    public class Leveling : ScriptableObject {
+    public class LevelingData : ScriptableObject {
         [field: SerializeField]
         public int MaxLevel { get; private set; } = 10;
         [field: SerializeField, Tooltip("Determines how much progression points are needed to level up for each level.")]

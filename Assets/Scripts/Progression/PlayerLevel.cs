@@ -6,14 +6,11 @@ using System.IO;
 
 namespace Progression {
     public class PlayerLevel {
-        public readonly Leveling levelingData;
-        
-        public PlayerLevel(Leveling levelingData) {
-            this.levelingData = levelingData;
+        public PlayerLevel() {
         }
-        public PlayerLevel(Leveling levelingData, uint level, uint point): this(levelingData) {
+        public PlayerLevel(uint level, uint point) {
             Level = level;
-            Point = point;
+            _point = point;
         }
 
         public uint Level { get; private set; } = 0;
@@ -27,8 +24,8 @@ namespace Progression {
             private set {
                 if (_point < 0) throw new System.Exception("Point reached negative");
                 _point = value;
-                while (Level < levelingData.MaxLevel && Point >= (uint)levelingData.LevelCurve.Evaluate(Level+1)) {
-                    _point -= (uint)levelingData.LevelCurve.Evaluate(Level+1);
+                while (Level < StageController.LevelingData.MaxLevel && Point >= (uint)StageController.LevelingData.LevelCurve.Evaluate(Level+1)) {
+                    _point -= (uint)StageController.LevelingData.LevelCurve.Evaluate(Level+1);
                     Level++;
                 }
             }

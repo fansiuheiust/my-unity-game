@@ -11,7 +11,6 @@ namespace Progression {
     ///  for handling coins and perk unlocking of a player
     /// </summary>
     public class PlayerPerk {
-        readonly Perks perkData;
         static uint[] InitialValuesPerTier => new uint[Global.Rarities.Length];
         readonly Dictionary<CoinType, uint[]> coins = new() {
             { CoinType.Floor, InitialValuesPerTier },
@@ -20,12 +19,15 @@ namespace Progression {
         };
         public PerkTree PerkTree { get; private set; }
 
-        public PlayerPerk(Perks perkData) {
-            this.perkData = perkData;
-        }
-        public PlayerPerk(Perks perkData, Dictionary<CoinType, uint[]> coins) : this(perkData) {
+        
+        public PlayerPerk(Dictionary<CoinType, uint[]> coins) {
             this.coins = coins;
         }
+
+        /// <summary>
+        /// An empty player perk
+        /// </summary>
+        public PlayerPerk() { }
 
 
         /// <summary>

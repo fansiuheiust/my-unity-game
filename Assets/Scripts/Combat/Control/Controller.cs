@@ -201,7 +201,7 @@ namespace Combat {
 
 
         void OnSave(InputAction.CallbackContext _) {
-            StageController.Controller.SaveData();
+            StageController.instance.SaveData();
         }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Progression.Balance {
 
     [CreateAssetMenu(fileName = "Dungeon", menuName = "Scriptable Objects/Dungeon")]
-    public class Dungeon : ScriptableObject {
+    public class DungeonData : ScriptableObject {
         [field: SerializeField]
         public int NumFloors { get; private set; } = 10;
         [field: SerializeField, Tooltip("Multiplier to mob's base stats for every room")]

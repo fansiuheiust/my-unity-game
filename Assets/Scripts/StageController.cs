@@ -9,21 +9,27 @@ using UnityEngine;
 public class StageController : MonoBehaviour
 {
     // Player stats
-    public Player Player { get; private set; }
-    public PlayerLevel PlayerLevel { get; private set; }
-    public PlayerPerk PlayerPerk { get; private set; }
+    public static Player Player { get; private set; }
+    public static PlayerLevel PlayerLevel { get; private set; }
+    public static PlayerPerk PlayerPerk { get; private set; }
     [SerializeField]
     bool loadFromSave = false;
-    [SerializeField, Tooltip("This leveling data will be used for the player's leveling")]
-    Leveling levelingData;
-    [SerializeField, Tooltip("This perk data will be used for the player's perks")]
-    Perks perkData;
+    [SerializeField, Tooltip("This leveling data will be used for the entire game")]
+    LevelingData levelingData;
+    [SerializeField, Tooltip("This perk data will be used for the entire game")]
+    PerkData perkData;
+    [SerializeField, Tooltip("This dungeon data will be used for the entire game")]
+    DungeonData dungeonData;
+    public static LevelingData LevelingData => instance.levelingData;
+    public static PerkData PerkData => instance.perkData;
+    public static DungeonData DungeonData => instance.dungeonData;
+
     static string saveFilePath;
-    public static StageController Controller;
+    public static StageController instance;
     void Awake() {
-        Controller = this;
         saveFilePath = $"{Application.persistentDataPath}/PlayerData.bin";
         LoadPlayerData();
+        instance = this;
     }
 
     void LoadPlayerData() {
@@ -34,19 +40,19 @@ public class StageController : MonoBehaviour
             try {
                 SaveData data = formatter.Deserialize(stream) as SaveData;
 
-                PlayerLevel = new(levelingData, data.level, data.point);
-                PlayerPerk = new(perkData, data.coins);
+                PlayerLevel = new(data.level, data.point);
+                PlayerPerk = new(data.coins);
 
             } catch {
                 Debug.Log("Player data file load failed.");
-                PlayerLevel = new(levelingData);
-                PlayerPerk = new(perkData);
+                PlayerLevel = new();
+                PlayerPerk = new();
             } finally {
                 stream.Close();
             }
         } else {
-            PlayerLevel = new(levelingData);
-            PlayerPerk = new(perkData);
+            PlayerLevel = new();
+            PlayerPerk = new();
         }
     }
 
