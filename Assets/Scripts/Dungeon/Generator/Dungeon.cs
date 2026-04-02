@@ -171,6 +171,7 @@ namespace Dungeon.Generator {
                         else {
                             spawnRequirement = NumRooms.ToDictionary(x => x.Key, x => x.Value);
                             rooms.Clear();
+                            layeredRooms.Clear();
                             Connections.Clear();
                             goto Redo;
                         }

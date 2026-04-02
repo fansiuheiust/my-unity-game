@@ -16,13 +16,19 @@ namespace Dungeon {
             {"Plus", new Vector2Int[]{Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down } }
         };
         void Awake() {
+            Build();
+            dungeon.Visualize();
+        }
+
+
+        public void Build() {
             List<(string, RoomType, Vector2Int[])> options = new();
             for (uint i = 0; i < StageController.DungeonData.NormalRoomShapeLength; i++) {
                 options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
             }
             // TODO: puzzle room
             // TODO: miniboss room
-            dungeon = new(options.ToArray(), StageController.DungeonData.MainPathCounts(floor), new() { { RoomType.Mob, StageController.DungeonData.MobRoomCounts(floor) } });
+            dungeon = new(options.ToArray(), StageController.DungeonData.MainPathCounts(floor), new() { { RoomType.Mob, StageController.DungeonData.MobRoomCounts(floor) } }, false);
         }
     }
 }

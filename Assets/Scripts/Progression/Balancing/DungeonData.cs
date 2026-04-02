@@ -22,7 +22,7 @@ namespace Progression.Balance {
 
         [SerializeField, Tooltip("Number of mob rooms per floor")]
         uint[] mobRoomCounts;
-        public uint MobRoomCounts(uint floor) => mobRoomCounts[floor];
+        public uint MobRoomCounts(uint floor) => mobRoomCounts[floor-1];
         [SerializeField, Tooltip("Number of puzzle rooms per floor")]
         uint[] puzzleRoomCounts;
         /// <param name="floor">Floor</param>
@@ -41,7 +41,7 @@ namespace Progression.Balance {
         public uint WallThickness { get; private set; }
         [SerializeField, Tooltip("Options of normal room")]
         string[] normalRoomShapes;
-        public string NormalRoomShapes(uint floor) => normalRoomShapes[floor];
+        public string NormalRoomShapes(uint i) => normalRoomShapes[i];
         public uint NormalRoomShapeLength => (uint)normalRoomShapes.Length;
 
     }
