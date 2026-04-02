@@ -2,6 +2,8 @@ using UnityEngine;
 using Dungeon.Generator;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace Dungeon {
     public class Builder2D : MonoBehaviour {
@@ -16,12 +18,12 @@ namespace Dungeon {
             {"Plus", new Vector2Int[]{Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down } }
         };
         void Awake() {
-            Build();
+            CompileDungeon();
             dungeon.Visualize();
         }
 
 
-        public void Build() {
+        public void CompileDungeon() {
             List<(string, RoomType, Vector2Int[])> options = new();
             for (uint i = 0; i < StageController.DungeonData.NormalRoomShapeLength; i++) {
                 options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
@@ -30,5 +32,16 @@ namespace Dungeon {
             // TODO: miniboss room
             dungeon = new(options.ToArray(), StageController.DungeonData.MainPathCounts(floor), new() { { RoomType.Mob, StageController.DungeonData.MobRoomCounts(floor) } }, false);
         }
+
+        public void Build() {
+            var rooms = dungeon.GeneratedRooms;
+            var connections = dungeon.GeneratedConnections;
+            foreach (var (type, blocks, center, rotation) in rooms) {
+                Vector3Int spawnPos = center * (int)(StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness * 2);
+                
+            }
+        }
+
+
     }
 }
