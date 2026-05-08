@@ -180,7 +180,7 @@ namespace Dungeon.Generator {
         /// </summary>
         public static Room Ladder {
             get {
-                Room ri = new(0, 0, "1x1x2", RoomType.Ladder);
+                Room ri = new(0, 0, "1x1", RoomType.Ladder);
                 ri.Blocks = new Block[] {
                     new(Vector3Int.zero),
                     new(Vector3Int.down),

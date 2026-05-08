@@ -20,6 +20,7 @@ namespace Dungeon {
         void Awake() {
             CompileDungeon();
             dungeon.Visualize();
+            Build();
         }
 
 
@@ -36,9 +37,28 @@ namespace Dungeon {
         public void Build() {
             var rooms = dungeon.GeneratedRooms;
             var connections = dungeon.GeneratedConnections;
-            foreach (var (type, blocks, center, rotation) in rooms) {
-                Vector3Int spawnPos = center * (int)(StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness * 2);
+            uint id = 0;
+            uint absLengthX = (uint)(dungeon.MaxCorner.x - dungeon.MinCorner.x+1), absLengthY = (uint)(dungeon.MaxCorner.y - dungeon.MinCorner.y+1);
+            uint[,] grid = new uint[absLengthX, absLengthY]; // logging ids for wall spawning
+            for (uint i = 0; i < absLengthX; i++) {
+                for (uint j = 0; j < absLengthY; j++) {
+                    grid[i, j] = (uint)rooms.Count; // count signals empty room
+                }
+            }
+            foreach (var (type, shape, blocks, center, rotation) in rooms) {
+                Vector3 spawnPos = (Vector3) center * (StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness);
                 
+                foreach (var block in blocks) {
+                    grid[block.x - dungeon.MinCorner.x, block.y - dungeon.MinCorner.y] = id; 
+                }
+
+                string path = $"Dungeon/Rooms/{type}/{shape}/";
+                var candidates = Resources.LoadAll(path);
+                GameObject spawnedRoom = (GameObject)Instantiate(candidates[Random.Range(0, candidates.Length-1)]);
+                spawnedRoom.transform.SetPositionAndRotation(spawnPos, Quaternion.Euler(0, rotation, 0));
+
+                id++;
+
             }
         }
 
