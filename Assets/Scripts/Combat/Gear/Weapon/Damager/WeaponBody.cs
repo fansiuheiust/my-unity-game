@@ -74,7 +74,7 @@ namespace Combat {
         /// <returns>Whether the damage is dealt</returns>
         protected virtual bool Hit(Mob target) {
             if (Owner.CanAttack(target)) {
-                Owner.DealDamage(target, DamageType);
+                Owner.DealDamage(target, DamageType, multiplier);
                 return true;
             }
             return false;

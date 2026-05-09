@@ -129,8 +129,9 @@ namespace Combat {
 
     [System.Serializable]
     public class Ranged: Weapon {
-        public Ranged(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
-            
+        [field: SerializeField] public readonly uint pierce = 0;
+        public Ranged(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, uint pierce, string prefabName = "Default"): base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+            this.pierce = pierce;
         }
 
         protected Ranged() { }

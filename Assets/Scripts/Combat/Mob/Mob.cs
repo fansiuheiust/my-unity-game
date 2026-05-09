@@ -192,8 +192,8 @@ namespace Combat {
         /// </summary>
         /// <param name="target">Mob to be damaged</param>
         /// <param name="damageType">Type of damage to be dealt</param>
-        public void DealDamage(Mob target, DamageType damageType) {
-            target.TakeDamage(this, damageType);
+        public void DealDamage(Mob target, DamageType damageType, float weaponMultiplier = 1f) {
+            target.TakeDamage(this, damageType, weaponMultiplier);
         }
 
         /// <summary>
