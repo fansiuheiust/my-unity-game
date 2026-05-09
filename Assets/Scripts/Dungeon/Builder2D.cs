@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System.Linq;
 using Unity.VisualScripting;
 using Progression.Balance;
+using UnityEngine.UIElements;
 
 namespace Dungeon {
     public class Builder2D : MonoBehaviour {
@@ -66,19 +67,22 @@ namespace Dungeon {
             }
             for (uint i = 0; i < absLengthX; i++) {
                 for (uint j = 0; j < absLengthZ; j++) {
-                    // vertical placement - edge of the dungeon
-                    if ((j == 0 || j == absLengthZ-1) && grid[i, j] != rooms.Count) {
-                        BuildWall((new Vector3(i, 0,j + (j==0 ? -0.5f: 0.5f))+dungeon.MinCorner)*(StageController.DungeonData.RoomLength+StageController.DungeonData.WallThickness), false, true);
-                    }
+                    float scale = StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness;
+                    Vector3Int position = new Vector3Int((int)i, 0, (int)j) + dungeon.MinCorner;
                     // horizontal placement - edge of the dungeon
+                    if ((j == 0 || j == absLengthZ-1) && grid[i, j] != rooms.Count) {
+                        BuildWall((position + (j == 0? -0.5f: 0.5f)*Vector3.forward)*scale, false, true);
+                    }
+                    // vertical placement - edge of the dungeon
                     if ((i == 0 || i == absLengthX-1) && grid[i, j] != rooms.Count) {
-                        BuildWall((new Vector3(i + (i==0 ? -0.5f: 0.5f), 0, j) + dungeon.MinCorner) * (StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness), false, false);
+                        BuildWall((position + (i==0 ? -0.5f: 0.5f)*Vector3.right) * scale, false, false);
                     }
 
-                    // vertical placement
+                    // horizontal placement
                     if (j < absLengthZ - 1 && grid[i,j] != grid[i,j+1]) {
-                        var c = connections.Where(x => x.posA == new Vector3Int((int)i, 0, (int)j) && x.posB == new Vector3Int((int)i, 0, (int)j + 1) || x.posB == new Vector3Int((int)i, 0, (int)j) && x.posA == new Vector3Int((int)i, 0, (int)j + 1));
-                        GameObject wall = BuildWall((new Vector3(i, 0, j + 0.5f) + dungeon.MinCorner) * (StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness),
+                        var c = connections.Where(x => x.posA == position && x.posB == position+Vector3Int.forward ||
+                                                        x.posB == position && x.posA == position + Vector3Int.forward);
+                        GameObject wall = BuildWall((position + 0.5f*Vector3.forward) * scale,
                             c.Count() > 0,
                             true);
                         if (c.Count() > 0) {
@@ -87,10 +91,11 @@ namespace Dungeon {
                         }
                     }
 
-                    // horizontal placement
+                    // vertical placement
                     if (i < absLengthX - 1 && grid[i, j] != grid[i + 1, j]) {
-                        var c = connections.Where(x => x.posA == new Vector3Int((int)i, 0, (int)j) && x.posB == new Vector3Int((int)i+1, 0, (int)j) || x.posB == new Vector3Int((int)i, 0, (int)j) && x.posA == new Vector3Int((int)i+1, 0, (int)j));
-                        GameObject wall = BuildWall((new Vector3(i + 0.5f, 0, j) + dungeon.MinCorner) * (StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness),
+                        var c = connections.Where(x => x.posA == position && x.posB == position+Vector3Int.right ||
+                                                        x.posB == position && x.posA == position+Vector3Int.right);
+                        GameObject wall = BuildWall((position + 0.5f*Vector3.right) * scale,
                             c.Count() > 0,
                             false);
                         if (c.Count() > 0) {
@@ -106,11 +111,11 @@ namespace Dungeon {
         /// Builds a wall at <c>position</c>
         /// </summary>
         /// <returns>The instantiated wall</returns>
-        /// <param name="isVertical">Vertical: |, Horizontal: -</param>
-        GameObject BuildWall(Vector3 position, bool isGated, bool isVertical) {
+        /// <param name="isHorizontal">Vertical: |, Horizontal: -</param>
+        GameObject BuildWall(Vector3 position, bool isGated, bool isHorizontal) {
             string path = $"Dungeon/Walls/{(isGated? "GatedWall": "UngatedWall")}";
             GameObject wall = (GameObject)Instantiate(Resources.Load(path));
-            wall.transform.SetPositionAndRotation(position, Quaternion.Euler(0, isVertical? 90: 0, 0));
+            wall.transform.SetPositionAndRotation(position, Quaternion.Euler(0, isHorizontal? 90: 0, 0));
             return wall;
         }
 
