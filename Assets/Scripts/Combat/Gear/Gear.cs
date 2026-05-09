@@ -1,3 +1,4 @@
+using Palmmedia.ReportGenerator.Core.Reporting.Builders.Rendering;
 using UnityEditor;
 using UnityEngine;
 
@@ -69,6 +70,7 @@ namespace Combat {
         [field: SerializeField] public readonly float DmgRatio;
         [field: SerializeField] public readonly WeaponSpeed WeaponSpeed;
         [field: SerializeField] public readonly float WeaponRange;
+        string prefabName = "Default";
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -77,12 +79,13 @@ namespace Combat {
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Weapon</param>
         /// <param name="dmgRatio">Damage it deals in terms of percentage of the equipper's atk</param>
         /// <param name="weaponSpeed">Self-documenting</param>
-        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange) : this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
+        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName) : this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
         }
-        public Weapon(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange): base(id, name, @base, scaling) {
+        public Weapon(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName): base(id, name, @base, scaling) {
             DmgRatio = dmgRatio;
             WeaponSpeed = weaponSpeed;
             WeaponRange = weaponRange;
+            this.prefabName = prefabName;
         }
         protected Weapon() { }
 
@@ -105,19 +108,32 @@ namespace Combat {
             _ => throw new System.ArgumentOutOfRangeException(nameof(weaponSpeed), $"{weaponSpeed} is not a valid weapon speed"),
         };
 
-        public abstract GameObject WeaponPrefab { get; }
+        public void SetPrefabName(string name) => prefabName = name;
+
+        public GameObject WeaponPrefab => (GameObject)Resources.Load($"Prefabs/Weapon/{weaponFolderPath}/{prefabName}");
+        protected abstract string weaponFolderPath { get; }
     }
 
     [System.Serializable]
     public class Melee : Weapon {
-        readonly string prefabName;
         public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
 
         }
-        public Melee(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange) {
-            this.prefabName = prefabName;
+        public Melee(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+
         }
         protected Melee() { }
-        public override GameObject WeaponPrefab => (GameObject)Resources.Load($"Prefabs/Weapon/Melee/{prefabName}");
+
+        protected override string weaponFolderPath => "Melee";
+    }
+
+    [System.Serializable]
+    public class Ranged: Weapon {
+        public Ranged(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+            
+        }
+
+        protected Ranged() { }
+        protected override string weaponFolderPath => "Ranged";
     }
 }
