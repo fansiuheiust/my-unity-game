@@ -14,6 +14,11 @@ namespace Combat {
         protected Mob Owner { get; private set; } = null;
 
         /// <summary>
+        /// For attack/block mutual exclusion
+        /// </summary>
+        public bool isActing = false;
+
+        /// <summary>
         /// This should be invoked even if derived objects override
         /// </summary>
         protected virtual void Awake() {
