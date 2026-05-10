@@ -37,10 +37,14 @@ namespace Combat {
         /// Starts blocking
         /// </summary>
         public override void BlockClicked() {
-            if (_blockUnderCd || _blade.Stance != BladeStance.None) {
+            Debug.Log(WeaponObject.isActing);
+            if (_blockUnderCd || WeaponObject.isActing) {
                 base.BlockClicked();
                 return;
             }
+
+            WeaponObject.isActing = true;
+
             _blade.Stance = BladeStance.Block;
             _model.transform.localPosition += _blockChange;
             BlockRotated(0);
@@ -65,6 +69,8 @@ namespace Combat {
             _model.transform.localEulerAngles = Vector3.zero;
 
             _blade.Stance = BladeStance.None;
+            WeaponObject.isActing = false;
+
             Owner.InterruptStun();
             StartCoroutine(BlockCooldown(max_block_dur));
             EndBlock();

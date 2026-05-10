@@ -23,22 +23,12 @@ namespace Combat {
         /// </summary>
         protected virtual void Awake() {
             Owner = Mob.FindParentingMob(transform);
-            Owner.OnAttackClick += AttackClicked;
-            Owner.OnAttackLift += AttackLifted;
-            Owner.OnBlockClick += BlockClicked;
-            Owner.OnBlockLift += BlockLifted;
-            Owner.OnBlockRotate += BlockRotated;
             Owner.OnWeaponUnequip += Delete;
             Owner.OnAttackRangeChange += ChangeAttackRange;
         }
 
 
         void Delete() {
-            Owner.OnAttackClick -= AttackClicked;
-            Owner.OnAttackLift -= AttackLifted;
-            Owner.OnBlockClick -= BlockClicked;
-            Owner.OnBlockLift -= BlockLifted;
-            Owner.OnBlockRotate -= BlockRotated;
             Owner.OnWeaponUnequip -= Delete;
             Owner.OnAttackRangeChange -= ChangeAttackRange;
             Owner = null;
