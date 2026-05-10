@@ -12,9 +12,11 @@ namespace Combat {
 
         private void Awake() {
             Collider = GetComponent<Collider>();
+            Set(StageController.Player, 0, 1);
         }
 
-        public void Set(uint pierceLeft, float multiplier) {
+        public void Set(Mob owner, uint pierceLeft, float multiplier) {
+            Owner = owner;
             this.pierceLeft = pierceLeft;
             this.multiplier = multiplier;
         }
@@ -29,19 +31,23 @@ namespace Combat {
                 Hit(m);
             } else {
                 // hitting a non-mob
+                Debug.Log("Hit the ground");
                 Die();
             }
         }
 
         protected virtual bool Hit(Mob m) {
+            Physics.IgnoreCollision(Collider, m.GetComponent<Collider>());
+            Debug.Log("Projectile hit!");
             if (Owner.CanAttack(m)) {
+                Debug.Log("Hit a mob!");
                 Owner.DealDamage(m, DamageType, multiplier);
-                pierceLeft--;
-                if (pierceLeft < 0) {
+                if (pierceLeft == 0) {
                     // ran out of pierces
+                    Debug.Log("Ran out of pierces");
                     Die();
                 } else {
-                    Physics.IgnoreCollision(Collider, m.GetComponent<Collider>());
+                    pierceLeft--;
                 }
                 return true;
             }
