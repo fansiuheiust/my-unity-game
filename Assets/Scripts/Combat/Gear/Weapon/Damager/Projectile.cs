@@ -4,6 +4,7 @@ namespace Combat {
     public class Projectile : MonoBehaviour {
         protected Mob Owner { get; private set; } = null;
         protected Collider Collider { get; private set; }
+        protected Rigidbody RB { get; private set; }
 
         protected virtual DamageType DamageType => DamageType.Projectile;
 
@@ -12,14 +13,16 @@ namespace Combat {
 
         private void Awake() {
             Collider = GetComponent<Collider>();
-            Set(StageController.Player, 0, 1);
+            RB = GetComponent<Rigidbody>();
         }
 
-        public void Set(Mob owner, uint pierceLeft, float multiplier) {
+        public void Set(Mob owner, float multiplier, Vector3 velocity) {
             Owner = owner;
             Owner.OnWeaponUnequip += Delete;
-            this.pierceLeft = pierceLeft;
+            Physics.IgnoreCollision(Owner.GetComponent<Collider>(), Collider);
+            pierceLeft = ((Ranged)Owner.EquippedWeapon).pierce;
             this.multiplier = multiplier;
+            RB.AddForce(velocity, ForceMode.VelocityChange);
         }
 
         private void OnCollisionEnter(Collision collision) {
@@ -32,20 +35,16 @@ namespace Combat {
                 Hit(m);
             } else {
                 // hitting a non-mob
-                Debug.Log("Hit the ground");
                 Delete();
             }
         }
 
         protected virtual bool Hit(Mob m) {
             Physics.IgnoreCollision(Collider, m.GetComponent<Collider>());
-            Debug.Log("Projectile hit!");
             if (Owner.CanAttack(m)) {
-                Debug.Log("Hit a mob!");
                 Owner.DealDamage(m, DamageType, multiplier);
                 if (pierceLeft == 0) {
                     // ran out of pierces
-                    Debug.Log("Ran out of pierces");
                     Delete();
                 } else {
                     pierceLeft--;

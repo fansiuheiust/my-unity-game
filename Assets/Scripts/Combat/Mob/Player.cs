@@ -9,14 +9,14 @@ using UnityEngine;
 namespace Combat {
     public class Player : Mob {
 
-        Transform _camera;
+        public Transform Camera { get; private set; }
         public PlayerLevel Level { get; private set; }
         public PlayerPerk PerkManager { get; private set; }
         protected override void Awake() {
             base.Awake();
             
 
-            _camera = transform.Find("Camera");
+            Camera = transform.Find("Camera");
             Faction = Faction.Ally;
 
             while (StageController.instance == null) ;
@@ -40,7 +40,7 @@ namespace Combat {
         }
 
         public void RotateToCamera() {
-            _rotatable.localEulerAngles = new Vector3(0, _camera.localEulerAngles.y, 0);
+            _rotatable.localEulerAngles = new Vector3(0, Camera.localEulerAngles.y, 0);
         }
 
 

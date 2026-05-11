@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.Rendering;
 using System;
 using JetBrains.Annotations;
+using Loot;
 
 namespace Combat {
     /// <summary>
@@ -183,7 +184,7 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            Equip(new Melee("Test sword", new BaseStats(atk: 4f), new ScalingStats(atk: 0.1f), WeaponSpeed.Normal, 2f));
+            Equip(GearDatabase.GetById("bow"));
         }
 
         // damage-related
@@ -448,6 +449,10 @@ namespace Combat {
         /// Handles mob "clicking" block button
         /// </summary>
         public void BlockClick() {
+            if (EquippedWeapon == null) {
+                OnBlockControlReset?.Invoke();
+                return;
+            }
             if (IsStunned) {
                 _clickedBlockDuringStun = true;
                 OnBlockControlReset?.Invoke();

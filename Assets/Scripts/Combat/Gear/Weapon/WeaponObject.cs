@@ -28,84 +28,28 @@ namespace Combat {
             Model = transform.Find("Model");
             Owner.OnWeaponUnequip += Delete;
             Owner.OnAttackRangeChange += ChangeAttackRange;
-        }
+            if (!TryGetComponent(out Block _)) {
+                Owner.OnBlockClick += ResetBlock;
+            }
 
+        }
 
         void Delete() {
             Owner.OnWeaponUnequip -= Delete;
             Owner.OnAttackRangeChange -= ChangeAttackRange;
+            if (!TryGetComponent(out Block _)) {
+                Owner.OnBlockClick -= ResetBlock;
+            }
             Owner = null;
             Destroy(gameObject);
         }
-
-        protected abstract void ChangeAttackRange(float newRange);
-
         /// <summary>
-        /// <para>This just cancels the attack action as it is not implemented</para>
-        /// <para>(to stop seeing this even if you implemented for a derived class, document the overridden method</para>
+        /// Resets block control of owner for when there is no block script
         /// </summary>
-        /// <param name="attackTime">1/(final attack speed)</param>
-        public virtual void AttackClicked(float attackTime) {
-            ResetAttackControl();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="attackTime">1/(final attack speed)</param>
-        public virtual void AttackLifted(float attackTime) {
-
-        }
-
-        /// <summary>
-        /// <para>This just cancels the block action as it is not implemented</para>
-        /// <para>(to stop seeing this even if you implemented for a derived class, document the overridden method</para>
-        /// </summary>
-        public virtual void BlockClicked() {
-            ResetBlockControl();
-        }
-        public virtual void BlockLifted() {
-
-        }
-        public virtual void BlockRotated(float angle) {
-
-        }
-
-        /// <summary>
-        /// Must be called before an attack to invoke event
-        /// </summary>
-        protected void StartAttack() {
-            Owner.OnAttackStart.Invoke(Owner);
-        }
-        /// <summary>
-        /// Must be called after an attack to invoke event
-        /// </summary>
-        protected void EndAttack() {
-            Owner.OnAttackEnd.Invoke(Owner);
-        }
-        /// <summary>
-        /// Raises OnAttackControlReset
-        /// </summary>
-        protected void ResetAttackControl() {
-            Owner.ResetAttackControl();
-        }
-        /// <summary>
-        /// Must be called after a block to invoke event
-        /// </summary>
-        protected void StartBlock() {
-            Owner.OnBlockStart.Invoke(Owner);
-        }
-        /// <summary>
-        /// Must be called after a block to invoke event 
-        /// </summary>
-        protected void EndBlock() {
-            Owner.OnBlockEnd.Invoke(Owner);
-        }
-        /// <summary>
-        /// Reaises OnBlockControlReset
-        /// </summary>
-        protected void ResetBlockControl() {
+        void ResetBlock() {
             Owner.ResetBlockControl();
         }
+
+        protected abstract void ChangeAttackRange(float newRange);
     }
 }
