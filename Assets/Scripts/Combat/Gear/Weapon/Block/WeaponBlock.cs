@@ -7,10 +7,6 @@ namespace Combat {
     /// </summary>
     public class WeaponBlock : Block {
         /// <summary>
-        /// The rigid body ceneted around the weapon
-        /// </summary>
-        Transform _model;
-        /// <summary>
         /// blade of the melee weapon
         /// </summary>
         Blade _blade;
@@ -26,7 +22,6 @@ namespace Combat {
         protected override void Awake() {
             base.Awake();
             _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
-            _model = transform.Find("Model");
         }
 
         /// <summary>
@@ -37,7 +32,6 @@ namespace Combat {
         /// Starts blocking
         /// </summary>
         public override void BlockClicked() {
-            Debug.Log(WeaponObject.isActing);
             if (_blockUnderCd || WeaponObject.isActing) {
                 base.BlockClicked();
                 return;
@@ -46,7 +40,7 @@ namespace Combat {
             WeaponObject.isActing = true;
 
             _blade.Stance = BladeStance.Block;
-            _model.transform.localPosition += _blockChange;
+            WeaponObject.Model.transform.localPosition += _blockChange;
             BlockRotated(0);
 
             StartBlock();
@@ -63,10 +57,10 @@ namespace Combat {
         /// </summary>
         public override void BlockLifted() {
             if (_blade.Stance != BladeStance.Block) return;
-            _model.transform.localPosition -= _blockChange;
+            WeaponObject.Model.transform.localPosition -= _blockChange;
 
             transform.localEulerAngles = Vector3.zero;
-            _model.transform.localEulerAngles = Vector3.zero;
+            WeaponObject.Model.transform.localEulerAngles = Vector3.zero;
 
             _blade.Stance = BladeStance.None;
             WeaponObject.isActing = false;
@@ -97,7 +91,7 @@ namespace Combat {
             // [-150, -90): -90
             // [-90, -30):    90
             transform.localEulerAngles = new Vector3(0, -90 <= angle && angle < 90 ? -30 : 30, angle);
-            _model.transform.localEulerAngles = new Vector3(-30 <= angle && angle < 90 || -150 <= angle && angle < -90 ? -90 : 90, 0, 0);
+            WeaponObject.Model.transform.localEulerAngles = new Vector3(-30 <= angle && angle < 90 || -150 <= angle && angle < -90 ? -90 : 90, 0, 0);
         }
     }
 }

@@ -183,7 +183,7 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            Equip(new Melee("Test sword", new BaseStats(atk: 4), new ScalingStats(atk: 0.1f), 0.9f, WeaponSpeed.Normal, 2f));
+            Equip(new Melee("Test sword", new BaseStats(atk: 4f), new ScalingStats(atk: 0.1f), WeaponSpeed.Normal, 2f));
         }
 
         // damage-related
@@ -351,7 +351,7 @@ namespace Combat {
                 UnequipWeapon();
             Instantiate(weapon.WeaponPrefab, _rotatable);
             EquippedWeapon = weapon;
-            Stats.GainStats(weapon.Base, weapon.Scaling, weapon.DmgRatio);
+            Stats.GainStats(weapon.Base, weapon.Scaling);
         }
         /// <summary>
         /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
@@ -368,8 +368,6 @@ namespace Combat {
         /// Unequips the mob's Weapon, and updates the mob's stats.
         /// </summary>
         public void UnequipWeapon() {
-
-            Stats.UnequipWeapon();
 
             OnWeaponUnequip();
 

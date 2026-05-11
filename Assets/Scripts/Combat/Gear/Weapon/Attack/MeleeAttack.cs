@@ -3,10 +3,7 @@ using System.Collections;
 
 namespace Combat {
     public class MeleeAttack : Attack {
-        /// <summary>
-        /// The rigid body ceneted around the weapon
-        /// </summary>
-        Transform _model;
+        
         /// <summary>
         /// blade of the melee weapon
         /// </summary>
@@ -20,7 +17,6 @@ namespace Combat {
         protected override void Awake() {
             base.Awake();
             _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
-            _model = transform.Find("Model");
             _blade.OnAttackInterrupted += AttackInterruptedByBlock;
         }
 
@@ -73,7 +69,7 @@ namespace Combat {
 
             _blade.Stance = BladeStance.Attack;
 
-            _model.localEulerAngles = new Vector3(0, 90, 90);
+            WeaponObject.Model.localEulerAngles = new Vector3(0, 90, 90);
             //  swing
             float vel = 0;
             float swingTime = time / 3;
@@ -110,7 +106,7 @@ namespace Combat {
         /// </summary>
         void CancelAttack() {
             transform.localEulerAngles = Vector3.zero;
-            _model.localEulerAngles = Vector3.zero;
+            WeaponObject.Model.localEulerAngles = Vector3.zero;
             _blade.Stance = BladeStance.None;
 
             Owner.OnStunStart.RemoveListener(AttackInterruptedByStun);
@@ -151,11 +147,11 @@ namespace Combat {
         /// <param name="time">self-documenting</param>
         IEnumerator CourteousSwingAnimation(float time) {
             _blade.Stance = BladeStance.Idle;
-            _model.localEulerAngles = new(0, 0, 90);
+            WeaponObject.Model.localEulerAngles = new(0, 0, 90);
             float courtesyDur = time / 3f;
             float angularVelocity = 90f / courtesyDur;
             for (float raiseTime = 0; raiseTime < courtesyDur; raiseTime += Time.deltaTime) {
-                _model.localEulerAngles += new Vector3(0, angularVelocity * Time.deltaTime, 0);
+                WeaponObject.Model.localEulerAngles += new Vector3(0, angularVelocity * Time.deltaTime, 0);
                 yield return new WaitForSeconds(Time.deltaTime);
             }
 

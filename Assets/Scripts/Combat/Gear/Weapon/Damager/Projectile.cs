@@ -17,6 +17,7 @@ namespace Combat {
 
         public void Set(Mob owner, uint pierceLeft, float multiplier) {
             Owner = owner;
+            Owner.OnWeaponUnequip += Delete;
             this.pierceLeft = pierceLeft;
             this.multiplier = multiplier;
         }
@@ -32,7 +33,7 @@ namespace Combat {
             } else {
                 // hitting a non-mob
                 Debug.Log("Hit the ground");
-                Die();
+                Delete();
             }
         }
 
@@ -45,7 +46,7 @@ namespace Combat {
                 if (pierceLeft == 0) {
                     // ran out of pierces
                     Debug.Log("Ran out of pierces");
-                    Die();
+                    Delete();
                 } else {
                     pierceLeft--;
                 }
@@ -54,7 +55,8 @@ namespace Combat {
             return false;
         }
 
-        protected virtual void Die() {
+        protected virtual void Delete() {
+            Owner.OnWeaponUnequip -= Delete;
             Destroy(gameObject);
         }
     }

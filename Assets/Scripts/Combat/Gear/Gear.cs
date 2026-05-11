@@ -67,7 +67,6 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public abstract class Weapon : Gear {
-        [field: SerializeField] public readonly float DmgRatio;
         [field: SerializeField] public readonly WeaponSpeed WeaponSpeed;
         [field: SerializeField] public readonly float WeaponRange;
         string prefabName = "Default";
@@ -79,10 +78,9 @@ namespace Combat {
         /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Weapon</param>
         /// <param name="dmgRatio">Damage it deals in terms of percentage of the equipper's atk</param>
         /// <param name="weaponSpeed">Self-documenting</param>
-        public Weapon(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName) : this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+        public Weapon(string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, string prefabName) : this("", name, @base, scaling, weaponSpeed, weaponRange, prefabName) {
         }
-        public Weapon(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName): base(id, name, @base, scaling) {
-            DmgRatio = dmgRatio;
+        public Weapon(string id, string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, string prefabName): base(id, name, @base, scaling) {
             WeaponSpeed = weaponSpeed;
             WeaponRange = weaponRange;
             this.prefabName = prefabName;
@@ -116,10 +114,10 @@ namespace Combat {
 
     [System.Serializable]
     public class Melee : Weapon {
-        public Melee(string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): this("", name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+        public Melee(string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default"): this("", name, @base, scaling, weaponSpeed, weaponRange, prefabName) {
 
         }
-        public Melee(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+        public Melee(string id, string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, string prefabName = "Default") : base(id, name, @base, scaling, weaponSpeed, weaponRange, prefabName) {
 
         }
         protected Melee() { }
@@ -130,7 +128,7 @@ namespace Combat {
     [System.Serializable]
     public class Ranged: Weapon {
         [field: SerializeField] public readonly uint pierce = 0;
-        public Ranged(string id, string name, BaseStats @base, ScalingStats scaling, float dmgRatio, WeaponSpeed weaponSpeed, float weaponRange, uint pierce, string prefabName = "Default"): base(id, name, @base, scaling, dmgRatio, weaponSpeed, weaponRange, prefabName) {
+        public Ranged(string id, string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, uint pierce, string prefabName = "Default"): base(id, name, @base, scaling, weaponSpeed, weaponRange, prefabName) {
             this.pierce = pierce;
         }
 

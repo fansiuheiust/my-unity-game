@@ -29,10 +29,6 @@ namespace Combat {
         public float Hp { get; private set; }
         public float Mana { get; private set; }
         /// <summary>
-        /// Can be seen as weapon damage (Weapon's damage: x% of atk)
-        /// </summary>
-        public float DmgRatio { get; private set; }
-        /// <summary>
         /// Invoked once per stats change
         /// <para>arg0: the new walk speed</para>
         /// </summary>
@@ -75,7 +71,7 @@ namespace Combat {
         }
 
         // damage calculation
-        public float UnclassifiedDmg => DmgRatio * Final.Atk * (1 + Final.Crit);
+        public float UnclassifiedDmg => Final.Atk * (1 + Final.Crit);
         public float MeleeDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.PhysicalDmg]);
         public float ProjectileDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.ProjectileDmg]);
         public float MagicDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.MagicDmg]);
@@ -107,22 +103,6 @@ namespace Combat {
             if (scaling is not null)
                 Scaling += scaling;
             ComputeFinalStats();
-        }
-        /// <summary>
-        /// Overload of <c>GainStats(BaseStats, ScalingStats)</c> for equipping weapon
-        /// </summary>
-        /// <param name="base">base stats of the weapon</param>
-        /// <param name="scaling">scaling stats of the weapon</param>
-        /// <param name="weaponDmg">damage (% of atk) of the weapon</param>
-        public void GainStats(BaseStats @base, ScalingStats scaling, float weaponDmg) {
-            DmgRatio = weaponDmg;
-            GainStats(@base, scaling);
-        }
-        /// <summary>
-        /// Unequips a mob's weapon
-        /// </summary>
-        public void UnequipWeapon() {
-            DmgRatio = 0.05f;
         }
         /// <summary>
         /// Unequips the player with a gear, including weapon
