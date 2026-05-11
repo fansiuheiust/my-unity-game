@@ -43,6 +43,7 @@ namespace Combat {
             Physics.IgnoreCollision(Collider, m.GetComponent<Collider>());
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
+                Owner.DealKnockback(m, Owner.transform.position, 0.5f);
                 if (pierceLeft == 0) {
                     // ran out of pierces
                     Delete();
