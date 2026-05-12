@@ -663,6 +663,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47379d364daa21f42b5b5b965ca47cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lever
+--- !u!1 &273181231 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5594697965900854007, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
+  m_PrefabInstance: {fileID: 6554398997416591488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &273181240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273181231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4930edfc115743458c4c46dae492aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  findInterval: 1
+  searchRadius: 10
+  moveRadius: 2.5
+  stateChangeInterval: 2
 --- !u!1 &331137546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2924,10 +2945,14 @@ PrefabInstance:
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 62762652673332940, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5594697965900854007, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 273181240}
   m_SourcePrefab: {fileID: 100100000, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
 --- !u!1001 &6891448526032148874
 PrefabInstance:
