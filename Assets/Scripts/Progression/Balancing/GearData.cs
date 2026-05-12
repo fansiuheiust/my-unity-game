@@ -2,8 +2,10 @@ using UnityEngine;
 using Combat;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Progression.Balance {
+    [CreateAssetMenu(fileName = "Perks", menuName = "Scriptable Objects/Gears")]
     public class GearData: ScriptableObject {
         [SerializeField] SerializedArmor[] armors;
         [SerializeField] SerializedMelee[] melees;
@@ -20,7 +22,7 @@ namespace Progression.Balance {
         public Dictionary<string, Gear> AllGears {
             get {
                 var armors = this.armors.Select(x => x.Gear);
-                var weapons = this.armors.Select(x => x.Gear);
+                var weapons = melees.Select(x => x.Gear).Concat(rangeds.Select(x => x.Gear));
                 return armors.Concat(weapons).ToDictionary(x => x.Id);
             }
         }
