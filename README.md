@@ -1,9 +1,6 @@
-# This file is now a design document
-
-
 
 # Dungeon Game: Renamed
-A dungeon crawler inspired by Hypixel Skyblock Dungeon, remade from my version used for a school's Open Day.
+A solo dungeon crawler project inspired by Hypixel Skyblock Dungeon, rebuilt from scratch from my version used for a school's Open Day.
 
 ## List of features
 
@@ -32,8 +29,9 @@ A dungeon crawler inspired by Hypixel Skyblock Dungeon, remade from my version u
 ### Building blocks
 - [x] Basic interactables
 - [x] Blocks that can disappear
+
 ### Progression
 - [x] Perk tree
 - [x] Coins to unlock perks
 - [x] Permanently save coins
-- [ ] Effect of Perk tree
+- [ ] Effects of Perk tree
