@@ -171,12 +171,13 @@ namespace Combat {
         /// </summary>
         /// <param name="orign">Where the knockback should be from</param>
         /// <param name="duration">How long the knockback should last, with mob's stats considered</param>
-        public void TakeKnockback(Vector3 origin, float duration) {
+        /// <param name="magnitudeMultiplier">How much faster the speed should move when knocked back</param>
+        public void TakeKnockback(Vector3 origin, float duration, float magnitudeMultiplier = 1f) {
             // apply force to rigid body
             _rb.linearVelocity = Vector3.zero;
             // v = u + at, u = 0 => v = at
             Vector3 dir = transform.position - origin;
-            Vector2 xzV = acceleration * duration * (new Vector2(dir.x, dir.z)).normalized;
+            Vector2 xzV = magnitudeMultiplier * acceleration * duration * (new Vector2(dir.x, dir.z)).normalized;
             Vector3 newV = new Vector3(xzV.x, 0, xzV.y);
             _rb.AddForce(newV, ForceMode.VelocityChange);
             targetVelocity = newV;

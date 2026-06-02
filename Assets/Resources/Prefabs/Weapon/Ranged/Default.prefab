@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 2800569824042857649}
   - component: {fileID: 3165753472634522285}
   - component: {fileID: 5610855680353785820}
+  - component: {fileID: -8527928786917614703}
   m_Layer: 0
   m_Name: Default
   m_TagString: Untagged
@@ -274,6 +275,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdd81247a96dcf49ae1474af2b3a305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileName: Default
+--- !u!114 &-8527928786917614703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8084390923374441487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19f6d6256a35ca48b2e66c5e912fb95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dodgeDur: 0.3
+  dodgeCD: 1.7
 --- !u!1 &8966188682622126016
 GameObject:
   m_ObjectHideFlags: 0

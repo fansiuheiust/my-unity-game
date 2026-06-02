@@ -18,7 +18,7 @@ namespace Combat {
     public enum Faction {
         Ally, Neutral, Enemy, Indeterminate
     }
-    public class Mob : MonoBehaviour {
+    public partial class Mob : MonoBehaviour {
         [SerializeField]
         public MobStats Stats { get; private set; }
 
@@ -85,6 +85,11 @@ namespace Combat {
                 }
             }
         }
+
+        bool _isImmune = false;
+
+        
+        
 
         // Events
         /// <summary>
@@ -184,7 +189,10 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            Equip(GearDatabase.GetById("bow"));
+            if (this is Player)
+                Equip(GearDatabase.GetById("bow"));
+            else
+                Equip(GearDatabase.GetById("long_sword"));
         }
 
         // damage-related
@@ -204,6 +212,7 @@ namespace Combat {
         /// <param name="damageType">Type of damage the mob dealt</param>
         /// <param name="weaponMultiplier">The damage multiplier based on the weapon's action</param>
         void TakeDamage(Mob source, DamageType damageType, float weaponMultiplier = 1f) {
+            if (_isImmune) return;
             Stats.TakeDamage(source.Stats, damageType, weaponMultiplier);
             DeathCheck(source);
         }
@@ -216,6 +225,7 @@ namespace Combat {
         /// <param name="source">Source of damage (null if not damaged by a mob)</param>
         /// <param name="damageType">type of damage</param>
         public void TakeDamage(float amount, Mob source, DamageType damageType) {
+            if (_isImmune) return;
             Stats.TakeDamage(amount, damageType);
             DeathCheck(source);
         }
@@ -233,11 +243,12 @@ namespace Combat {
             return e;
         }
 
+
         /// <summary>
         /// Only for removing effect FROM Effect.cs
         /// </summary>
         /// <param name="e">Effect to be removed, must be equal reference</param>
-        public void RemoveExpiredEffect(Effect e) {
+        void RemoveExpiredEffect(Effect e) {
             Effects.Remove(e);
             Destroy(e);
         }
@@ -291,10 +302,27 @@ namespace Combat {
         /// <param name="origin">the position of the knockback</param>
         /// <param name="duration">How long should this mob not act (because of knockback) for</param>
         void TakeKnockback(Mob source, Vector3 origin, float duration) {
+            if (_isImmune) return;
             duration *= (1 + source.Stats.Final.Knockback) * (1 - Stats.Final.KnockbackResistance);
             if (duration < 1e-3f) return;
             TakeStun(duration, source);
             _movement.TakeKnockback(origin, duration);
+        }
+
+        /// <summary>
+        /// Takes knockback, does nothing if the duration is 0 (i.e. player has no knockback or mob has full knockback immunity)
+        /// </summary>
+        /// <param name="origin">the position of the knockback</param>
+        /// <param name="duration">How long should this mob not act (because of knockback) for</param>
+        /// <param name="isInternal">Whether the knockback is internal: internal knockback's duration is not modified by knockback resistance</param>
+        /// <param name="magnitudeMultiplier">How much faster the speed should move when knocked back</param>
+        public void TakeKnockback(Vector3 origin, float duration, bool isInternal = false, float magnitudeMultiplier = 1f) {
+            if (_isImmune && !isInternal) return;
+            if (!isInternal)
+                duration *= (1 - Stats.Final.KnockbackResistance);
+            if (duration < 1e-3f) return;
+            TakeStun(duration, null, isInternal);
+            _movement.TakeKnockback(origin, duration, magnitudeMultiplier);
         }
 
 
