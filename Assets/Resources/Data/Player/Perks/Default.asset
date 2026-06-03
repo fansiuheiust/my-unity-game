@@ -109,7 +109,7 @@ MonoBehaviour:
       - 10
       - 25
       - 50
-    maxLevel: 33
+    maxLevel: 3
     serializedDependencies:
     - id: RoomSkipper
       type: 1

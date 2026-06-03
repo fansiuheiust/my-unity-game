@@ -19,7 +19,7 @@ namespace Combat {
             Camera = transform.Find("Camera");
             Faction = Faction.Ally;
 
-            while (StageController.instance == null) ;
+            // while (StageController.instance == null) ;
             Level = StageController.PlayerLevel;
             PerkManager = StageController.PlayerPerk;
         }

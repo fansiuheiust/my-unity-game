@@ -64,12 +64,11 @@ namespace Combat {
             _playerInput.actions["save"].performed += OnSave;
 
             // temp stuff
-            _playerInput.actions["tempstun"].performed += _ => { 
-                Dungeon.Generator.Driver.Main(); 
+            _playerInput.actions["tempstun"].performed += _ => {
+                Progression.UnitTest.TestPerkTreeSave();
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
-                Buff b = new(new BaseStats(), new ScalingStats(walkSpeed: 0.125f));
-                b.Spawn(transform.position);
+                Progression.UnitTest.TestPerkTreeLoad();
             };
         }
 

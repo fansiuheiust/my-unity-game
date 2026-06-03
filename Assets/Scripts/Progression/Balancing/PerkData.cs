@@ -22,6 +22,8 @@ namespace Progression.Balance {
         [SerializeField]
         SerializedPerk[] classPerks;
         public PerkTree FloorPerkTree => new(floorPerks.Select(x=>x.UseDefaultCoinType? x.ToPerk(CoinType.Floor): x.AsPerk).ToArray());
+        public PerkTree RNGPerkTree => new(rngPerks.Select(x=>x.UseDefaultCoinType? x.ToPerk(CoinType.RNG): x.AsPerk).ToArray());
+        public PerkTree ClassPerkTree => new(classPerks.Select(x => x.UseDefaultCoinType ? x.ToPerk(CoinType.Class) : x.AsPerk).ToArray());
     }
 
     [System.Serializable]

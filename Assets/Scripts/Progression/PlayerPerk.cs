@@ -17,17 +17,29 @@ namespace Progression {
             { CoinType.RNG, InitialValuesPerTier },
             { CoinType.Class, InitialValuesPerTier }
         };
-        public PerkTree PerkTree { get; private set; }
+        public PerkTree FloorPerks { get; private set; }
+        public PerkTree RNGPerks { get; private set; }
+        public PerkTree ClassPerks { get; private set; }
 
         
-        public PlayerPerk(Dictionary<CoinType, uint[]> coins) {
+        public PlayerPerk(Dictionary<CoinType, uint[]> coins, Dictionary<string, uint> floorPerks, Dictionary<string, uint> rngPerks, Dictionary<string, uint> classPerks): this() {
             this.coins = coins;
+            foreach (var (id, level) in floorPerks)
+                FloorPerks[id].LevelUp(level); // force level up a perk
+            foreach (var (id, level) in rngPerks)
+                RNGPerks[id].LevelUp(level);
+            foreach (var (id, level) in classPerks)
+                ClassPerks[id].LevelUp(level);
         }
 
         /// <summary>
         /// An empty player perk
         /// </summary>
-        public PlayerPerk() { }
+        public PlayerPerk() {
+            FloorPerks = StageController.PerkData.FloorPerkTree;
+            RNGPerks = StageController.PerkData.RNGPerkTree;
+            ClassPerks = StageController.PerkData.ClassPerkTree;
+        }
 
 
         /// <summary>

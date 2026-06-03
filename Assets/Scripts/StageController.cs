@@ -28,8 +28,8 @@ public class StageController : MonoBehaviour
     public static StageController instance;
     void Awake() {
         saveFilePath = $"{Application.persistentDataPath}/PlayerData.bin";
-        LoadPlayerData();
         instance = this;
+        LoadPlayerData();
     }
 
     void LoadPlayerData() {
@@ -41,7 +41,7 @@ public class StageController : MonoBehaviour
                 SaveData data = formatter.Deserialize(stream) as SaveData;
 
                 PlayerLevel = new(data.level, data.point);
-                PlayerPerk = new(data.coins);
+                PlayerPerk = new(data.coins, data.floorPerks, data.rngPerks, data.classPerks);
 
             } catch {
                 Debug.Log("Player data file load failed.");
@@ -64,7 +64,7 @@ public class StageController : MonoBehaviour
                 coins[t][i] = PlayerPerk.Coin(t, i);
             }
         }
-        SaveData data = new() { level = PlayerLevel.Level, point = PlayerLevel.Point, coins = coins };
+        SaveData data = new() { level = PlayerLevel.Level, point = PlayerLevel.Point, coins = coins, floorPerks = PlayerPerk.FloorPerks.PerkData, rngPerks = PlayerPerk.RNGPerks.PerkData, classPerks = PlayerPerk.ClassPerks.PerkData };
         BinaryFormatter formatter = new();
         FileStream fileStream = new(saveFilePath, FileMode.Create);
         try {
@@ -83,4 +83,6 @@ class SaveData {
 
     public Dictionary<CoinType, uint[]> coins;
     // TODO: save unlocked perks
+    public Dictionary<string, uint> floorPerks, rngPerks, classPerks;
+
 }

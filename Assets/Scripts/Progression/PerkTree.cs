@@ -64,6 +64,10 @@ namespace Progression {
         /// </summary>
         /// <param name="id">ID of the perk</param>
         public bool Unlocked(string id) => perks[id].Level != 0;
+        /// <summary>
+        /// level of each unlocked perk
+        /// </summary>
+        public Dictionary<string, uint> PerkData => perks.Where(x=>x.Value.Level != 0).ToDictionary(x=>x.Key, x=>x.Value.Level);
     }
 
     /// <summary>
@@ -127,11 +131,16 @@ namespace Progression {
             this.rawDescription = rawDescription;
             this.type = type;
             this.stats = stats;
+            this.exclusions = exclusions.ToArray();
         }
 
-        public void LevelUp() {
-            if (++Level > maxLevel)
-                Level--;
+        /// <summary>
+        /// Levels up a perk, bypassing dependency/exclusion check
+        /// </summary>
+        /// <param name="level">number of level to add</param>
+        internal void LevelUp(uint level = 1) {
+            if ((Level+=level) > maxLevel)
+                Level = maxLevel;
         }
 
         /// <summary>
@@ -145,72 +154,5 @@ namespace Progression {
         /// </summary>
         /// <param name="name">name of the attribute</param>
         public float this[string name] => stats[name].Value(Level);
-    }
-
-    public static class Driver {
-        public static void Main() {
-            Perk[] perks = new Perk[] {
-                new("a", 10),
-                new("b", 4, new Dependency("a", DependencyType.Existential)),
-                new("c", 3, new Dependency("a", DependencyType.Max)),
-                new("d", 8, new Dependency("b", DependencyType.Levelled), new Dependency("c", DependencyType.Levelled)),
-            };
-            PerkTree pt = new(perks);
-            Debug.Assert(pt.Unlockable("b") == false && pt.Unlockable("c") == false);
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            Debug.Assert(pt.Unlockable("b") == true && pt.Unlockable("c") == false);
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            pt.LevelUp("a");
-            Debug.Assert(pt.Unlockable("b") == true && pt.Unlockable("c") == true);
-
-            Debug.Assert(pt.Unlockable("d") == false);
-            pt.LevelUp("b");
-            Debug.Assert(pt.Unlockable("d") == false);
-            pt.LevelUp("c");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == false);
-            pt.LevelUp("c");
-            pt.LevelUp("c");
-            Debug.Assert(pt.Unlockable("d") == false);
-            pt.LevelUp("b");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == false);
-            pt.LevelUp("b");
-            pt.LevelUp("b");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == true);
-            pt.LevelUp("d");
-            Debug.Assert(pt.Unlockable("d") == false);
-
-            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new PerkStats(
-                new IntAttribute("Targets", 3, 5, 10),
-                new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
-                new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)
-                ), CoinType.Floor,
-                new (uint, uint)[3] {
-                    (0, 3),
-                    (0, 9),
-                    (1, 4)
-                }, 3, 
-                new Dependency[] { new Dependency("prereq", DependencyType.Existential) }, new string[0]);
-        }
     }
 }
