@@ -30,11 +30,11 @@ namespace Progression {
         /// <summary>
         /// value of the attribute to display at a level
         /// </summary>
-        public abstract string ValueInString(int level);
+        public abstract string ValueInString(uint level);
         /// <summary>
         /// value of the attribute at a level
         /// </summary>
-        public abstract float Value(int level);
+        public abstract float Value(uint level);
     }
 
     public class IntAttribute: PerkAttribute {
@@ -42,8 +42,8 @@ namespace Progression {
         public IntAttribute(string name, params int[] values): base(name) {
             this.values = values;
         }
-        public override string ValueInString(int level) => values[level-1].ToString();
-        public override float Value(int level) => values[level-1];
+        public override string ValueInString(uint level) => values[level-1].ToString();
+        public override float Value(uint level) => values[level-1];
     }
 
     public class DecimalAttribute : PerkAttribute {
@@ -51,14 +51,14 @@ namespace Progression {
         public DecimalAttribute(string name, params float[] values) : base(name) {
             this.values = values;
         }
-        public override string ValueInString(int level) => $"{values[level - 1]:F2}";
-        public override float Value(int level) => values[level - 1];
+        public override string ValueInString(uint level) => $"{values[level - 1]:F2}";
+        public override float Value(uint level) => values[level - 1];
     }
 
     public class PercentageAttribute: DecimalAttribute {
         public PercentageAttribute(string name, params float[] values) : base(name, values) {
         }
-        public override string ValueInString(int level) => $"{(values[level - 1] * 100):F2}%";
+        public override string ValueInString(uint level) => $"{(values[level - 1] * 100):F2}%";
     }
 
 }
