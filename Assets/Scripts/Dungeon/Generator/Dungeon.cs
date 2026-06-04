@@ -29,7 +29,7 @@ namespace Dungeon.Generator {
         /// </summary>
         public uint MainPathLength { get; private set; }
         /// <summary>
-        /// Number of rooms to include for each room type, do not include start, ladder and final room
+        /// Number of rooms to include for each room type, do not include start, ladder and final room, note that rooms in the main path COUNTS towards this
         /// </summary>
         public Dictionary<RoomType, uint> NumRooms = new();
         /// <summary>
@@ -71,8 +71,8 @@ namespace Dungeon.Generator {
                 throw new System.Exception("If the main paths's length is smaller than the number of rooms, expectedSidePathLength must be non-zero");
             Options = options;
             MainPathLength = mainPathLength;
-            NumRooms = numRooms;
-            spawnRequirement = numRooms.ToDictionary(x=>x.Key, x=>x.Value);
+            NumRooms = numRooms.Where(x=>x.Value != 0).ToDictionary(x=>x.Key, x=>x.Value);
+            spawnRequirement = numRooms.Where(x=>x.Value!=0).ToDictionary(x=>x.Key, x=>x.Value);
             ExpectedSidePathLength = expectedSidePathLength;
             Generate(isLayered);
         }
@@ -125,6 +125,13 @@ namespace Dungeon.Generator {
                 // insert callback hell meme but for loop
 
                 // loop through rom where rom = a potential room
+                var spawnList = RoomSpawnList;
+                if (spawnList.Count() == 0) {
+                    if (i == MainPathLength)
+                        spawnList = new (string, RoomType, Vector2Int[])[1];
+                    else
+                        throw new System.Exception("Ran out of rooms to spawn the main path");
+                }
                 foreach ((string, RoomType, Vector2Int[]) rom in RoomSpawnList) {
                     Room toSpawn = (i == MainPathLength)? 
                         Room.Final: 
@@ -285,7 +292,7 @@ namespace Dungeon.Generator {
             return false;
         }
 
-        IEnumerable<(string, RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => spawnRequirement[x.Item2] > 0)
+        IEnumerable<(string, RoomType, Vector2Int[])> RoomSpawnList => Options.Where(x => spawnRequirement.ContainsKey(x.Item2) && spawnRequirement[x.Item2] > 0)
             .OrderBy(x=>Random.value);
 
         Room[] RoomCandidates => RoomSpawnList.Select(x => new Room(x)).ToArray();

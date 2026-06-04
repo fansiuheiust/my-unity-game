@@ -28,8 +28,7 @@ MonoBehaviour:
       - 10
       - 25
       - 50
-      - 100
-    maxLevel: 4
+    maxLevel: 3
     serializedDependencies: []
     exclusions:
     - Scaler
@@ -40,8 +39,6 @@ MonoBehaviour:
       value: 6
     - tier: 0
       value: 8
-    - tier: 0
-      value: 10
   - id: Scavenge
     name: Scavenge
     rawDescription: Gain {Coin Per Skip} coin(s) per skipped room, can only trigger

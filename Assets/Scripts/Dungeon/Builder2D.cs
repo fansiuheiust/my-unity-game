@@ -6,6 +6,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using Progression.Balance;
 using UnityEngine.UIElements;
+using Progression;
 
 namespace Dungeon {
     public class Builder2D : MonoBehaviour {
@@ -19,7 +20,7 @@ namespace Dungeon {
             {"2x2", new Vector2Int[]{new(1,0), new(0, 1), new(1, 1) } },
             {"Plus", new Vector2Int[]{Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down } }
         };
-        void Awake() {
+        void Start() {
             CompileDungeon();
             dungeon.Visualize();
             Build();
@@ -31,9 +32,18 @@ namespace Dungeon {
             for (uint i = 0; i < StageController.DungeonData.NormalRoomShapeLength; i++) {
                 options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
             }
+
+            PerkTree floorPerks = StageController.PlayerPerk.FloorPerks;
             // TODO: puzzle room
             // TODO: miniboss room
-            dungeon = new(options.ToArray(), StageController.DungeonData.MainPathCounts(floor), new() { { RoomType.Mob, StageController.DungeonData.MobRoomCounts(floor) } }, false);
+            uint numMainPath = StageController.DungeonData.MainPathCounts(floor), numMobRooms = StageController.DungeonData.MobRoomCounts(floor);
+            if (floorPerks.Unlocked($"RoomSkipper{floor}")) {
+                numMainPath = (uint)(numMainPath * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
+                numMobRooms = (uint)Mathf.CeilToInt(numMobRooms * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
+            }
+            dungeon = new(options.ToArray(), numMainPath, new() { 
+                { RoomType.Mob, numMobRooms },
+            }, false);
         }
 
         public void Build() {
