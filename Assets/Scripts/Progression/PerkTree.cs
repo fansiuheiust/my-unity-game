@@ -15,6 +15,8 @@ namespace Progression {
                 this.perks.Add(p.id, p);
         }
 
+        public bool Contains(string id) => perks.ContainsKey(id);
+
         public bool Unlockable(Perk toCheck) {
             if (toCheck == null) return false;
             if (!perks.ContainsKey(toCheck.id)) return false;
