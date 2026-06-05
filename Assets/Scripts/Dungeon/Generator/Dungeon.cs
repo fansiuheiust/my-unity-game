@@ -54,7 +54,7 @@ namespace Dungeon.Generator {
         internal List<Connection> Connections { get; private set; } = new();
 
         /// <summary>
-        /// Generates the dungeon
+        /// Generates the dungeon, note that <c>options</c> will be owned.
         /// </summary>
         /// <param name="options"><seealso cref="Options"/></param>
         /// <param name="mainPathLength"><seealso cref="MainPathLength"/></param>
