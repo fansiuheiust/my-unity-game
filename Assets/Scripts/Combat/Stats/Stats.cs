@@ -108,7 +108,7 @@ namespace Combat {
         /// <param name="dmgReduction">Self-documenting</param>
         /// <param name="knockback">Self-documenting</param>
         /// <param name="knockbackResistance">Self-documenting</param>
-        /// <param name="otherScaling">Hashed scaling stats. If not given an argument, an new one will be allocated. Otherwise, OtherScaling will OWN otherScaling</param>
+        /// <param name="otherScaling">Hashed scaling stats. If not given an argument, an new one will be allocated.</param>
         public ScalingStats(float atk = 0, float def = 0, float maxHp = 0, float maxMana = 0, float manaRegen = 0, float walkSpeed = 0, float atkSpeed = 0, float critRate = 0, float critDmg = 0, float dmgReduction = 0, float knockback = 0, float knockbackResistance = 0, Dictionary<HashedScalingStats, float> otherScaling = null) : base(atk, def, maxHp, maxMana, manaRegen) {
             WalkSpeed = walkSpeed;
             AtkSpeed = atkSpeed;
@@ -118,7 +118,7 @@ namespace Combat {
             Knockback = knockback;
             KnockbackResistance = knockbackResistance;
             if (otherScaling is not null)
-                OtherScaling = otherScaling;
+                OtherScaling = otherScaling.ToDictionary(x=>x.Key, x=>x.Value);
         }
 
         public new ScalingStats Clone() {

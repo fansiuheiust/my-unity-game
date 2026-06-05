@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 namespace Progression {
     public class PerkTree {
@@ -12,7 +13,7 @@ namespace Progression {
             if (perks.Any(x => perks.Any(y => (x != y && x.id == y.id))))
                 throw new System.Exception("2 perks cannot have the same ID.");
             foreach (Perk p in perks)
-                this.perks.Add(p.id, p);
+                this.perks.Add(p.id, p.Clone());
         }
 
         public bool Contains(string id) => perks.ContainsKey(id);
@@ -120,21 +121,23 @@ namespace Progression {
         internal Perk(string id, uint maxLevel = 1, params Dependency[] dependencies) {
             this.id = id;
             this.maxLevel = maxLevel;
-            this.dependencies = dependencies;
+            this.dependencies = dependencies.ToArray();
         }
         /// <summary>
-        /// Note that <c>costs</c> <c>stats</c>, <c>dependencies</c>, <c>exclusions</c> will be reference-copied
+        /// Note that <c>stats</c> which does not have any mutators will be reference-copied
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
         public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
-            this.costs = costs;
+            this.costs = costs.ToArray();
             this.name = name;
             this.rawDescription = rawDescription;
             this.type = type;
             this.stats = stats;
-            this.exclusions = exclusions;
+            this.exclusions = exclusions.ToArray();
         }
+
+        public Perk Clone() => new(id, name, rawDescription, stats, type, costs.ToArray(), maxLevel, dependencies.ToArray(), exclusions.ToArray());
 
         /// <summary>
         /// Levels up a perk, bypassing dependency/exclusion check
