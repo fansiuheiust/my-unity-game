@@ -14,18 +14,20 @@ namespace Combat {
         public readonly float cooldown;
         public readonly AbilityTriggerKey triggerKey;
         readonly Stats stats;
+        public readonly System.Type ability;
         
         /// <summary>
         /// Note that <c>stats</c> will be reference-copied
         /// </summary>
         /// <param name="stats">will be reference-copied</param>
-        public Ability(string id, string name, string rawDescription, float cooldown, AbilityTriggerKey triggerKey, Stats stats) {
+        public Ability(string id, string name, string rawDescription, float cooldown, AbilityTriggerKey triggerKey, Stats stats, System.Type ability) {
             this.id = id;
             this.name = name;
             this.rawDescription = rawDescription;
             this.cooldown = cooldown;
             this.triggerKey = triggerKey;
             this.stats = stats;
+            this.ability = ability;
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace Combat {
         public readonly Perk perk;
         /// <summary>
         /// </summary>
-        public PerkAbility(string id, string name, string rawDescription, float cooldown, AbilityTriggerKey triggerKey, Perk perk): base(id, name, rawDescription, cooldown, triggerKey, null) {
+        public PerkAbility(string id, string name, string rawDescription, float cooldown, AbilityTriggerKey triggerKey, Perk perk, System.Type type): base(id, name, rawDescription, cooldown, triggerKey, null, type) {
             this.perk = perk;
         }
         public override float this[string name] => perk[name];
