@@ -63,7 +63,7 @@ namespace Progression.Balance {
         Cost[] serializedCosts;
 
         public Perk ToPerk(CoinType coinType) {
-            PerkAttribute[] attributes = new PerkAttribute[stats.Length];
+            Progression.Attribute[] attributes = new Progression.Attribute[stats.Length];
             for (int i = 0; i < stats.Length; i++)
                 attributes[i] = stats[i].type switch {
                     PerkAttributeType.Integer => new IntAttribute(stats[i].name, stats[i].values.Select(x => (int)x).ToArray()),

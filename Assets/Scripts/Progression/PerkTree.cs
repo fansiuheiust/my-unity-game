@@ -103,7 +103,7 @@ namespace Progression {
         /// Type of coin to update this perk
         /// </summary>
         public readonly CoinType type;
-        readonly PerkStats stats = new();
+        readonly Stats stats = new();
         public uint Level { get; private set; } = 0;
         public readonly uint maxLevel;
         public readonly Dependency[] dependencies;
@@ -127,7 +127,7 @@ namespace Progression {
         /// Note that <c>stats</c> which does not have any mutators will be reference-copied
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, Stats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
             this.costs = costs.ToArray();
             this.name = name;

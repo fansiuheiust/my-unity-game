@@ -133,7 +133,7 @@ namespace Progression {
             pt.LevelUp("d");
             Debug.Assert(pt.Unlockable("d") == false);
 
-            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new PerkStats(
+            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new Stats(
                 new IntAttribute("Targets", 3, 5, 10),
                 new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
                 new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)

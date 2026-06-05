@@ -42,5 +42,3 @@ PlayerPerk
 
 abstract method called in Init which should be used to set data according to the perk tree
 
-
-
