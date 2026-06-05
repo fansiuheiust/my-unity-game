@@ -85,7 +85,7 @@ namespace Dungeon.Generator {
             if (blocks.Length != 1 && blocks.Any(x => blocks.All(y => x.HammingDistance(y) != 1)))
                 throw new System.Exception("Blocks must be next to each other in x XOR z");
             ShapeName = shapeName;
-            Blocks = blocks;
+            Blocks = blocks.ToArray();
             Center = center;
             Type = type;
         }
@@ -180,10 +180,11 @@ namespace Dungeon.Generator {
         /// </summary>
         public static Room Ladder {
             get {
-                Room ri = new(0, 0, "1x1", RoomType.Ladder);
-                ri.Blocks = new Block[] {
-                    new(Vector3Int.zero),
-                    new(Vector3Int.down),
+                Room ri = new(0, 0, "1x1", RoomType.Ladder) {
+                    Blocks = new Block[] {
+                        new(Vector3Int.zero),
+                        new(Vector3Int.down),
+                    }
                 };
                 return ri;
             }

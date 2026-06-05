@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Combat {
     /// <summary>
-    /// A class for serializing the stats of a mob
+    /// A class for serializing the stats of a mob, <c>InsertHashedStats MUST be called before usage</c>
     /// </summary>
     [System.Serializable]
     public class SerializedMobStats {

@@ -27,15 +27,15 @@ namespace Combat {
         /// Self-documenting
         /// </summary>
         /// <param name="name">Name of the gear</param>
-        /// <param name="base">Base stats of the gear, null if no base stats, it will be owned by Gear</param>
-        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Gear</param>
+        /// <param name="base">Base stats of the gear, null if no base stats</param>
+        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats</param>
         public Gear(string name, BaseStats @base, ScalingStats scaling): this("", name, @base, scaling) {
         }
         public Gear(string id, string name, BaseStats @base, ScalingStats scaling) {
             Id = id;
             Name = name;
-            Base = @base;
-            Scaling = scaling;
+            Base = @base is null? new BaseStats(): @base.Clone();
+            Scaling = scaling is null? new ScalingStats(): scaling.Clone();
         }
 
         protected Gear() { }
@@ -51,8 +51,8 @@ namespace Combat {
         /// Self-documenting
         /// </summary>
         /// <param name="name">Name of the armor</param>
-        /// <param name="base">Base stats of the gear, null if no base stats, it will be owned by Armor</param>
-        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Armor</param>
+        /// <param name="base">Base stats of the gear, null if no base stats</param>
+        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats</param>
         /// <param name="type">Type of the armor (helmet, chestplate, leggings, boots)</param>
         public Armor(string id, string name, BaseStats @base, ScalingStats scaling, ArmorType type) : base(name, @base, scaling) {
             Type = type;
@@ -74,8 +74,8 @@ namespace Combat {
         /// Self-documenting
         /// </summary>
         /// <param name="name">Name of the weapon</param>
-        /// <param name="base">Base stats of the gear, null if no base stats, it will be owned by Weapon</param>
-        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats, it will be owned by Weapon</param>
+        /// <param name="base">Base stats of the gear, null if no base stats</param>
+        /// <param name="scaling">Scaling stats of the gear, null if no scaling stats</param>
         /// <param name="dmgRatio">Damage it deals in terms of percentage of the equipper's atk</param>
         /// <param name="weaponSpeed">Self-documenting</param>
         public Weapon(string name, BaseStats @base, ScalingStats scaling, WeaponSpeed weaponSpeed, float weaponRange, string prefabName) : this("", name, @base, scaling, weaponSpeed, weaponRange, prefabName) {

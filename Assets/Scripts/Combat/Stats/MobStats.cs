@@ -42,11 +42,11 @@ namespace Combat {
         /// <summary>
         /// Self-documenting
         /// </summary>
-        /// <param name="base">Initial base stats of the mob, it will be owned by MobStats</param>
-        /// <param name="scaling">Initial scaling stats of hte mob, it will be owned by MobStats</param>
+        /// <param name="base">Initial base stats of the mob</param>
+        /// <param name="scaling">Initial scaling stats of hte mob</param>
         public MobStats(BaseStats @base, ScalingStats scaling) {
-            Base = @base;
-            Scaling = scaling;
+            Base = @base.Clone();
+            Scaling = scaling.Clone();
             ComputeFinalStats();
             Hp = Final.MaxHp;
             Mana = Final.MaxMana;

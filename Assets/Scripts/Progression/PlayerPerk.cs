@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Progression.Balance;
+using System.Linq;
 
 
 namespace Progression {
@@ -21,9 +22,8 @@ namespace Progression {
         public PerkTree RNGPerks { get; private set; }
         public PerkTree ClassPerks { get; private set; }
 
-        
         public PlayerPerk(Dictionary<CoinType, uint[]> coins, Dictionary<string, uint> floorPerks, Dictionary<string, uint> rngPerks, Dictionary<string, uint> classPerks): this() {
-            this.coins = coins;
+            this.coins = coins.ToDictionary(x=>x.Key, x=>x.Value);
             foreach (var (id, level) in floorPerks)
                 FloorPerks[id].LevelUp(level); // force level up a perk
             foreach (var (id, level) in rngPerks)

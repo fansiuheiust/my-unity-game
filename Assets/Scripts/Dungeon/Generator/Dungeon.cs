@@ -69,7 +69,7 @@ namespace Dungeon.Generator {
                 throw new System.Exception("The main path's length cannot be larger than the number of rooms");
             if (mainPathLength != numRooms.Sum(x=>x.Value) && expectedSidePathLength == 0)
                 throw new System.Exception("If the main paths's length is smaller than the number of rooms, expectedSidePathLength must be non-zero");
-            Options = options;
+            Options = options.Select(x=>(x.Item1, x.Item2, x.Item3.ToArray())).ToArray();
             MainPathLength = mainPathLength;
             NumRooms = numRooms.Where(x=>x.Value != 0).ToDictionary(x=>x.Key, x=>x.Value);
             spawnRequirement = numRooms.Where(x=>x.Value!=0).ToDictionary(x=>x.Key, x=>x.Value);
