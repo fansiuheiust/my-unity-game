@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Text.Json;
 using System.Collections.Generic;
 using NUnit.Framework.Internal;
+using System.Linq;
 
 namespace Progression {
 
@@ -40,7 +41,7 @@ namespace Progression {
     public class IntAttribute: PerkAttribute {
         protected readonly int[] values;
         public IntAttribute(string name, params int[] values): base(name) {
-            this.values = values;
+            this.values = values.ToArray();
         }
         public override string ValueInString(uint level) => values[level-1].ToString();
         public override float Value(uint level) => values[level-1];
@@ -49,7 +50,7 @@ namespace Progression {
     public class DecimalAttribute : PerkAttribute {
         protected readonly float[] values;
         public DecimalAttribute(string name, params float[] values) : base(name) {
-            this.values = values;
+            this.values = values.ToArray();
         }
         public override string ValueInString(uint level) => $"{values[level - 1]:F2}";
         public override float Value(uint level) => values[level - 1];

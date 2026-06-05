@@ -123,7 +123,7 @@ namespace Progression {
             this.dependencies = dependencies;
         }
         /// <summary>
-        /// 
+        /// Note that <c>costs</c> <c>stats</c>, <c>dependencies</c>, <c>exclusions</c> will be reference-copied
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
         public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
@@ -133,7 +133,7 @@ namespace Progression {
             this.rawDescription = rawDescription;
             this.type = type;
             this.stats = stats;
-            this.exclusions = exclusions.ToArray();
+            this.exclusions = exclusions;
         }
 
         /// <summary>
