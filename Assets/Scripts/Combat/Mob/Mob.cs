@@ -7,6 +7,8 @@ using UnityEngine.Rendering;
 using System;
 using JetBrains.Annotations;
 using Loot;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEditorInternal;
 
 namespace Combat {
     /// <summary>
@@ -20,7 +22,10 @@ namespace Combat {
     }
     public partial class Mob : MonoBehaviour {
         [SerializeField]
-        public MobStats Stats { get; private set; }
+        MobStats stats;
+
+        public FinalStats Stats => stats.Final;
+
 
         [SerializeField]
         SerializedMobStats initialStats;
@@ -170,14 +175,14 @@ namespace Combat {
 
 
         protected virtual void Awake() {
-            Stats = new(initialStats);
+            stats = new(initialStats);
             _movement = GetComponent<MobMovement>();
             _rotatable = transform.Find("Rotatable");
-            Stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
-            Stats.OnAttackRangeChange += ChangeAttackRange;
+            stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
+            stats.OnAttackRangeChange += ChangeAttackRange;
 
             // raises all stats change events
-            Stats.ComputeFinalStats();
+            stats.ComputeFinalStats();
 
             // GC
             initialStats = null;
@@ -209,7 +214,7 @@ namespace Combat {
         /// <param name="weaponMultiplier">The damage multiplier based on the weapon's action</param>
         void TakeDamage(Mob source, DamageType damageType, float weaponMultiplier = 1f) {
             if (_isImmune) return;
-            Stats.TakeDamage(source.Stats, damageType, weaponMultiplier);
+            stats.TakeDamage(source.stats, damageType, weaponMultiplier);
             DeathCheck(source);
         }
 
@@ -222,7 +227,7 @@ namespace Combat {
         /// <param name="damageType">type of damage</param>
         public void TakeDamage(float amount, Mob source, DamageType damageType) {
             if (_isImmune) return;
-            Stats.TakeDamage(amount, damageType);
+            stats.TakeDamage(amount, damageType);
             DeathCheck(source);
         }
 
@@ -299,7 +304,7 @@ namespace Combat {
         /// <param name="duration">How long should this mob not act (because of knockback) for</param>
         void TakeKnockback(Mob source, Vector3 origin, float duration) {
             if (_isImmune) return;
-            duration *= (1 + source.Stats.Final.Knockback) * (1 - Stats.Final.KnockbackResistance);
+            duration *= (1 + source.stats.Final.Knockback) * (1 - stats.Final.KnockbackResistance);
             if (duration < 1e-3f) return;
             TakeStun(duration, source);
             _movement.TakeKnockback(origin, duration);
@@ -315,7 +320,7 @@ namespace Combat {
         public void TakeKnockback(Vector3 origin, float duration, bool isInternal = false, float magnitudeMultiplier = 1f) {
             if (_isImmune && !isInternal) return;
             if (!isInternal)
-                duration *= (1 - Stats.Final.KnockbackResistance);
+                duration *= (1 - stats.Final.KnockbackResistance);
             if (duration < 1e-3f) return;
             TakeStun(duration, null, isInternal);
             _movement.TakeKnockback(origin, duration, magnitudeMultiplier);
@@ -329,7 +334,7 @@ namespace Combat {
         /// <returns>
         /// Default dead checker: Hp < 1
         /// </returns>
-        protected virtual bool IsDead => Stats.IsDead;
+        protected virtual bool IsDead => stats.IsDead;
 
         /// <summary>
         /// Called to check and act if the mob is dead
@@ -349,7 +354,23 @@ namespace Combat {
 
 
 
-        // Gears
+        // Gears and stats
+        /// <summary>
+        /// gains stats for the mob
+        /// </summary>
+        /// <param name="base">Base stats to gain, <c>null</c> if no change</param>
+        /// <param name="scaling">Scaling stats to gain, <c>null</c> if no change</param>
+        public void GainStats(BaseStats @base, ScalingStats scaling) {
+            stats.GainStats(@base, scaling);
+        }
+        /// <summary>
+        /// Loses stats for the mob
+        /// </summary>
+        /// <param name="base">Base stats to lose, <c>null</c> if no change</param>
+        /// <param name="scaling">Scaling stats to lose, <c>null</c> if no change</param>
+        public void LoseStats(BaseStats @base, ScalingStats scaling) {
+            stats.LoseStats(@base, scaling);
+        }
         /// <summary>
         /// Equips the mob with a Gear, and updates the Mob's stats. Unequips the mob's original gear if any.
         /// </summary>
@@ -376,7 +397,7 @@ namespace Combat {
                 UnequipWeapon();
             Instantiate(weapon.WeaponPrefab, _rotatable);
             EquippedWeapon = weapon;
-            Stats.GainStats(weapon.Base, weapon.Scaling);
+            stats.GainStats(weapon.Base, weapon.Scaling);
         }
         /// <summary>
         /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
@@ -386,7 +407,7 @@ namespace Combat {
             if (EquippedArmors[armor.Type] is not null)
                 UnequipArmor(armor.Type);
             EquippedArmors[armor.Type] = armor;
-            Stats.GainStats(armor.Base, armor.Scaling);
+            stats.GainStats(armor.Base, armor.Scaling);
         }
 
         /// <summary>
@@ -396,7 +417,7 @@ namespace Combat {
 
             OnWeaponUnequip();
 
-            Stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
+            stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
             EquippedWeapon = null;
         }
         /// <summary>
@@ -405,7 +426,7 @@ namespace Combat {
         /// <param name="type">Type of the armor to be unequipped</param>
         public void UnequipArmor(ArmorType type) {
             Armor ToLose = EquippedArmors[type];
-            Stats.LoseStats(ToLose.Base, ToLose.Scaling);
+            stats.LoseStats(ToLose.Base, ToLose.Scaling);
             EquippedArmors[type] = null;
         }
 
@@ -464,7 +485,7 @@ namespace Combat {
                 OnAttackControlReset?.Invoke();
                 return;
             }
-            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
+            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
         }
         /// <summary>
         /// Handles mob "lifting" attack button
@@ -475,7 +496,7 @@ namespace Combat {
                 _clickedAttackDuringStun = false;
                 return;
             }
-            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats.Final.AtkSpeed)));
+            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
         }
 
         /// <summary>
