@@ -22,7 +22,7 @@ namespace Combat {
     }
     public partial class Mob : MonoBehaviour {
         [SerializeField]
-        MobStats stats;
+        protected MobStats stats;
 
         public FinalStats Stats => stats.Final;
 
