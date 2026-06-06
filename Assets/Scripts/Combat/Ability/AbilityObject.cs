@@ -11,7 +11,12 @@ namespace Combat {
         protected float ManaCost { get; private set; }
         protected AbilityTriggerKey TriggerKey { get; private set; }
         protected bool OnCooldown { get; private set; } = false;
-        
+
+        void OnDestroy() {
+            AbilityRemovalBehaviour();
+        }
+
+
         void OnAbilityUseAttempted(AbilityTriggerKey triggerKey) {
             if (triggerKey != TriggerKey) return;
             UnleashAbility();

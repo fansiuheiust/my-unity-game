@@ -200,7 +200,7 @@ namespace Combat {
         // Start is called before the first frame update
         void Start() {
             if (this is Player)
-                Equip(GearDatabase.GetById("bow"));
+                Equip(GearDatabase.GetById("dagger"));
             else
                 Equip(GearDatabase.GetById("long_sword"));
         }
@@ -396,27 +396,31 @@ namespace Combat {
                 default:
                     throw new System.NotImplementedException($"Equipment of gear of type \"{gear.GetType().Name}\" is not implemented.");
             }
+            if (gear.ability is not null) {
+                AbilityObject a = (AbilityObject)gameObject.AddComponent(gear.ability.ability);
+                a.Init(this, gear.ability);
+            }
         }
         /// <summary>
         /// Equips the mob with a Weapon, and updates the mob's stats. Unequips the mob's original weapon if any.
         /// </summary>
         /// <param name="weapon">Weapon to be equipped, it will be owned by the mob</param>
-        public void Equip(Weapon weapon) {
+        void Equip(Weapon weapon) {
             if (EquippedWeapon is not null)
                 UnequipWeapon();
             Instantiate(weapon.WeaponPrefab, _rotatable);
             EquippedWeapon = weapon;
-            stats.GainStats(weapon.Base, weapon.Scaling);
+            stats.GainStats(weapon.@base, weapon.scaling);
         }
         /// <summary>
         /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
         /// </summary>
         /// <param name="armor">Armor to be equipped, it will be owned by the mob</param>
-        public void Equip(Armor armor) {
-            if (EquippedArmors[armor.Type] is not null)
-                UnequipArmor(armor.Type);
-            EquippedArmors[armor.Type] = armor;
-            stats.GainStats(armor.Base, armor.Scaling);
+        void Equip(Armor armor) {
+            if (EquippedArmors[armor.type] is not null)
+                UnequipArmor(armor.type);
+            EquippedArmors[armor.type] = armor;
+            stats.GainStats(armor.@base, armor.scaling);
         }
 
         /// <summary>
@@ -426,7 +430,9 @@ namespace Combat {
 
             OnWeaponUnequip();
 
-            stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
+            stats.LoseStats(EquippedWeapon.@base, EquippedWeapon.scaling);
+            if (EquippedWeapon.ability is not null)
+                Destroy(gameObject.GetComponent(EquippedWeapon.ability.ability));
             EquippedWeapon = null;
         }
         /// <summary>
@@ -435,13 +441,15 @@ namespace Combat {
         /// <param name="type">Type of the armor to be unequipped</param>
         public void UnequipArmor(ArmorType type) {
             Armor ToLose = EquippedArmors[type];
-            stats.LoseStats(ToLose.Base, ToLose.Scaling);
+            stats.LoseStats(ToLose.@base, ToLose.scaling);
+            if (ToLose.ability is not null)
+                Destroy(gameObject.GetComponent(ToLose.ability.ability));
             EquippedArmors[type] = null;
         }
 
         void ChangeAttackRange(float multiplier) {
             if (EquippedWeapon is not null)
-                OnAttackRangeChange?.Invoke(EquippedWeapon.WeaponRange * (1+multiplier));
+                OnAttackRangeChange?.Invoke(EquippedWeapon.weaponRange * (1+multiplier));
         }
 
         // Ability

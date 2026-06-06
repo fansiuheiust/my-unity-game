@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Progression {
     public static class UnitTest {
         /// <summary>
-        /// 
+        /// Pass
         /// </summary>
         public static void TestAbilityDatabase() {
             Debug.Assert(AbilityDatabase.abilityObjects.ContainsKey("Speedy"));

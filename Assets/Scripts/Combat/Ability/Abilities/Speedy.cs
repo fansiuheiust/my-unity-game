@@ -31,8 +31,10 @@ namespace Combat.Abilities {
         }
 
         protected override void AbilityRemovalBehaviour() {
-            StopCoroutine(activeInstance);
-            RemoveSpeedBoost();
+            if (activeInstance != null) {
+                StopCoroutine(activeInstance);
+                RemoveSpeedBoost();
+            }
         }
     }
 }

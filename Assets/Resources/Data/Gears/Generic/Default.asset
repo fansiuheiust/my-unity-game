@@ -39,6 +39,7 @@ MonoBehaviour:
       hashedScaling:
       - stats: 3
         data: 0.4
+    abilityName: 
     weaponSpeed: 0
     weaponRange: 3
     prefabName: Default
@@ -65,6 +66,7 @@ MonoBehaviour:
         <Knockback>k__BackingField: 0
         <KnockbackResistance>k__BackingField: 0
       hashedScaling: []
+    abilityName: Speedy
     weaponSpeed: 2
     weaponRange: 0.5
     prefabName: Default
@@ -92,6 +94,7 @@ MonoBehaviour:
         <Knockback>k__BackingField: 0
         <KnockbackResistance>k__BackingField: 0
       hashedScaling: []
+    abilityName: 
     weaponSpeed: 0
     weaponRange: 100
     prefabName: Default
