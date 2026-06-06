@@ -62,6 +62,7 @@ namespace Combat {
             _playerInput.actions["blockrotate"].Disable();
             _playerInput.actions["interact"].performed += OnInteraction;
             _playerInput.actions["save"].performed += OnSave;
+            _playerInput.actions["ability"].performed += OnAbility;
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
@@ -203,6 +204,16 @@ namespace Combat {
 
         void OnSave(InputAction.CallbackContext _) {
             StageController.instance.SaveData();
+        }
+
+        void OnAbility(InputAction.CallbackContext context) {
+            _player.UseAbility(context.control.name switch {
+                "e" => AbilityTriggerKey.Damage,
+                "q" => AbilityTriggerKey.Ultimate,
+                "x" => AbilityTriggerKey.Movement,
+                "c" => AbilityTriggerKey.Misc,
+                _ => AbilityTriggerKey.None,
+            });
         }
     }
 }

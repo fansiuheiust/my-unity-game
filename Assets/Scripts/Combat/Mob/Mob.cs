@@ -152,6 +152,13 @@ namespace Combat {
         public event Action OnBlockControlReset;
 
         /// <summary>
+        /// <para>Raised when a mob tries to unleash ability</para>
+        /// <c>AbilityTriggerKey</c>: trigger key used
+        /// </summary>
+        public event Action<AbilityTriggerKey> OnAbilityUseAttempt;
+
+
+        /// <summary>
         /// <para>Raised when the mob is stunned</para>
         /// <c>Mob</c>: the stunned mob <br />
         /// </summary>
@@ -170,6 +177,8 @@ namespace Combat {
         /// <para><c>Vector3</c>: Direction</para>
         /// </summary>
         public UnityEvent<Mob, Vector3> OnMovementChange;
+
+        
 
 
 
@@ -539,6 +548,10 @@ namespace Combat {
         }
         public void ResetBlockControl() {
             OnBlockControlReset?.Invoke();
+        }
+
+        public void UseAbility(AbilityTriggerKey key) {
+            OnAbilityUseAttempt?.Invoke(key);
         }
 
 

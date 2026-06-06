@@ -9,7 +9,13 @@ namespace Combat {
         // cooldown handling
         protected float Cooldown { get; private set; }
         protected float ManaCost { get; private set; }
+        protected AbilityTriggerKey TriggerKey { get; private set; }
         protected bool OnCooldown { get; private set; } = false;
+        
+        void OnAbilityUseAttempted(AbilityTriggerKey triggerKey) {
+            if (triggerKey != TriggerKey) return;
+            UnleashAbility();
+        }
         protected void UnleashAbility() {
             if (OnCooldown) {
                 return;
@@ -37,8 +43,11 @@ namespace Combat {
             this.Owner = Owner;
             Cooldown = ability.cooldown;
             ManaCost = ability.manaCost;
+            TriggerKey = ability.triggerKey;
             SetFields(ability);
             SubscribeToOwner();
+            if (TriggerKey != AbilityTriggerKey.None)
+                Owner.OnAbilityUseAttempt += OnAbilityUseAttempted;
         }
         /// <summary>
         /// To set required data members according to an ability, not necessarily in <c>Init</c>, e.g. when perk upgrades for perk-based attributes

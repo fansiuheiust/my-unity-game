@@ -2,7 +2,7 @@
 
 Abilities are scripts that can be added to a mob.
 
-They can either be passive or be triggered by a key (E, Q, X, C).
+They can either be passive or be triggered by a key (E: damage enemy, Q: charged ability, X: movement ability, C: buff self/debuff enemy).
 
 Multiple abilities can share the same trigger key.
 

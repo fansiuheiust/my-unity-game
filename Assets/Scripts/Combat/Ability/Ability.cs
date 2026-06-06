@@ -4,8 +4,14 @@ using UnityEngine;
 
 namespace Combat {
 
+    /// <summary>
+    /// <c>Damage</c>: Ability that deals damage on the enemy, triggered by pressing <c>E</c><br />
+    /// <c>Ultimate</c>: Ability that requires charging, triggered by pressing <c>Q</c><br />
+    /// <c>Movement</c>: Ability that moves the user, triggered by pressing <c>X</c><br />
+    /// <c>Misc</c>: Miscalleneous abilities, e.g. buffing self, debuffing enemy, etc, triggered by pressing <c>C</c><br />
+    /// </summary>
     public enum AbilityTriggerKey {
-        E, Q, X, C, None
+        Damage, Ultimate, Movement, Misc, None
     }
     public class Ability {
         public readonly string id;
