@@ -25,7 +25,7 @@ namespace Combat {
 
         IEnumerator Attack() {
             ClickAttack();
-            float afkTime = 1 / ((1 + Owner.Stats.Final.AtkSpeed) * Owner.EquippedWeapon.BaseAttackSpeed);
+            float afkTime = 1 / ((1 + Owner.Stats.AtkSpeed) * Owner.EquippedWeapon.BaseAttackSpeed);
             for (float time = 0; time < afkTime; time += Time.deltaTime) {
                 _rotatable.forward = Delta;
                 yield return null;

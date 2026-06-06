@@ -28,7 +28,7 @@ namespace Combat {
 
         protected override void Die(Mob killer) {
             Debug.Log("You died, but let me restore your HP.");
-            Stats.Heal(Stats.Final.MaxHp, Stats);
+            stats.Heal(stats.Final.MaxHp, stats);
         }
 
         /// <summary>

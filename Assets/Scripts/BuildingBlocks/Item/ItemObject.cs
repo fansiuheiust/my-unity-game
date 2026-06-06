@@ -36,7 +36,7 @@ namespace BuildingBlocks {
     /// </summary>
     public class BuffObject: ItemObject<(BaseStats, ScalingStats)> {
         protected override void Pick(Mob picker) {
-            picker.Stats.GainStats(Value.Item1, Value.Item2);
+            picker.GainStats(Value.Item1, Value.Item2);
         }
     }
 
