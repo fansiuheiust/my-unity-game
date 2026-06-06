@@ -442,7 +442,7 @@ namespace Combat {
         /// <param name="mana">Amount of mana to be consumed</param>
         /// <returns>Whether mana is sufficient for the consumption</returns>
         public bool ConsumeMana(float mana) { 
-            (bool consumed, float amount) = Stats.ConsumeMana(mana);
+            (bool consumed, float amount) = stats.ConsumeMana(mana);
             if (consumed)
                 OnManaConsumption.Invoke(this, amount);
             return consumed;
