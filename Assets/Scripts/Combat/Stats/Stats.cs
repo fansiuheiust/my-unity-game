@@ -28,7 +28,7 @@ namespace Combat {
     }
 
     public enum HashedScalingStats {
-        PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange
+        PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange, ManaCostReduction
     }
 
 
@@ -179,6 +179,7 @@ namespace Combat {
         { HashedScalingStats.AttackRange, -0.75f },
     }, OtherScalingMaxs = new() {
         { HashedScalingStats.AttackRange, 1.5f },
+        { HashedScalingStats.ManaCostReduction, 0.95f }
     };
         void Normalize() {
             Atk = Atk > 0 ? Atk : 0;

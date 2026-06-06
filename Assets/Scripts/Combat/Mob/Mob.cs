@@ -98,47 +98,42 @@ namespace Combat {
         /// </summary>
         public event Action<float> OnAttackRangeChange;
         /// <summary>
+        /// <para>Raised when mob consumes mana</para>
+        /// <c>Mob</c>: mob who consumed mana <br />
+        /// <c>float</c>: amount of mana consumed <br />
+        /// </summary>
+        public UnityEvent<Mob, float> OnManaConsumption;
+
+        /// <summary>
         /// <para>Raised when a mob dies.</para>
-        /// <para>
-        /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob.
-        /// </para>
-        /// <para>
+        /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob. <br />
         /// <c>Mob1</c>: source, null if it does not exist.
-        /// </para>
         /// </summary>
         public UnityEvent<Mob, Mob> OnDeath;
         /// <summary>
         /// <para>Raised when an attack starts</para>
-        /// <para>
         /// <c>Mob</c>: the invoker
-        /// </para>
         /// </summary>
         public UnityEvent<Mob> OnAttackStart;
         /// <summary>
         /// <para>Raised when an attack ends</para>
-        /// <para>
         /// Mob0: the invoker
-        /// </para>
         /// </summary>
         public UnityEvent<Mob> OnAttackEnd;
         /// <summary>
         /// <para>Raised when an attack is interrupted (by blocking)</para>
-        /// <para>Mob0: Mob whose attack is interrupted</para>
-        /// <para>Mob1: Mob who interrupted the attack</para>
+        /// <c>Mob0</c>: Mob whose attack is interrupted<br />
+        /// <c>Mob1</c>: Mob who interrupted the attack<br />
         /// </summary>
         public UnityEvent<Mob, Mob> OnAttackInterrupt;
         /// <summary>
         /// <para>Raised when a block starts</para>
-        /// <para>
-        /// <c>Mob</c>: the invoker
-        /// </para>
+        /// <c>Mob</c>: the invoker<br />
         /// </summary>
         public UnityEvent<Mob> OnBlockStart;
         /// <summary>
         /// <para>Raised when a block ends</para>
-        /// <para>
-        /// <c>Mob</c>: the invoker
-        /// </para>
+        /// <c>Mob</c>: the invoker<br />
         /// </summary>
         public UnityEvent<Mob> OnBlockEnd;
 
@@ -152,7 +147,8 @@ namespace Combat {
         public event Action OnBlockControlReset;
 
         /// <summary>
-        /// Raised when the mob is stunned
+        /// <para>Raised when the mob is stunned</para>
+        /// <c>Mob</c>: the stunned mob <br />
         /// </summary>
         public UnityEvent<Mob> OnStunStart;
         /// <summary>
@@ -416,6 +412,19 @@ namespace Combat {
         void ChangeAttackRange(float multiplier) {
             if (EquippedWeapon is not null)
                 OnAttackRangeChange?.Invoke(EquippedWeapon.WeaponRange * (1+multiplier));
+        }
+
+        // Ability
+        /// <summary>
+        /// Consumes mana if possible
+        /// </summary>
+        /// <param name="mana">Amount of mana to be consumed</param>
+        /// <returns>Whether mana is sufficient for the consumption</returns>
+        public bool ConsumeMana(float mana) { 
+            (bool consumed, float amount) = Stats.ConsumeMana(mana);
+            if (consumed)
+                OnManaConsumption.Invoke(this, amount);
+            return consumed;
         }
 
         // Movement control

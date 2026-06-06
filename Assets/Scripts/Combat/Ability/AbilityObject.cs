@@ -8,8 +8,18 @@ namespace Combat {
 
         // cooldown handling
         protected float Cooldown { get; private set; }
+        protected float ManaCost { get; private set; }
         protected bool OnCooldown { get; private set; } = false;
-        protected void EnterCooldown() {
+        protected void UnleashAbility() {
+            if (OnCooldown) {
+                return;
+            }
+            if (ManaCost > 0 && !Owner.ConsumeMana(ManaCost)) { // i.e. insufficient mana
+                return;
+            }
+
+            AbilityBehaviour();
+
             StartCoroutine(PerformCooldown());
         }
         IEnumerator PerformCooldown() {
@@ -20,11 +30,13 @@ namespace Combat {
             OnCooldown = false;
         }
 
+        protected abstract void AbilityBehaviour();
 
         // initialization
         public void Init(Mob Owner, Ability ability) {
             this.Owner = Owner;
             Cooldown = ability.cooldown;
+            ManaCost = ability.manaCost;
             SetFields(ability);
             SubscribeToOwner();
         }
