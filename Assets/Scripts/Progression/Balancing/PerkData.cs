@@ -107,6 +107,7 @@ namespace Progression.Balance {
             [Tooltip("Make sure you use the data type specified in Type")]
             public float[] values;
         }
+        
         [System.Serializable]
         class Dependency {
 

@@ -57,5 +57,10 @@ namespace Combat {
         /// To subscribe methods to the owner's events, triggered when an owner is set
         /// </summary>
         protected abstract void SubscribeToOwner();
+
+        /// <summary>
+        /// To do things when an ability is soon to be removed
+        /// </summary>
+        protected abstract void AbilityRemovalBehaviour();
     }
 }

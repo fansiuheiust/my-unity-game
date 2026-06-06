@@ -1,11 +1,24 @@
 
+using Progression.Balance;
 using System.Collections;
 using UnityEngine;
 
 namespace Progression {
     public static class UnitTest {
         /// <summary>
-        /// Perform this with LoadFromSave off
+        /// 
+        /// </summary>
+        public static void TestAbilityDatabase() {
+            Debug.Assert(AbilityDatabase.abilityObjects.ContainsKey("Speedy"));
+            Debug.Assert(AbilityDatabase.abilities["Speedy"].id == "Speedy");
+            Debug.Assert(AbilityDatabase.abilities["Speedy"].name == "Speedy");
+            Debug.Assert(AbilityDatabase.abilities["Speedy"]["Speed Boost"] == 0.5f);
+            Debug.Assert(AbilityDatabase.abilities["Speedy"]["Duration"] == 4f);
+            Debug.Assert(AbilityDatabase.abilities["Speedy"].ability == typeof(Combat.Abilities.Speedy));
+        }
+
+        /// <summary>
+        /// Pass, Perform this with LoadFromSave off
         /// </summary>
         public static void TestFloorPerkDuplication() {
             PerkTree floorPerks = StageController.PlayerPerk.FloorPerks;
