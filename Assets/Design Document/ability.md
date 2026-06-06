@@ -42,3 +42,11 @@ PlayerPerk
 
 abstract method called in Init which should be used to set data according to the perk tree
 
+
+
+### TODO
+
+Perk as abilities:
+
+Assume perk cannot be deactivated. Unlocking perk gives player an ability, leveling up an ability removes and readds the ability, loading from save adds ability
+

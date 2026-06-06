@@ -49,7 +49,7 @@ namespace Combat {
         public readonly Perk perk;
         /// <summary>
         /// </summary>
-        public PerkAbility(string id, string name, string rawDescription, float cooldown, float manaCost, AbilityTriggerKey triggerKey, Perk perk, System.Type type): base(id, name, rawDescription, cooldown, manaCost, triggerKey, null, type) {
+        public PerkAbility(Perk perk, float cooldown, float manaCost, AbilityTriggerKey triggerKey, System.Type ability): base(perk.id, perk.name, perk.rawDescription, cooldown, manaCost, triggerKey, null, ability) {
             this.perk = perk;
         }
         public override float this[string name] => perk[name];
