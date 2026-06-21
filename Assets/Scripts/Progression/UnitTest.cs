@@ -5,7 +5,16 @@ using UnityEngine;
 
 namespace Progression {
     public static class UnitTest {
-
+        /// <summary>
+        /// Pass
+        /// </summary>
+        public static void TestPerkAbilityObject() {
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Log("Test whether the ability behaves correctly");
+        }
+        /// <summary>
+        /// Pass
+        /// </summary>
         public static void TestPerkAbility() {
             Debug.Assert(AbilityDatabase.abilities.ContainsKey("SampleClassAbility"), "whether ability database has sample perk ability");
             StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();

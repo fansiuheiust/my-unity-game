@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
+using Progression.Balance;
+using Combat;
 
 namespace Progression {
     public class PerkTree {
@@ -144,9 +146,20 @@ namespace Progression {
         /// </summary>
         /// <param name="level">number of level to add</param>
         internal void LevelUp(uint level = 1) {
+            uint ogLevel = Level;
             Level += level;
             if (Level > maxLevel)
                 Level = maxLevel;
+
+            if (AbilityDatabase.abilities.ContainsKey(id)) {
+                Ability a = AbilityDatabase.abilities[id];
+                if (Level != ogLevel && ogLevel != 0) {
+                    StageController.Player.LoseAbility(a);
+                }
+                if (Level != 0) {
+                    StageController.Player.GainAbility(a);
+                }
+            }
         }
 
         /// <summary>

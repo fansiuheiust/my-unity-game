@@ -363,7 +363,7 @@ namespace Combat {
 
 
 
-        // Gears and stats
+        // Gears, stats, and ability
         /// <summary>
         /// gains stats for the mob
         /// </summary>
@@ -396,10 +396,7 @@ namespace Combat {
                 default:
                     throw new System.NotImplementedException($"Equipment of gear of type \"{gear.GetType().Name}\" is not implemented.");
             }
-            if (gear.ability is not null) {
-                AbilityObject a = (AbilityObject)gameObject.AddComponent(gear.ability.ability);
-                a.Init(this, gear.ability);
-            }
+            GainAbility(gear.ability);
         }
         /// <summary>
         /// Equips the mob with a Weapon, and updates the mob's stats. Unequips the mob's original weapon if any.
@@ -431,8 +428,7 @@ namespace Combat {
             OnWeaponUnequip();
 
             stats.LoseStats(EquippedWeapon.@base, EquippedWeapon.scaling);
-            if (EquippedWeapon.ability is not null)
-                Destroy(gameObject.GetComponent(EquippedWeapon.ability.ability));
+            LoseAbility(EquippedWeapon.ability);
             EquippedWeapon = null;
         }
         /// <summary>
@@ -442,8 +438,7 @@ namespace Combat {
         public void UnequipArmor(ArmorType type) {
             Armor ToLose = EquippedArmors[type];
             stats.LoseStats(ToLose.@base, ToLose.scaling);
-            if (ToLose.ability is not null)
-                Destroy(gameObject.GetComponent(ToLose.ability.ability));
+            LoseAbility(ToLose.ability);
             EquippedArmors[type] = null;
         }
 
@@ -463,6 +458,24 @@ namespace Combat {
             if (consumed)
                 OnManaConsumption.Invoke(this, amount);
             return consumed;
+        }
+
+        /// <summary>
+        /// Gains an ability, does nothing if ability is null
+        /// </summary>
+        /// <param name="ability">ability to be gained</param>
+        public void GainAbility(Ability ability) {
+            if (ability is null) return;
+            AbilityObject a = (AbilityObject)gameObject.AddComponent(ability.ability);
+            a.Init(this, ability);
+        }
+        /// <summary>
+        /// Lose an ability, does nothing if ability is null
+        /// </summary>
+        /// <param name="ability">ability to lose</param>
+        public void LoseAbility(Ability ability) {
+            if (ability is null) return;
+            Destroy(gameObject.GetComponent(ability.ability));
         }
 
         // Movement control
