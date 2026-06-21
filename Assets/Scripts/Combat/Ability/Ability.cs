@@ -1,6 +1,6 @@
 using Progression;
 using UnityEngine;
-
+using UnityEngine.UIElements;
 
 namespace Combat {
 
@@ -17,8 +17,8 @@ namespace Combat {
         public readonly string id;
         public readonly string name;
         readonly string rawDescription;
-        public readonly float cooldown;
-        public readonly float manaCost;
+        readonly float cooldown;
+        readonly float manaCost;
         public readonly AbilityTriggerKey triggerKey;
         readonly Stats stats;
         public readonly System.Type ability;
@@ -38,6 +38,9 @@ namespace Combat {
             this.ability = ability;
         }
 
+        public virtual float Cooldown => cooldown;
+        public virtual float ManaCost => manaCost;
+
         /// <summary>
         /// Returns an attribute's value
         /// </summary>
@@ -47,11 +50,13 @@ namespace Combat {
 
     public class PerkAbility: Ability {
         public readonly Perk perk;
-        /// <summary>
-        /// </summary>
-        public PerkAbility(Perk perk, float cooldown, float manaCost, AbilityTriggerKey triggerKey, System.Type ability): base(perk.id, perk.name, perk.rawDescription, cooldown, manaCost, triggerKey, null, ability) {
+        public PerkAbility(Perk perk, AbilityTriggerKey triggerKey, System.Type ability): base(perk.id, perk.name, perk.rawDescription, -1, -1, triggerKey, null, ability) {
             this.perk = perk;
         }
         public override float this[string name] => perk[name];
+
+        public override float Cooldown => perk.ContainsAttribute("Cooldown") ?perk["Cooldown"]: 0;
+        public override float ManaCost => perk.ContainsAttribute("ManaCost")? perk["ManaCost"]: 0;
+
     }
 }

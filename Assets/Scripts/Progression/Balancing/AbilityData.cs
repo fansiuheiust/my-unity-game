@@ -8,7 +8,10 @@ namespace Progression.Balance {
     public class AbilityData : ScriptableObject {
         [SerializeField]
         SerializedAbility[] abilities;
+        [SerializeField, Tooltip("Abilities that are unlocked if a Perk is")]
+        SerializedPerkAbility[] perkAbilities;
         public Ability[] Abilities => abilities.Select(x => x.Ability).ToArray();
+        public Ability[] PerkAbilities => perkAbilities.Select(x => x.Ability).ToArray();
     }
 
     [System.Serializable]
@@ -42,6 +45,12 @@ namespace Progression.Balance {
             } 
         }
     }
+    [System.Serializable]
+    class SerializedPerkAbility {
+        [SerializeField] string perkID;
+        [SerializeField] AbilityTriggerKey triggerKey;
+        internal PerkAbility Ability => new(StageController.PlayerPerk.ClassPerks[perkID], triggerKey, AbilityDatabase.abilityObjects[perkID]);
+    }
 
     [System.Serializable]
     class SingleValuedAttribute {
@@ -50,4 +59,5 @@ namespace Progression.Balance {
         [Tooltip("Make sure the value matches the attribute type")]
         public float value;
     }
+    
 }

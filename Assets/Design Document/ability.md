@@ -44,9 +44,11 @@ abstract method called in Init which should be used to set data according to the
 
 
 
-### TODO
+#### Perk as Abilities:
 
-Perk as abilities:
+Only Class Perks can be abilities.
 
-Assume perk cannot be deactivated. Unlocking perk gives player an ability, leveling up an ability removes and readds the ability, loading from save adds ability
+A perk ability share ID and name with its perk.
+
+Assume perk cannot be deactivated. Unlocking perk gives player an ability, leveling up an ability removes and readds the ability, loading from save adds ability.
 

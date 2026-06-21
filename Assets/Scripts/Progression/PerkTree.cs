@@ -144,7 +144,8 @@ namespace Progression {
         /// </summary>
         /// <param name="level">number of level to add</param>
         internal void LevelUp(uint level = 1) {
-            if ((Level+=level) > maxLevel)
+            Level += level;
+            if (Level > maxLevel)
                 Level = maxLevel;
         }
 
@@ -159,5 +160,10 @@ namespace Progression {
         /// </summary>
         /// <param name="name">name of the attribute</param>
         public float this[string name] => stats[name].Value(Level);
+        /// <summary>
+        /// Whether the perk contains an attribute
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
+        public bool ContainsAttribute(string name) => stats.Contains(name);
     }
 }

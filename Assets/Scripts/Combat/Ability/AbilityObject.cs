@@ -46,8 +46,8 @@ namespace Combat {
         // initialization
         public void Init(Mob Owner, Ability ability) {
             this.Owner = Owner;
-            Cooldown = ability.cooldown;
-            ManaCost = ability.manaCost;
+            Cooldown = ability.Cooldown;
+            ManaCost = ability.ManaCost;
             TriggerKey = ability.triggerKey;
             SetFields(ability);
             SubscribeToOwner();

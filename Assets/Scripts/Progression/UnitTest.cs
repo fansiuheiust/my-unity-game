@@ -5,6 +5,23 @@ using UnityEngine;
 
 namespace Progression {
     public static class UnitTest {
+
+        public static void TestPerkAbility() {
+            Debug.Assert(AbilityDatabase.abilities.ContainsKey("SampleClassAbility"), "whether ability database has sample perk ability");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 5, "whether cooldown is correct for level 1");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 1, "whether power is correct for level 1");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 2, "whether cooldown is correct for level 2");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 2, "whether power is correct for level 2");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 2, "whether cooldown is correct for level 3");
+            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 3, "whether power is correct for level 3");
+        }
+
         /// <summary>
         /// Pass
         /// </summary>

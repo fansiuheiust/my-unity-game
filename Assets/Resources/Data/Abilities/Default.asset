@@ -26,3 +26,6 @@ MonoBehaviour:
     - name: Duration
       type: 1
       value: 4
+  perkAbilities:
+  - perkID: SampleClassAbility
+    triggerKey: 3

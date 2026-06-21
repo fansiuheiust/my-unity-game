@@ -66,7 +66,7 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
-                _player.UnequipWeapon();
+                Progression.UnitTest.TestPerkAbility();
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
                 Progression.UnitTest.TestPerkTreeLoad();

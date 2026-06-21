@@ -1,3 +1,4 @@
+using Combat;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,10 @@ namespace Progression.Balance {
             abilityObjects = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(Combat.AbilityObject).IsAssignableFrom(t))
                 .ToDictionary(t => t.Name, t => t);
-            abilities = ((AbilityData)Resources.Load($"Data/Abilities/Default")).Abilities.ToDictionary(x=>x.id, x=>x);
+            AbilityData data = (AbilityData)Resources.Load($"Data/Abilities/Default");
+            abilities = data.Abilities.ToDictionary(x=>x.id, x=>x);
+            foreach (Ability x in data.PerkAbilities)
+                abilities.Add(x.id, x);
         }
     }
 }
