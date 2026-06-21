@@ -151,8 +151,8 @@ namespace Progression {
             if (Level > maxLevel)
                 Level = maxLevel;
 
-            if (AbilityDatabase.abilities.ContainsKey(id)) {
-                Ability a = AbilityDatabase.abilities[id];
+            if (AbilityDatabase.ContainsAbility(id)) {
+                Ability a = AbilityDatabase.GetAbility(id);
                 if (Level != ogLevel && ogLevel != 0) {
                     StageController.Player.LoseAbility(a);
                 }

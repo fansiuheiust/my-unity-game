@@ -466,7 +466,7 @@ namespace Combat {
         /// <param name="ability">ability to be gained</param>
         public void GainAbility(Ability ability) {
             if (ability is null) return;
-            AbilityObject a = (AbilityObject)gameObject.AddComponent(ability.ability);
+            AbilityObject a = (AbilityObject)gameObject.AddComponent(ability.abilityObject);
             a.Init(this, ability);
         }
         /// <summary>
@@ -475,7 +475,7 @@ namespace Combat {
         /// <param name="ability">ability to lose</param>
         public void LoseAbility(Ability ability) {
             if (ability is null) return;
-            Destroy(gameObject.GetComponent(ability.ability));
+            Destroy(gameObject.GetComponent(ability.abilityObject));
         }
 
         // Movement control

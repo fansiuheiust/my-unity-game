@@ -9,13 +9,13 @@ namespace Progression.Balance {
         /// <summary>
         /// List of <c>AbilityObject</c>s hashed by its identifier
         /// </summary>
-        public static readonly Dictionary<string, System.Type> abilityObjects;
+        static readonly Dictionary<string, System.Type> abilityObjects;
 
         /// <summary>
         /// List of <c>Ability</c>'s hashed by its ID
         /// </summary>
 
-        public static readonly Dictionary<string, Combat.Ability> abilities;
+        static readonly Dictionary<string, Combat.Ability> abilities;
         static AbilityDatabase() {
             abilityObjects = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(Combat.AbilityObject).IsAssignableFrom(t))
@@ -25,5 +25,9 @@ namespace Progression.Balance {
             foreach (Ability x in data.PerkAbilities)
                 abilities.Add(x.id, x);
         }
+        public static Combat.Ability GetAbility(string id) => abilities[id];
+        public static bool ContainsAbility(string id) => abilities.ContainsKey(id);
+        public static System.Type GetAbilityObject(string id) => abilityObjects[id];
+        public static bool ContainsAbilityObject(string id) => abilityObjects.ContainsKey(id);
     }
 }

@@ -41,7 +41,7 @@ namespace Progression.Balance {
                         _ => new PercentageAttribute(this.attributes[i].name, new float[] { this.attributes[i].value/100f })
                     };
                 }
-                return new(id, name, rawDescription, cooldown, manaCost, triggerKey, new(attributes), AbilityDatabase.abilityObjects[id]);
+                return new(id, name, rawDescription, cooldown, manaCost, triggerKey, new(attributes), AbilityDatabase.GetAbilityObject(id));
             } 
         }
     }
@@ -49,7 +49,7 @@ namespace Progression.Balance {
     class SerializedPerkAbility {
         [SerializeField] string perkID;
         [SerializeField] AbilityTriggerKey triggerKey;
-        internal PerkAbility Ability => new(StageController.PlayerPerk.ClassPerks[perkID], triggerKey, AbilityDatabase.abilityObjects[perkID]);
+        internal PerkAbility Ability => new(StageController.PlayerPerk.ClassPerks[perkID], triggerKey, AbilityDatabase.GetAbilityObject(perkID));
     }
 
     [System.Serializable]

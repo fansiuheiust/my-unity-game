@@ -16,31 +16,31 @@ namespace Progression {
         /// Pass
         /// </summary>
         public static void TestPerkAbility() {
-            Debug.Assert(AbilityDatabase.abilities.ContainsKey("SampleClassAbility"), "whether ability database has sample perk ability");
+            Debug.Assert(AbilityDatabase.ContainsAbility("SampleClassAbility"), "whether ability database has sample perk ability");
             StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 5, "whether cooldown is correct for level 1");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 1, "whether power is correct for level 1");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 5, "whether cooldown is correct for level 1");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 1, "whether power is correct for level 1");
             StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 2, "whether cooldown is correct for level 2");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 2, "whether power is correct for level 2");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 2, "whether cooldown is correct for level 2");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 2, "whether power is correct for level 2");
             StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].ManaCost == 0, "whether default mana cost is used");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"].Cooldown == 2, "whether cooldown is correct for level 3");
-            Debug.Assert(AbilityDatabase.abilities["SampleClassAbility"]["Power"] == 3, "whether power is correct for level 3");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 2, "whether cooldown is correct for level 3");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 3, "whether power is correct for level 3");
         }
 
         /// <summary>
         /// Pass
         /// </summary>
         public static void TestAbilityDatabase() {
-            Debug.Assert(AbilityDatabase.abilityObjects.ContainsKey("Speedy"));
-            Debug.Assert(AbilityDatabase.abilities["Speedy"].id == "Speedy");
-            Debug.Assert(AbilityDatabase.abilities["Speedy"].name == "Speedy");
-            Debug.Assert(AbilityDatabase.abilities["Speedy"]["Speed Boost"] == 0.5f);
-            Debug.Assert(AbilityDatabase.abilities["Speedy"]["Duration"] == 4f);
-            Debug.Assert(AbilityDatabase.abilities["Speedy"].ability == typeof(Combat.Abilities.Speedy));
+            Debug.Assert(AbilityDatabase.ContainsAbility("Speedy"));
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").id == "Speedy");
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").name == "Speedy");
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy")["Speed Boost"] == 0.5f);
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy")["Duration"] == 4f);
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").abilityObject == typeof(Combat.Abilities.Speedy));
         }
 
         /// <summary>

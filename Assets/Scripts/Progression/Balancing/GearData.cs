@@ -40,7 +40,7 @@ namespace Progression.Balance {
             }
         }
 
-        protected Ability Ability => abilityID != "" ? AbilityDatabase.abilities[abilityID]: null;
+        protected Ability Ability => abilityID != "" ? AbilityDatabase.GetAbility(abilityID) : null;
     }
 
     [System.Serializable]

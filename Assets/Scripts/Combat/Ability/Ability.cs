@@ -21,13 +21,13 @@ namespace Combat {
         readonly float manaCost;
         public readonly AbilityTriggerKey triggerKey;
         readonly Stats stats;
-        public readonly System.Type ability;
+        public readonly System.Type abilityObject;
         
         /// <summary>
         /// Note that <c>stats</c> will be reference-copied
         /// </summary>
         /// <param name="stats">will be reference-copied</param>
-        public Ability(string id, string name, string rawDescription, float cooldown, float manaCost, AbilityTriggerKey triggerKey, Stats stats, System.Type ability) {
+        public Ability(string id, string name, string rawDescription, float cooldown, float manaCost, AbilityTriggerKey triggerKey, Stats stats, System.Type abilityObject) {
             this.id = id;
             this.name = name;
             this.rawDescription = rawDescription;
@@ -35,7 +35,7 @@ namespace Combat {
             this.manaCost = manaCost;
             this.triggerKey = triggerKey;
             this.stats = stats;
-            this.ability = ability;
+            this.abilityObject = abilityObject;
         }
 
         public virtual float Cooldown => cooldown;
