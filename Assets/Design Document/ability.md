@@ -2,7 +2,7 @@
 
 Abilities are scripts that can be added to a mob.
 
-They can either be passive or be triggered by a key (E, Q, X, C).
+They can either be passive or be triggered by a key (E: damage enemy, Q: charged ability, X: movement ability, C: buff self/debuff enemy).
 
 Multiple abilities can share the same trigger key.
 
@@ -43,4 +43,12 @@ PlayerPerk
 abstract method called in Init which should be used to set data according to the perk tree
 
 
+
+#### Perk as Abilities:
+
+Only Class Perks can be abilities.
+
+A perk ability share ID and name with its perk.
+
+Assume perk cannot be deactivated. Unlocking perk gives player an ability, leveling up an ability removes and readds the ability, loading from save adds ability.
 

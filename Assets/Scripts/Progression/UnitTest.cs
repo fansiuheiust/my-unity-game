@@ -1,11 +1,50 @@
 
+using Progression.Balance;
 using System.Collections;
 using UnityEngine;
 
 namespace Progression {
     public static class UnitTest {
         /// <summary>
-        /// Perform this with LoadFromSave off
+        /// Pass
+        /// </summary>
+        public static void TestPerkAbilityObject() {
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Log("Test whether the ability behaves correctly");
+        }
+        /// <summary>
+        /// Pass
+        /// </summary>
+        public static void TestPerkAbility() {
+            Debug.Assert(AbilityDatabase.ContainsAbility("SampleClassAbility"), "whether ability database has sample perk ability");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 5, "whether cooldown is correct for level 1");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 1, "whether power is correct for level 1");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 2, "whether cooldown is correct for level 2");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 2, "whether power is correct for level 2");
+            StageController.PlayerPerk.ClassPerks["SampleClassAbility"].LevelUp();
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").ManaCost == 0, "whether default mana cost is used");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility").Cooldown == 2, "whether cooldown is correct for level 3");
+            Debug.Assert(AbilityDatabase.GetAbility("SampleClassAbility")["Power"] == 3, "whether power is correct for level 3");
+        }
+
+        /// <summary>
+        /// Pass
+        /// </summary>
+        public static void TestAbilityDatabase() {
+            Debug.Assert(AbilityDatabase.ContainsAbility("Speedy"));
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").id == "Speedy");
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").name == "Speedy");
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy")["Speed Boost"] == 0.5f);
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy")["Duration"] == 4f);
+            Debug.Assert(AbilityDatabase.GetAbility("Speedy").abilityObject == typeof(Combat.Abilities.Speedy));
+        }
+
+        /// <summary>
+        /// Pass, Perform this with LoadFromSave off
         /// </summary>
         public static void TestFloorPerkDuplication() {
             PerkTree floorPerks = StageController.PlayerPerk.FloorPerks;
@@ -133,7 +172,7 @@ namespace Progression {
             pt.LevelUp("d");
             Debug.Assert(pt.Unlockable("d") == false);
 
-            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new PerkStats(
+            Perk p = new("tester", "Tester", "Lorem {Targets} Ipsum {Raw damage} {Bonus damage}", new Stats(
                 new IntAttribute("Targets", 3, 5, 10),
                 new DecimalAttribute("Raw damage", 12f, 15.5f, 22.77f),
                 new PercentageAttribute("Bonus damage", 0.1f, 0.3f, 0.6f)

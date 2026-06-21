@@ -103,47 +103,42 @@ namespace Combat {
         /// </summary>
         public event Action<float> OnAttackRangeChange;
         /// <summary>
+        /// <para>Raised when mob consumes mana</para>
+        /// <c>Mob</c>: mob who consumed mana <br />
+        /// <c>float</c>: amount of mana consumed <br />
+        /// </summary>
+        public UnityEvent<Mob, float> OnManaConsumption;
+
+        /// <summary>
         /// <para>Raised when a mob dies.</para>
-        /// <para>
-        /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob.
-        /// </para>
-        /// <para>
+        /// <c>Mob0</c>: the invoker, i.e. the soon-to-be dead mob. <br />
         /// <c>Mob1</c>: source, null if it does not exist.
-        /// </para>
         /// </summary>
         public UnityEvent<Mob, Mob> OnDeath;
         /// <summary>
         /// <para>Raised when an attack starts</para>
-        /// <para>
         /// <c>Mob</c>: the invoker
-        /// </para>
         /// </summary>
         public UnityEvent<Mob> OnAttackStart;
         /// <summary>
         /// <para>Raised when an attack ends</para>
-        /// <para>
         /// Mob0: the invoker
-        /// </para>
         /// </summary>
         public UnityEvent<Mob> OnAttackEnd;
         /// <summary>
         /// <para>Raised when an attack is interrupted (by blocking)</para>
-        /// <para>Mob0: Mob whose attack is interrupted</para>
-        /// <para>Mob1: Mob who interrupted the attack</para>
+        /// <c>Mob0</c>: Mob whose attack is interrupted<br />
+        /// <c>Mob1</c>: Mob who interrupted the attack<br />
         /// </summary>
         public UnityEvent<Mob, Mob> OnAttackInterrupt;
         /// <summary>
         /// <para>Raised when a block starts</para>
-        /// <para>
-        /// <c>Mob</c>: the invoker
-        /// </para>
+        /// <c>Mob</c>: the invoker<br />
         /// </summary>
         public UnityEvent<Mob> OnBlockStart;
         /// <summary>
         /// <para>Raised when a block ends</para>
-        /// <para>
-        /// <c>Mob</c>: the invoker
-        /// </para>
+        /// <c>Mob</c>: the invoker<br />
         /// </summary>
         public UnityEvent<Mob> OnBlockEnd;
 
@@ -157,7 +152,15 @@ namespace Combat {
         public event Action OnBlockControlReset;
 
         /// <summary>
-        /// Raised when the mob is stunned
+        /// <para>Raised when a mob tries to unleash ability</para>
+        /// <c>AbilityTriggerKey</c>: trigger key used
+        /// </summary>
+        public event Action<AbilityTriggerKey> OnAbilityUseAttempt;
+
+
+        /// <summary>
+        /// <para>Raised when the mob is stunned</para>
+        /// <c>Mob</c>: the stunned mob <br />
         /// </summary>
         public UnityEvent<Mob> OnStunStart;
         /// <summary>
@@ -174,6 +177,8 @@ namespace Combat {
         /// <para><c>Vector3</c>: Direction</para>
         /// </summary>
         public UnityEvent<Mob, Vector3> OnMovementChange;
+
+        
 
 
 
@@ -195,7 +200,7 @@ namespace Combat {
         // Start is called before the first frame update
         void Start() {
             if (this is Player)
-                Equip(GearDatabase.GetById("bow"));
+                Equip(GearDatabase.GetById("dagger"));
             else
                 Equip(GearDatabase.GetById("long_sword"));
         }
@@ -358,7 +363,7 @@ namespace Combat {
 
 
 
-        // Gears and stats
+        // Gears, stats, and ability
         /// <summary>
         /// gains stats for the mob
         /// </summary>
@@ -391,27 +396,28 @@ namespace Combat {
                 default:
                     throw new System.NotImplementedException($"Equipment of gear of type \"{gear.GetType().Name}\" is not implemented.");
             }
+            GainAbility(gear.ability);
         }
         /// <summary>
         /// Equips the mob with a Weapon, and updates the mob's stats. Unequips the mob's original weapon if any.
         /// </summary>
         /// <param name="weapon">Weapon to be equipped, it will be owned by the mob</param>
-        public void Equip(Weapon weapon) {
+        void Equip(Weapon weapon) {
             if (EquippedWeapon is not null)
                 UnequipWeapon();
             Instantiate(weapon.WeaponPrefab, _rotatable);
             EquippedWeapon = weapon;
-            stats.GainStats(weapon.Base, weapon.Scaling);
+            stats.GainStats(weapon.@base, weapon.scaling);
         }
         /// <summary>
         /// Equips the mob with an Armor, and updates the mob's stats. Unequips the mob's original armor if any.
         /// </summary>
         /// <param name="armor">Armor to be equipped, it will be owned by the mob</param>
-        public void Equip(Armor armor) {
-            if (EquippedArmors[armor.Type] is not null)
-                UnequipArmor(armor.Type);
-            EquippedArmors[armor.Type] = armor;
-            stats.GainStats(armor.Base, armor.Scaling);
+        void Equip(Armor armor) {
+            if (EquippedArmors[armor.type] is not null)
+                UnequipArmor(armor.type);
+            EquippedArmors[armor.type] = armor;
+            stats.GainStats(armor.@base, armor.scaling);
         }
 
         /// <summary>
@@ -421,7 +427,8 @@ namespace Combat {
 
             OnWeaponUnequip();
 
-            stats.LoseStats(EquippedWeapon.Base, EquippedWeapon.Scaling);
+            stats.LoseStats(EquippedWeapon.@base, EquippedWeapon.scaling);
+            LoseAbility(EquippedWeapon.ability);
             EquippedWeapon = null;
         }
         /// <summary>
@@ -430,13 +437,45 @@ namespace Combat {
         /// <param name="type">Type of the armor to be unequipped</param>
         public void UnequipArmor(ArmorType type) {
             Armor ToLose = EquippedArmors[type];
-            stats.LoseStats(ToLose.Base, ToLose.Scaling);
+            stats.LoseStats(ToLose.@base, ToLose.scaling);
+            LoseAbility(ToLose.ability);
             EquippedArmors[type] = null;
         }
 
         void ChangeAttackRange(float multiplier) {
             if (EquippedWeapon is not null)
-                OnAttackRangeChange?.Invoke(EquippedWeapon.WeaponRange * (1+multiplier));
+                OnAttackRangeChange?.Invoke(EquippedWeapon.weaponRange * (1+multiplier));
+        }
+
+        // Ability
+        /// <summary>
+        /// Consumes mana if possible
+        /// </summary>
+        /// <param name="mana">Amount of mana to be consumed</param>
+        /// <returns>Whether mana is sufficient for the consumption</returns>
+        public bool ConsumeMana(float mana) { 
+            (bool consumed, float amount) = stats.ConsumeMana(mana);
+            if (consumed)
+                OnManaConsumption.Invoke(this, amount);
+            return consumed;
+        }
+
+        /// <summary>
+        /// Gains an ability, does nothing if ability is null
+        /// </summary>
+        /// <param name="ability">ability to be gained</param>
+        public void GainAbility(Ability ability) {
+            if (ability is null) return;
+            AbilityObject a = (AbilityObject)gameObject.AddComponent(ability.abilityObject);
+            a.Init(this, ability);
+        }
+        /// <summary>
+        /// Lose an ability, does nothing if ability is null
+        /// </summary>
+        /// <param name="ability">ability to lose</param>
+        public void LoseAbility(Ability ability) {
+            if (ability is null) return;
+            Destroy(gameObject.GetComponent(ability.abilityObject));
         }
 
         // Movement control
@@ -530,6 +569,10 @@ namespace Combat {
         }
         public void ResetBlockControl() {
             OnBlockControlReset?.Invoke();
+        }
+
+        public void UseAbility(AbilityTriggerKey key) {
+            OnAbilityUseAttempt?.Invoke(key);
         }
 
 

@@ -214,5 +214,33 @@ MonoBehaviour:
     - tier: 0
       value: 12
   rngPerks: []
-  classPerks: []
+  classPerks:
+  - id: SampleClassAbility
+    name: Sample Class Ability
+    rawDescription: Test
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - type: 1
+      name: Cooldown
+      values:
+      - 5
+      - 2
+      - 2
+    - type: 0
+      name: Power
+      values:
+      - 1
+      - 2
+      - 3
+    maxLevel: 3
+    serializedDependencies: []
+    exclusions: []
+    serializedCosts:
+    - tier: 1
+      value: 1
+    - tier: 1
+      value: 2
+    - tier: 1
+      value: 3
   <FloorPerkCostMultiplier>k__BackingField: 2

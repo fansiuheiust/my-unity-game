@@ -89,6 +89,19 @@ namespace Combat {
         /// </example>
         public float DmgTakenMultiplier => (1 - Final.Def / (100 + Final.Def)) * (1 - Final.DmgReduction);
 
+        // mana change
+        /// <summary>
+        /// Consumes mana if possible, will not when there is no mana
+        /// </summary>
+        /// <param name="mana">Amount of mana to be consumed</param>
+        /// <returns>Whether mana is consumed, and the mana consumed</returns>
+        public (bool consumed, float amount) ConsumeMana(float mana) {
+            mana *= (1 - Final[HashedScalingStats.ManaCostReduction]);
+            if (mana < Mana)
+                return (false, 0);
+            Mana -= mana;
+            return (true, mana);
+        }
 
 
         // stats change events

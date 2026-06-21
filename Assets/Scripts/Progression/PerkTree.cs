@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
+using Progression.Balance;
+using Combat;
 
 namespace Progression {
     public class PerkTree {
@@ -103,7 +105,7 @@ namespace Progression {
         /// Type of coin to update this perk
         /// </summary>
         public readonly CoinType type;
-        readonly PerkStats stats = new();
+        readonly Stats stats = new();
         public uint Level { get; private set; } = 0;
         public readonly uint maxLevel;
         public readonly Dependency[] dependencies;
@@ -127,7 +129,7 @@ namespace Progression {
         /// Note that <c>stats</c> which does not have any mutators will be reference-copied
         /// </summary>
         /// <param name="rawDescription">use {} to encapsulate attributes by their specified name. e.g. Gain {Extra Loot} more loots.</param>
-        public Perk(string id, string name, string rawDescription, PerkStats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
+        public Perk(string id, string name, string rawDescription, Stats stats, CoinType type, (uint tier, uint value)[] costs, uint maxLevel, Dependency[] dependencies, string[] exclusions): this(id, maxLevel, dependencies) {
             if (costs.Length != maxLevel) throw new System.Exception("Number of costs must be equal to the number of levels for perk " + id);
             this.costs = costs.ToArray();
             this.name = name;
@@ -144,8 +146,20 @@ namespace Progression {
         /// </summary>
         /// <param name="level">number of level to add</param>
         internal void LevelUp(uint level = 1) {
-            if ((Level+=level) > maxLevel)
+            uint ogLevel = Level;
+            Level += level;
+            if (Level > maxLevel)
                 Level = maxLevel;
+
+            if (AbilityDatabase.ContainsAbility(id)) {
+                Ability a = AbilityDatabase.GetAbility(id);
+                if (Level != ogLevel && ogLevel != 0) {
+                    StageController.Player.LoseAbility(a);
+                }
+                if (Level != 0) {
+                    StageController.Player.GainAbility(a);
+                }
+            }
         }
 
         /// <summary>
@@ -159,5 +173,10 @@ namespace Progression {
         /// </summary>
         /// <param name="name">name of the attribute</param>
         public float this[string name] => stats[name].Value(Level);
+        /// <summary>
+        /// Whether the perk contains an attribute
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
+        public bool ContainsAttribute(string name) => stats.Contains(name);
     }
 }

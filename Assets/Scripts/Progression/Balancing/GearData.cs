@@ -11,11 +11,11 @@ namespace Progression.Balance {
         [SerializeField] SerializedMelee[] melees;
         [SerializeField] SerializedRanged[] rangeds;
 
-        public Dictionary<string, Armor> Armors => armors.Select(x => (Armor)x.Gear).ToDictionary(x => x.Id);
+        public Dictionary<string, Armor> Armors => armors.Select(x => (Armor)x.Gear).ToDictionary(x => x.id);
         public Dictionary<string, Weapon> Weapons {
             get {
-                Dictionary<string, Weapon> ri = melees.Select(x => (Weapon)x.Gear).ToDictionary(x => x.Id),
-                    ri2 = rangeds.Select(x => (Weapon)x.Gear).ToDictionary(x => x.Id);
+                Dictionary<string, Weapon> ri = melees.Select(x => (Weapon)x.Gear).ToDictionary(x => x.id),
+                    ri2 = rangeds.Select(x => (Weapon)x.Gear).ToDictionary(x => x.id);
                 return ri.Concat(ri2).ToDictionary(x=>x.Key, x=>x.Value);
             }
         }
@@ -23,7 +23,7 @@ namespace Progression.Balance {
             get {
                 var armors = this.armors.Select(x => x.Gear);
                 var weapons = melees.Select(x => x.Gear).Concat(rangeds.Select(x => x.Gear));
-                return armors.Concat(weapons).ToDictionary(x => x.Id);
+                return armors.Concat(weapons).ToDictionary(x => x.id);
             }
         }
     }
@@ -32,12 +32,15 @@ namespace Progression.Balance {
         [SerializeField] protected string id;
         [SerializeField] protected string name;
         [SerializeField] protected SerializedMobStats stats;
+        [SerializeField, Tooltip("Leave it blank if no ability")] protected string abilityID = "";
         internal virtual Gear Gear {
             get {
                 stats.InsertHasedStats();
                 return null;
             }
         }
+
+        protected Ability Ability => abilityID != "" ? AbilityDatabase.GetAbility(abilityID) : null;
     }
 
     [System.Serializable]
@@ -53,7 +56,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Armor(id, name, stats.@base, stats.scaling, type);
+                return new Combat.Armor(id, name, stats.@base, stats.scaling, type, Ability);
             }
         }
     }
@@ -63,7 +66,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Melee(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, prefabName);
+                return new Combat.Melee(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, prefabName, Ability);
             }
         }
     }
@@ -74,7 +77,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Ranged(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, pierce, prefabName);
+                return new Combat.Ranged(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, pierce, prefabName, Ability);
             }
         }
     }
