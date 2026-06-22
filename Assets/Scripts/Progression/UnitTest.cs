@@ -5,6 +5,28 @@ using UnityEngine;
 
 namespace Progression {
     public static class UnitTest {
+        static bool Close(float a, float b, float epsilon = 1E-4f) => Mathf.Abs(a - b) < epsilon;
+
+        /// <summary>
+        /// Pass
+        /// </summary>
+        public static void TestLevelGearScaling() {
+            Combat.Player player = StageController.Player;
+            player.Equip(Loot.GearDatabase.Get("dagger"));
+            float atk = player.EquippedWeapon.@base.Atk;
+            uint pointRequired = (uint)StageController.LevelingData.LevelCurve.Evaluate(1);
+            player.Level.AddPoint(pointRequired+1);
+            player.Equip(Loot.GearDatabase.GetScaled("dagger"));
+            Debug.Assert(player.Level.Level == 1, "Player level not levelled correctly");
+            Debug.Assert(Close(atk * StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(1), player.EquippedWeapon.@base.Atk), "Dagger's attack not changed correctly");
+            for (int i = 1; i < StageController.LevelingData.MaxLevel; i++) {
+                player.Level.AddPoint((uint)StageController.LevelingData.LevelCurve.Evaluate(i+1));
+                player.Equip(Loot.GearDatabase.GetScaled("dagger"));
+                Debug.Assert(player.Level.Level == i+1, $"Player level not levelled correctly to level {i+1}");
+                Debug.Assert(Close(atk * StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(i+1), player.EquippedWeapon.@base.Atk), $"Dagger's attack not changed correctly for level {i+1}");
+            }
+        }
+
         /// <summary>
         /// Pass
         /// </summary>

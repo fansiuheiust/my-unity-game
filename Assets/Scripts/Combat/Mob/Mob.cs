@@ -214,8 +214,13 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            foreach (string x in initialGears) {
-                Equip(GearDatabase.GetById(x));
+            if (this is Player)
+                foreach (string x in initialGears) {
+                    Equip(GearDatabase.GetScaled(x));
+                }
+            else {
+                foreach (string x in initialGears)
+                    Equip(GearDatabase.Get(x));
             }
         }
 
