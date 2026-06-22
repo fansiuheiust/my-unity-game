@@ -17,14 +17,20 @@ namespace Combat {
     /// </summary>
     [Serializable]
     public class MobStats {
-        public BaseStats Base { get; private set; }
-        public ScalingStats Scaling { get; private set; }
+        BaseStats _base;
+        ScalingStats _scaling;
         /// <summary>
         /// Computed every time a stat is changed
         /// </summary>
         [field: SerializeField]
         [field: Unity.Collections.ReadOnly]
-        public FinalStats Final { get; private set; }
+        FinalStats _final;
+
+        public ref readonly BaseStats Base => ref _base;
+        public ref readonly ScalingStats Scaling => ref _scaling;
+        public ref readonly FinalStats Final => ref _final;
+
+
         [field: SerializeField]
         public float Hp { get; private set; }
         public float Mana { get; private set; }
@@ -45,11 +51,11 @@ namespace Combat {
         /// <param name="base">Initial base stats of the mob</param>
         /// <param name="scaling">Initial scaling stats of hte mob</param>
         public MobStats(BaseStats @base, ScalingStats scaling) {
-            Base = @base.Clone();
-            Scaling = scaling.Clone();
+            _base = @base.Clone();
+            _scaling = scaling.Clone();
             ComputeFinalStats();
-            Hp = Final.MaxHp;
-            Mana = Final.MaxMana;
+            Hp = _final.MaxHp;
+            Mana = _final.MaxMana;
         }
 
         /// <summary>
@@ -57,24 +63,24 @@ namespace Combat {
         /// </summary>
         /// <param name="serializedMobStats">The mob stats as set in the inspector, hashed stats array must NOT contain double entry</param>
         public MobStats(SerializedMobStats serializedMobStats) {
-            Base = serializedMobStats.@base;
-            Scaling = serializedMobStats.scaling;
+            _base = serializedMobStats.@base;
+            _scaling = serializedMobStats.scaling;
             Dictionary<HashedScalingStats, float> d = new();
             foreach (var s in serializedMobStats.hashedScaling) {
                 d.Add(s.stats, s.data);
             }
-            Scaling.InitializeHash(d);
+            _scaling.InitializeHash(d);
 
             ComputeFinalStats();
-            Hp = Final.MaxHp;
-            Mana = Final.MaxMana;
+            Hp = _final.MaxHp;
+            Mana = _final.MaxMana;
         }
 
         // damage calculation
-        public float UnclassifiedDmg => Final.Atk * (1 + Final.Crit);
-        public float MeleeDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.PhysicalDmg]);
-        public float ProjectileDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.ProjectileDmg]);
-        public float MagicDmg => UnclassifiedDmg * (1 + Final[HashedScalingStats.MagicDmg]);
+        public float UnclassifiedDmg => _final.Atk * (1 + _final.Crit);
+        public float MeleeDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.PhysicalDmg]);
+        public float ProjectileDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.ProjectileDmg]);
+        public float MagicDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.MagicDmg]);
 
         /// <returns>
         /// Default definition of dead: hp < 1
@@ -87,7 +93,7 @@ namespace Combat {
         /// <example>
         /// If <c>DmgTakenMultiplier</c> = 0.6, final damage taken = original damage * 0.6
         /// </example>
-        public float DmgTakenMultiplier => (1 - Final.Def / (100 + Final.Def)) * (1 - Final.DmgReduction);
+        public float DmgTakenMultiplier => (1 - _final.Def / (100 + _final.Def)) * (1 - _final.DmgReduction);
 
         // mana change
         /// <summary>
@@ -96,7 +102,7 @@ namespace Combat {
         /// <param name="mana">Amount of mana to be consumed</param>
         /// <returns>Whether mana is consumed, and the mana consumed</returns>
         public (bool consumed, float amount) ConsumeMana(float mana) {
-            mana *= (1 - Final[HashedScalingStats.ManaCostReduction]);
+            mana *= (1 - _final[HashedScalingStats.ManaCostReduction]);
             if (mana < Mana)
                 return (false, 0);
             Mana -= mana;
@@ -112,9 +118,9 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void GainStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                Base += @base;
+                _base += @base;
             if (scaling is not null)
-                Scaling += scaling;
+                _scaling += scaling;
             ComputeFinalStats();
         }
         /// <summary>
@@ -124,9 +130,9 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void LoseStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                Base -= @base;
+                _base -= @base;
             if (scaling is not null)
-                Scaling -= scaling;
+                _scaling -= scaling;
             ComputeFinalStats();
         }
 
@@ -135,10 +141,10 @@ namespace Combat {
         /// Called once per gear change
         /// </summary>
         public void ComputeFinalStats() {
-            Final = Base * Scaling;
+            _final = _base * Scaling;
             if (OnMovementSpeedChange is not null)
-                OnMovementSpeedChange(Final.WalkSpeed);
-            OnAttackRangeChange?.Invoke(Final[HashedScalingStats.AttackRange]);
+                OnMovementSpeedChange(_final.WalkSpeed);
+            OnAttackRangeChange?.Invoke(_final[HashedScalingStats.AttackRange]);
         }
 
         // Damage taking
