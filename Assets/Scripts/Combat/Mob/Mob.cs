@@ -24,7 +24,18 @@ namespace Combat {
         [SerializeField]
         protected MobStats stats;
 
-        public FinalStats Stats => stats.Final;
+        /// <summary>
+        /// Base stats of the mob
+        /// </summary>
+        public ref readonly BaseStats BaseStats => ref stats.Base;
+        /// <summary>
+        /// Scaling stats of the mob
+        /// </summary>
+        public ref readonly ScalingStats ScalingStats => ref stats.Scaling;
+        /// <summary>
+        /// Stats after multiplying base stats with 1+scale and normalization
+        /// </summary>
+        public ref readonly FinalStats Stats => ref stats.Final;
 
 
         [SerializeField]
