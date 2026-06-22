@@ -37,7 +37,8 @@ namespace Combat {
         /// </summary>
         public ref readonly FinalStats Stats => ref stats.Final;
 
-
+        [SerializeField, Tooltip("Whether the mob's stats should scale to the floor's level")]
+        bool scalesToFloor = true;
         [SerializeField]
         SerializedMobStats initialStats;
         [SerializeField, Tooltip("ID of the initial gears")]
@@ -222,6 +223,10 @@ namespace Combat {
                 foreach (string x in initialGears)
                     Equip(GearDatabase.Get(x));
             }
+            if (scalesToFloor) {
+                GainStats(( StageController.DungeonData.MobBaseStatsMultiplier.Evaluate(StageController.Floor)-1) * BaseStats, null);
+            }
+            ResetHp();
         }
 
         // damage-related
@@ -383,6 +388,10 @@ namespace Combat {
 
 
         // Gears, stats, and ability
+        /// <summary>
+        /// Resets a mob's HP back to full (for changes in max HP)
+        /// </summary>
+        public void ResetHp() => stats.ResetHp();
         /// <summary>
         /// gains stats for the mob
         /// </summary>

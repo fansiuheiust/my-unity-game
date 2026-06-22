@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Progression {
     public static class UnitTest {
         static bool Close(float a, float b, float epsilon = 1E-4f) => Mathf.Abs(a - b) < epsilon;
-
         /// <summary>
         /// Pass
         /// </summary>

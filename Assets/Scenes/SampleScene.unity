@@ -500,7 +500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3495d8ed956c3e8458bf029aaa8e7e0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floor: 1
 --- !u!4 &101979816
 Transform:
   m_ObjectHideFlags: 0
@@ -2223,6 +2222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593996a645aae434ba4bd29a0cb4e282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageController
+  floor: 10
   loadFromSave: 0
   levelingData: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}
   perkData: {fileID: 11400000, guid: 292fc30c17e9ad84cb7c6dd25e59ed2d, type: 2}
@@ -3007,6 +3007,10 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: loadFromSave
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: scalesToFloor
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}

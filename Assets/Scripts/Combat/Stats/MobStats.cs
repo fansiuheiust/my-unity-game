@@ -75,6 +75,7 @@ namespace Combat {
             Hp = _final.MaxHp;
             Mana = _final.MaxMana;
         }
+        public void ResetHp() => Hp = _final.MaxHp;
 
         // damage calculation
         public float UnclassifiedDmg => _final.Atk * (1 + _final.Crit);
