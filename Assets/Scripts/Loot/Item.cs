@@ -25,7 +25,7 @@ namespace Loot {
         GearItem() { GearId = null; }
         protected override void Init(GameObject go) {
             GearObject obj = go.AddComponent<GearObject>();
-            obj.Init(GearDatabase.GetById(GearId));
+            obj.Init(GearDatabase.GetScaled(GearId));
         }
     }
     [System.Serializable]

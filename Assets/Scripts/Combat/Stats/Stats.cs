@@ -70,6 +70,7 @@ namespace Combat {
         public static BaseStats operator -(BaseStats a, BaseStats b) {
             return new(a.Atk - b.Atk, a.Def - b.Def, a.MaxHp - b.MaxHp, a.MaxMana - b.MaxMana, a.ManaRegen - b.ManaRegen);
         }
+        public static BaseStats operator *(float a, BaseStats b) => new(a * b.Atk, b.Def * b.Def, a * b.MaxHp, a * b.MaxMana, a * b.ManaRegen);
     }
 
     /// <summary>

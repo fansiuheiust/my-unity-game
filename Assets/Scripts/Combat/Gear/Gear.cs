@@ -35,6 +35,12 @@ namespace Combat {
             this.scaling = scaling is null? new ScalingStats(): scaling.Clone();
             this.ability = ability;
         }
+        
+        /// <summary>
+        /// Creates a new gear with base stats multiplied
+        /// </summary>
+        /// <param name="multiplier">multiplier to the base stats</param>
+        public virtual Gear Scaled(float multiplier) => new Gear(id, name, multiplier * @base, scaling, ability);
 
         protected Gear() { }
     }
@@ -56,6 +62,8 @@ namespace Combat {
             this.type = type;
         }
         protected Armor() { }
+
+        public override Gear Scaled(float multiplier) => new Armor(id, name, multiplier * @base, scaling, type, ability);
     }
 
     /// <summary>
@@ -65,7 +73,7 @@ namespace Combat {
     public abstract class Weapon : Gear {
         public readonly WeaponSpeed weaponSpeed;
         public readonly float weaponRange;
-        string prefabName = "Default";
+        protected string prefabName = "Default";
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -114,6 +122,7 @@ namespace Combat {
         protected Melee() { }
 
         protected override string WeaponFolderPath => "Melee";
+        public override Gear Scaled(float multiplier) => new Melee(id, name, multiplier * @base, scaling, weaponSpeed, weaponRange, prefabName, ability);
     }
 
     [System.Serializable]
@@ -125,5 +134,6 @@ namespace Combat {
 
         protected Ranged() { }
         protected override string WeaponFolderPath => "Ranged";
+        public override Gear Scaled(float multiplier) => new Ranged(id, name, multiplier * @base, scaling, weaponSpeed, weaponRange, pierce, prefabName, ability);
     }
 }

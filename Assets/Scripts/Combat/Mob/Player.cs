@@ -22,6 +22,12 @@ namespace Combat {
             // while (StageController.instance == null) ;
             Level = StageController.PlayerLevel;
             PerkManager = StageController.PlayerPerk;
+            Level.PlayerLevelChanged += OnLevelChanged;
+
+        }
+
+        void OnLevelChanged(uint newLevel) {
+            
         }
 
 

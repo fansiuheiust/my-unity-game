@@ -11,7 +11,6 @@ using Progression;
 namespace Dungeon {
     public class Builder2D : MonoBehaviour {
         Generator.Dungeon dungeon;
-        [SerializeField]
         uint floor = 1;
         static readonly Dictionary<string, Vector2Int[]> shapeToKey = new Dictionary<string, Vector2Int[]> {
             { "1x1", new Vector2Int[]{} },
@@ -21,6 +20,7 @@ namespace Dungeon {
             {"Plus", new Vector2Int[]{Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down } }
         };
         void Start() {
+            floor = StageController.Floor;
             CompileDungeon();
             dungeon.Visualize();
             Build();
@@ -37,7 +37,7 @@ namespace Dungeon {
             // TODO: puzzle room
             // TODO: miniboss room
             uint numMainPath = StageController.DungeonData.MainPathCounts(floor), numMobRooms = StageController.DungeonData.MobRoomCounts(floor);
-            if (floorPerks.Unlocked($"RoomSkipper{floor}")) {
+            if (floor != StageController.DungeonData.NumFloors && floorPerks.Unlocked($"RoomSkipper{floor}")) { // last floor does not have floor perk
                 numMainPath = (uint)(numMainPath * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
                 numMobRooms = (uint)Mathf.CeilToInt(numMobRooms * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
             }

@@ -20,7 +20,7 @@
 
 * Perks of each category will be presented as a tree
 * Each player has a level from 1 to 20, determined by number of progression points
-* Gears and buffs will be stronger as the player levels up
+* Gears and buffs obtained will be stronger as the player levels up
 
 
 

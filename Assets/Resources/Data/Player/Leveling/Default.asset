@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27406b08966ff9b4cb82408c338e6de6, type: 3}
   m_Name: Default
   m_EditorClassIdentifier: 
-  <MaxLevel>k__BackingField: 10
+  <MaxLevel>k__BackingField: 20
   <LevelCurve>k__BackingField:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.006666676
-      value: 0.9961941
+      time: 1
+      value: 10
       inSlope: 0
       outSlope: 0
       tangentMode: 136
@@ -26,9 +26,9 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 3000
-      value: 20
-      inSlope: 0.006334616
+      time: 20
+      value: 3000
+      inSlope: 157.36842
       outSlope: 0
       tangentMode: 5
       weightedMode: 0

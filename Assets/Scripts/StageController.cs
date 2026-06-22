@@ -12,6 +12,8 @@ public class StageController : MonoBehaviour
     public static Player Player { get; private set; }
     public static PlayerLevel PlayerLevel { get; private set; }
     public static PlayerPerk PlayerPerk { get; private set; }
+    [SerializeField, Min(1), Tooltip("Current floor of the game")]
+    uint floor;
     [SerializeField]
     bool loadFromSave = false;
     [SerializeField, Tooltip("This leveling data will be used for the entire game")]
@@ -20,6 +22,8 @@ public class StageController : MonoBehaviour
     PerkData perkData;
     [SerializeField, Tooltip("This dungeon data will be used for the entire game")]
     DungeonData dungeonData;
+
+    public static uint Floor => instance.floor;
     public static LevelingData LevelingData => instance.levelingData;
     public static PerkData PerkData => instance.perkData;
     public static DungeonData DungeonData => instance.dungeonData;

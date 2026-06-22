@@ -519,6 +519,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e3b350be512e140a1d3abcacfc4886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    _final:
+      <Atk>k__BackingField: 0
+      <Def>k__BackingField: 0
+      <MaxHp>k__BackingField: 0
+      <MaxMana>k__BackingField: 0
+      <ManaRegen>k__BackingField: 0
+      <WalkSpeed>k__BackingField: 0
+      <AtkSpeed>k__BackingField: 0
+      <CritRate>k__BackingField: 0
+      <CritDmg>k__BackingField: 0
+      <DmgReduction>k__BackingField: 0
+      <Knockback>k__BackingField: 0
+      <KnockbackResistance>k__BackingField: 0
+    <Hp>k__BackingField: 0
+  scalesToFloor: 0
   initialStats:
     base:
       <Atk>k__BackingField: 0
@@ -542,6 +558,10 @@ MonoBehaviour:
     hashedScaling:
     - stats: 0
       data: -0.2
+  initialGears: []
+  OnManaConsumption:
+    m_PersistentCalls:
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
