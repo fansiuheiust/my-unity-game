@@ -40,6 +40,10 @@ namespace Combat {
 
         [SerializeField]
         SerializedMobStats initialStats;
+        [SerializeField, Tooltip("ID of the initial gears")]
+        string[] initialGears;
+
+
 
         Faction _faction = Faction.Indeterminate;
 
@@ -210,10 +214,9 @@ namespace Combat {
 
         // Start is called before the first frame update
         void Start() {
-            if (this is Player)
-                Equip(GearDatabase.GetById("dagger"));
-            else
-                Equip(GearDatabase.GetById("long_sword"));
+            foreach (string x in initialGears) {
+                Equip(GearDatabase.GetById(x));
+            }
         }
 
         // damage-related
