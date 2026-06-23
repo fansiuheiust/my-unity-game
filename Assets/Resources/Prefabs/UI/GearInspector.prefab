@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -235,32 +235,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<align=left>Max HP<line-height=0em></align>
-
-    <align=right><color=#00FF00>+100</color></line-height></align>
-
-    <align=left>Defence<line-height=0em></align>
-
-    <align=right><color=#00FF00>+67</color>
-    <color=#FF0000>-10%</color></line-height></align>
-
-    <align=left>Attack<line-height=0em></align>
-
-    <align=right><color=#FF0000>-32</color></line-height></align>
-
-    <align=left><color=#AA00AA>Ability:
-    Minecraft <color=#FF00FF><b>E</b></color></color>
-
-    <i>Something with stat
-    <color=#00FFFF>67</color>.</i>
-
-    <color=#888888>Cooldown: </color><color=#FFFF00>100s</color>
-
-    <color=#888888>Mana
-    Cost: </color><color=#00BBBB>67</color>
-
-
-    <color=#FF00FF><b>Mythical Helmet</b></color>'
+  m_text: Choose a gear to display using the buttons.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -397,7 +372,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <color=#FF00FF>Diamond Helmet</color>
+  m_text: Choose a Gear
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -526,7 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

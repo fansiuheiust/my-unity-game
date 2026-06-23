@@ -11,6 +11,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using Loot;
 using Progression;
+using UI;
 
 namespace Combat {
     /// <summary>
@@ -32,6 +33,8 @@ namespace Combat {
         Player _player;
         PlayerInput _playerInput;
         public Transform _camera;
+
+        Popup _popup = null;
 
         float _xAxisRotation = 0;
 
@@ -63,6 +66,10 @@ namespace Combat {
             _playerInput.actions["interact"].performed += OnInteraction;
             _playerInput.actions["save"].performed += OnSave;
             _playerInput.actions["ability"].performed += OnAbility;
+            _playerInput.actions["inspectgears"].performed += OnGearInspection;
+
+            // popup
+            _playerInput.actions["quit"].performed += OnPopupEsc;
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
@@ -219,6 +226,31 @@ namespace Combat {
                 "c" => AbilityTriggerKey.Misc,
                 _ => AbilityTriggerKey.None,
             });
+        }
+
+        void OnGearInspection(InputAction.CallbackContext _) {
+            CreatePopup((GameObject)Resources.Load("Prefabs/UI/GearInspector"));
+        }
+
+
+        void OnPopupEsc(InputAction.CallbackContext _) {
+            _popup.OnExitPressed();
+        }
+
+        public bool CreatePopup(GameObject prefab) {
+            if (_popup != null) return false;
+            Cursor.visible = true;
+            _playerInput.SwitchCurrentActionMap("PopupControl");
+            _popup = Instantiate(prefab).GetComponent<Popup>();
+            _popup.OnExit.AddListener(OnPopupDeath);
+            return true;
+        }
+
+        void OnPopupDeath() {
+            _popup = null;
+            _playerInput.SwitchCurrentActionMap("MovementControl");
+            _playerInput.actions["blockrotate"].Disable();
+            ResetMouse();
         }
     }
 }

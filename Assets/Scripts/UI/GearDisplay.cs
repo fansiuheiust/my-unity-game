@@ -23,7 +23,7 @@ namespace UI {
         public static string Stats(BaseStats b, ScalingStats s) {
             string ri = $"{Stat("Attack", b.Atk, s.Atk)}{Stat("Defence", b.Def, s.Def)}{Stat("Max HP", b.MaxHp, s.MaxHp)}{Stat("Max Mana", b.MaxMana, s.MaxMana)}{Stat("Mana Regen", b.ManaRegen, s.ManaRegen)}";
             // hashed base stat goes here
-            ri += $"{Stat("Walk Speed", 0, s.WalkSpeed)}{Stat("Attack Speed", 0, s.AtkSpeed)}{Stat("Crit Rate", 0, s.CritRate)}{Stat("Crit Damage", 0, s.CritDmg)}{Stat("Damage Reduction", 0, s.DmgReduction)}{Stat("Knockback", 0, s.Knockback)}{Stat("Knockback Resistance", 0, s.KnockbackResistance)}";
+            ri += $"\n{Stat("Walk Speed", 0, s.WalkSpeed)}{Stat("Attack Speed", 0, s.AtkSpeed)}{Stat("Crit Rate", 0, s.CritRate)}{Stat("Crit Damage", 0, s.CritDmg)}{Stat("Damage Reduction", 0, s.DmgReduction)}{Stat("Knockback", 0, s.Knockback)}{Stat("Knockback Resistance", 0, s.KnockbackResistance)}";
             foreach (HashedScalingStats h in Enum.GetValues(typeof(HashedScalingStats)))
                 ri += $"{Stat(Global.HashedScalingStat(h), 0, s[h])}";
 
@@ -65,14 +65,10 @@ namespace UI {
             return $"{Stats(gear.@base, gear.scaling)}{(gear.ability is not null? Ability(gear.ability) : "")}\n\n<color={TIERS[gear.tier]}><b>{Global.Rarities[gear.tier]} {gearType}</b></color>";
         }
 
-        private void Start() {
-            Display(GearDatabase.Get("dagger"), "Melee");
-        }
-
         void Display(Gear gear, string gearType) {
             if (gear is null) {
                 gearName.text = $"No {gearType}";
-                info.text = "";
+                info.text = $"You have not equipped {gearType}.";
                 RecolorUI("$#FFFFFF");
                 return;
             }

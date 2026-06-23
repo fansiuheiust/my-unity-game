@@ -113,6 +113,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "inspectgears",
+                    "type": "Button",
+                    "id": "7a21ee4d-537f-4ac8-8242-3753007fd7cb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -344,6 +353,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "995b662c-80c5-4665-a23e-2046bfab0840",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "inspectgears",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "PopupControl",
+            "id": "b28ad426-bbe1-43fa-a124-7c33314c7de8",
+            "actions": [
+                {
+                    "name": "quit",
+                    "type": "Button",
+                    "id": "9a0328f7-ca90-4d4f-a7f9-2196f1bd0239",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ad9b3d2b-fe1c-4c25-8399-92671c63b937",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "quit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
