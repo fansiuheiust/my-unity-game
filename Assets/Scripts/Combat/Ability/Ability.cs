@@ -16,7 +16,7 @@ namespace Combat {
     public class Ability {
         public readonly string id;
         public readonly string name;
-        readonly string rawDescription;
+        public readonly string rawDescription;
         readonly float cooldown;
         readonly float manaCost;
         public readonly AbilityTriggerKey triggerKey;
@@ -45,7 +45,11 @@ namespace Combat {
         /// Returns an attribute's value
         /// </summary>
         /// <param name="name">name of the attribute</param>
-        public virtual float this[string name] => stats[name].Value();
+        public float this[string name] => Attribute(name);
+
+        public virtual float Attribute(string name) => stats[name].Value();
+
+        public virtual string AttributeString(string name) => stats[name].ValueInString();
     }
 
     public class PerkAbility: Ability {
@@ -53,7 +57,9 @@ namespace Combat {
         public PerkAbility(Perk perk, AbilityTriggerKey triggerKey, System.Type ability): base(perk.id, perk.name, perk.rawDescription, -1, -1, triggerKey, null, ability) {
             this.perk = perk;
         }
-        public override float this[string name] => perk[name];
+        public override float Attribute(string name) => perk[name];
+
+        public override string AttributeString(string name) => perk.AttributeString(name);
 
         public override float Cooldown => perk.ContainsAttribute("Cooldown") ?perk["Cooldown"]: 0;
         public override float ManaCost => perk.ContainsAttribute("Mana Cost")? perk["Mana Cost"]: 0;

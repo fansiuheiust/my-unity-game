@@ -16,6 +16,7 @@ MonoBehaviour:
   melees:
   - id: long_sword
     name: Long Sword
+    tier: 0
     stats:
       base:
         <Atk>k__BackingField: 2
@@ -45,6 +46,7 @@ MonoBehaviour:
     prefabName: Default
   - id: dagger
     name: Dagger
+    tier: 0
     stats:
       base:
         <Atk>k__BackingField: 10
@@ -70,9 +72,42 @@ MonoBehaviour:
     weaponSpeed: 2
     weaponRange: 0.5
     prefabName: Default
+  - id: tester
+    name: Test Weapon
+    tier: 0
+    stats:
+      base:
+        <Atk>k__BackingField: 10
+        <Def>k__BackingField: -10
+        <MaxHp>k__BackingField: 100
+        <MaxMana>k__BackingField: -10
+        <ManaRegen>k__BackingField: 0
+      scaling:
+        <Atk>k__BackingField: -0.2
+        <Def>k__BackingField: -0.4
+        <MaxHp>k__BackingField: 0.6
+        <MaxMana>k__BackingField: 0.3
+        <ManaRegen>k__BackingField: 0
+        <WalkSpeed>k__BackingField: 0
+        <AtkSpeed>k__BackingField: 0
+        <CritRate>k__BackingField: 0
+        <CritDmg>k__BackingField: 0
+        <DmgReduction>k__BackingField: 0
+        <Knockback>k__BackingField: 0
+        <KnockbackResistance>k__BackingField: 0
+      hashedScaling:
+      - stats: 0
+        data: 0.2
+      - stats: 3
+        data: -0.2
+    abilityID: Speedy
+    weaponSpeed: 2
+    weaponRange: 1
+    prefabName: Default
   rangeds:
   - id: bow
     name: Bow
+    tier: 0
     stats:
       base:
         <Atk>k__BackingField: 10

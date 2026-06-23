@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8535075362659817461}
   - component: {fileID: 4664323767920455217}
   - component: {fileID: 8912708151551005995}
+  - component: {fileID: 5695661149031873488}
   m_Layer: 5
   m_Name: GearDisplay
   m_TagString: Untagged
@@ -78,6 +79,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 4
+--- !u!114 &5695661149031873488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608913490663811884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a00bea87ff86c00488c52bc2d18c6725, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: {fileID: 0}
+  info: {fileID: 4791954569794080977}
 --- !u!1 &1927265469447306005
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,7 +239,8 @@ MonoBehaviour:
 
     <align=left>Defence<line-height=0em></align>
 
-    <align=right><color=#00FF00>+67</color></line-height></align>
+    <align=right><color=#00FF00>+67</color>
+    <color=#FF0000>-10%</color></line-height></align>
 
     <align=left>Attack<line-height=0em></align>
 
@@ -276,7 +292,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -379,7 +395,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <color=#FF00FF><b>Diamond Helmet</b></color>
+  m_text: <color=#FF00FF>Diamond Helmet</color>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -412,7 +428,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535

@@ -70,7 +70,7 @@ namespace Progression {
     public class PercentageAttribute: DecimalAttribute {
         public PercentageAttribute(string name, params float[] values) : base(name, values) {
         }
-        public override string ValueInString(uint level) => $"{(values[level - 1] * 100):F2}%";
+        public override string ValueInString(uint level) => $"{(values[level - 1] * 100):F0}%";
     }
 
 }
