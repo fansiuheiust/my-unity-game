@@ -31,6 +31,7 @@ namespace Progression.Balance {
     abstract class SerializedGear {
         [SerializeField] protected string id;
         [SerializeField] protected string name;
+        [SerializeField] protected uint tier;
         [SerializeField] protected SerializedMobStats stats;
         [SerializeField, Tooltip("Leave it blank if no ability")] protected string abilityID = "";
         internal virtual Gear Gear {
@@ -56,7 +57,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Armor(id, name, stats.@base, stats.scaling, type, Ability);
+                return new Combat.Armor(id, name, tier, stats.@base, stats.scaling, type, Ability);
             }
         }
     }
@@ -66,7 +67,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Melee(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, prefabName, Ability);
+                return new Combat.Melee(id, name, tier, stats.@base, stats.scaling, weaponSpeed, weaponRange, prefabName, Ability);
             }
         }
     }
@@ -77,7 +78,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Ranged(id, name, stats.@base, stats.scaling, weaponSpeed, weaponRange, pierce, prefabName, Ability);
+                return new Combat.Ranged(id, name, tier, stats.@base, stats.scaling, weaponSpeed, weaponRange, pierce, prefabName, Ability);
             }
         }
     }
