@@ -8,7 +8,7 @@ namespace Progression.Balance {
     public class AbilityData : ScriptableObject {
         [SerializeField]
         SerializedAbility[] abilities;
-        [SerializeField, Tooltip("Abilities that are unlocked if a Perk is")]
+        [SerializeField, Tooltip("Abilities that are unlocked if a Perk is\nIf the ability's mana cost or cooldown is non-zero, make sure that the perk contains attribute \"Cooldown\" or \"Mana Cost\" respectively")]
         SerializedPerkAbility[] perkAbilities;
         public Ability[] Abilities => abilities.Select(x => x.Ability).ToArray();
         public Ability[] PerkAbilities => perkAbilities.Select(x => x.Ability).ToArray();
