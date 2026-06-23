@@ -56,7 +56,7 @@ namespace Combat {
         public override float this[string name] => perk[name];
 
         public override float Cooldown => perk.ContainsAttribute("Cooldown") ?perk["Cooldown"]: 0;
-        public override float ManaCost => perk.ContainsAttribute("ManaCost")? perk["ManaCost"]: 0;
+        public override float ManaCost => perk.ContainsAttribute("Mana Cost")? perk["Mana Cost"]: 0;
 
     }
 }

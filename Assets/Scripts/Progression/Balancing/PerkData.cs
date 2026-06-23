@@ -5,6 +5,8 @@ using System.ComponentModel.Design.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 namespace Progression.Balance {
     /// <summary>
     /// Controls coins and perks
@@ -102,8 +104,8 @@ namespace Progression.Balance {
 
         [System.Serializable]
         class Attribute {
-            public PerkAttributeType type;
             public string name;
+            public PerkAttributeType type;
             [Tooltip("Make sure you use the data type specified in Type")]
             public float[] values;
         }
