@@ -133,6 +133,8 @@ namespace Combat {
         /// <param name="context"></param>
         void OnRotateLock(InputAction.CallbackContext context) {
             Cursor.visible = true;
+            _playerInput.actions["attack"].Disable();
+            _playerInput.actions["block"].Disable();
             _playerInput.actions["rotate"].Disable();
         }
 
@@ -142,6 +144,8 @@ namespace Combat {
         /// <param name="context"></param>
         void OnRotateLockCancel(InputAction.CallbackContext context) {
             ResetMouse();
+            _playerInput.actions["attack"].Enable();
+            _playerInput.actions["block"].Enable();
             _playerInput.actions["rotate"].Enable();
         }
 
@@ -166,6 +170,7 @@ namespace Combat {
         // block
         void OnBlockInput(InputAction.CallbackContext context) {
             _playerInput.actions["rotate"].Disable();
+            _playerInput.actions["lockrotate"].Disable();
             _playerInput.actions["blockrotate"].Enable();
             Cursor.visible = true;
             _player.BlockClick();
@@ -179,6 +184,7 @@ namespace Combat {
         void OnBlockEnded() {
             Cursor.visible = false;
             _playerInput.actions["blockrotate"].Disable();
+            _playerInput.actions["lockrotate"].Enable();
             _playerInput.actions["rotate"].Enable();
         }
 
