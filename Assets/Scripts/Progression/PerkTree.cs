@@ -172,7 +172,9 @@ namespace Progression {
         /// Returns a Perk's attribute at its level
         /// </summary>
         /// <param name="name">name of the attribute</param>
-        public float this[string name] => stats[name].Value(Level);
+        public float this[string name] => Attribute(name);
+        public float Attribute(string name) => stats[name].Value(Level);
+        public string AttributeString(string name) => stats[name].ValueInString();
         /// <summary>
         /// Whether the perk contains an attribute
         /// </summary>

@@ -11,6 +11,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using Loot;
 using Progression;
+using UI;
 
 namespace Combat {
     /// <summary>
@@ -32,6 +33,8 @@ namespace Combat {
         Player _player;
         PlayerInput _playerInput;
         public Transform _camera;
+
+        Popup _popup = null;
 
         float _xAxisRotation = 0;
 
@@ -63,6 +66,10 @@ namespace Combat {
             _playerInput.actions["interact"].performed += OnInteraction;
             _playerInput.actions["save"].performed += OnSave;
             _playerInput.actions["ability"].performed += OnAbility;
+            _playerInput.actions["inspectgears"].performed += OnGearInspection;
+
+            // popup
+            _playerInput.actions["quit"].performed += OnPopupEsc;
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
@@ -133,6 +140,8 @@ namespace Combat {
         /// <param name="context"></param>
         void OnRotateLock(InputAction.CallbackContext context) {
             Cursor.visible = true;
+            _playerInput.actions["attack"].Disable();
+            _playerInput.actions["block"].Disable();
             _playerInput.actions["rotate"].Disable();
         }
 
@@ -142,6 +151,8 @@ namespace Combat {
         /// <param name="context"></param>
         void OnRotateLockCancel(InputAction.CallbackContext context) {
             ResetMouse();
+            _playerInput.actions["attack"].Enable();
+            _playerInput.actions["block"].Enable();
             _playerInput.actions["rotate"].Enable();
         }
 
@@ -166,6 +177,7 @@ namespace Combat {
         // block
         void OnBlockInput(InputAction.CallbackContext context) {
             _playerInput.actions["rotate"].Disable();
+            _playerInput.actions["lockrotate"].Disable();
             _playerInput.actions["blockrotate"].Enable();
             Cursor.visible = true;
             _player.BlockClick();
@@ -179,6 +191,7 @@ namespace Combat {
         void OnBlockEnded() {
             Cursor.visible = false;
             _playerInput.actions["blockrotate"].Disable();
+            _playerInput.actions["lockrotate"].Enable();
             _playerInput.actions["rotate"].Enable();
         }
 
@@ -213,6 +226,31 @@ namespace Combat {
                 "c" => AbilityTriggerKey.Misc,
                 _ => AbilityTriggerKey.None,
             });
+        }
+
+        void OnGearInspection(InputAction.CallbackContext _) {
+            CreatePopup((GameObject)Resources.Load("Prefabs/UI/GearInspector"));
+        }
+
+
+        void OnPopupEsc(InputAction.CallbackContext _) {
+            _popup.OnExitPressed();
+        }
+
+        public bool CreatePopup(GameObject prefab) {
+            if (_popup != null) return false;
+            Cursor.visible = true;
+            _playerInput.SwitchCurrentActionMap("PopupControl");
+            _popup = Instantiate(prefab).GetComponent<Popup>();
+            _popup.OnExit.AddListener(OnPopupDeath);
+            return true;
+        }
+
+        void OnPopupDeath() {
+            _popup = null;
+            _playerInput.SwitchCurrentActionMap("MovementControl");
+            _playerInput.actions["blockrotate"].Disable();
+            ResetMouse();
         }
     }
 }
