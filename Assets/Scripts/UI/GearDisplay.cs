@@ -3,6 +3,7 @@ using Loot;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI {
     public class GearDisplay: MonoBehaviour {
@@ -13,6 +14,7 @@ namespace UI {
         static readonly string[] TIERS = {"#FFFFFF", "#00BB00", "#AA00AA", "#EECC00", "#FF00FF" };
         [SerializeField] TextMeshProUGUI gearName;
         [SerializeField] TextMeshProUGUI info;
+        [SerializeField] Image outline, line;
 
         static string Stat(string name, float b, float s) {
             if (b == 0 && s == 0) return "";
@@ -52,7 +54,7 @@ namespace UI {
             return ri;
         }
 
-        public static string GearName(Gear gear) => $"<color=#{TIERS[gear.tier]}>{gear.name}</color>";
+        public static string GearName(Gear gear) => $"<color={TIERS[gear.tier]}>{gear.name}</color>";
 
         /// <summary>
         /// Returns the TextMeshPro string for a gear
@@ -64,7 +66,38 @@ namespace UI {
         }
 
         private void Start() {
-            info.text = Gear(GearDatabase.Get("dagger"), "Melee");
+            Display(GearDatabase.Get("dagger"), "Melee");
+        }
+
+        void Display(Gear gear, string gearType) {
+            if (gear is null) {
+                gearName.text = $"No {gearType}";
+                info.text = "";
+                RecolorUI("$#FFFFFF");
+                return;
+            }
+            gearName.text = GearName(gear);
+            info.text = Gear(gear, gearType);
+            RecolorUI(TIERS[gear.tier]);
+        }
+        void RecolorUI(string colorCode) {
+            if (ColorUtility.TryParseHtmlString(colorCode, out Color c)) {
+                outline.color = c;
+                line.color = c;
+            }
+        }
+        public void Display(string gearType) {
+            foreach (ArmorType type in Enum.GetValues(typeof(ArmorType))) {
+                if (type.ToString() == gearType) {
+                    Display(StageController.Player.EquippedArmors[type], gearType);
+                    return;
+                }
+            }
+            if (gearType == "Weapon") {
+                Display(StageController.Player.EquippedWeapon, gearType);
+                return;
+            }
+            throw new System.Exception($"Invalid Gear type: {gearType}");
         }
     }
 }
