@@ -22,8 +22,9 @@ namespace Progression {
         public PerkTree RNGPerks { get; private set; }
         public PerkTree ClassPerks { get; private set; }
 
-        public PlayerPerk(Dictionary<CoinType, uint[]> coins, Dictionary<string, uint> floorPerks, Dictionary<string, uint> rngPerks, Dictionary<string, uint> classPerks): this() {
-            this.coins = coins.ToDictionary(x=>x.Key, x=>x.Value);
+        public void LoadFromSave(Dictionary<CoinType, uint[]> coins, Dictionary<string, uint> floorPerks, Dictionary<string, uint> rngPerks, Dictionary<string, uint> classPerks) {
+            foreach (var c in coins)
+                this.coins[c.Key] = c.Value.ToArray();
             foreach (var (id, level) in floorPerks)
                 FloorPerks[id].LevelUp(level); // force level up a perk
             foreach (var (id, level) in rngPerks)
