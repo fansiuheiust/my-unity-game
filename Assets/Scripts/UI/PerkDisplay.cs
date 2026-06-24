@@ -9,7 +9,11 @@ namespace UI {
         [SerializeField] Image[] topLefts, botRights;
         [SerializeField] Image line, outline;
 
-        static readonly string INACTIVESTAT = "#AAAAAA", ACTIVESTAT = "#00FFFF";
+        static readonly string INACTIVESTAT = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF", ACTIVECOST = "#EECC00", INACTIVECOST = "#AAAAAA";
+        /// <summary>
+        /// Parsed description of a perk
+        /// </summary>
+        /// <param name="p">perk to parse description</param>
         public static string Description(Perk p) {
             string ri = "";
             for (int i = 0; i < p.rawDescription.Length; i++) {
@@ -32,21 +36,56 @@ namespace UI {
             return ri+"\n";
         }
 
+        /// <summary>
+        /// Comprehensive information about the perk
+        /// </summary>
+        /// <param name="p">perk to extract info from</param>
         public static string Info(Perk p) {
             string ri = Description(p);
             ri += "\n\nLevel ";
             if (p.Level == 0)
-                ri += $"<color={INACTIVESTAT}>0</color>/{p.maxLevel}\n\n";
+                ri += $"<color={INACTIVESTAT}>0</color>/{p.maxLevel}\n";
             else
-                ri += $"<color={ACTIVESTAT}>{p.Level}</color>/{p.maxLevel}\n\n";
-            ri += $"<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>";
+                ri += $"<color={ACTIVESTAT}>{p.Level}</color>/{p.maxLevel}\n";
+            ri += $"Upgrade cost: <color={INACTIVECOST}>";
+            for (uint l = 1; l <= p.maxLevel; l++) {
+                // Note: I assume that Perk type dictates cost
+                var (_, tier, amount) = p.CostAt(l);
+                ri += (l-1 == p.Level)? $"<b><color={ACTIVECOST}>{amount} <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color></color></b>": $"{amount} {Global.Rarities[tier]}";
+                if (l != p.maxLevel) ri += "/";
+            }
+            ri += $"</color>\n\n<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>";
             return ri;
-        } 
+        }
+
+        /// <summary>
+        /// sets color of an array of images
+        /// </summary>
+        /// <param name="color">color in #ABCDEF</param>
+        /// <param name="targets">images to change color</param>
+        /// <exception cref="System.Exception"></exception>
+        static void SetColor(string color, Image[] targets) {
+            if (ColorUtility.TryParseHtmlString(color, out Color c)) {
+                c.a = GlobalColor.Perk.OutlineOpacity;
+                foreach (var item in targets)
+                    item.color = c;
+            } else throw new System.Exception("Bad color");
+        }
 
         private void Start() {
             Display(StageController.PlayerPerk.FloorPerks["RoomSkipper1"]);
+            // Display(null);
         }
+
+        /// <summary>
+        /// Set the PerkDisplay to display a perk
+        /// </summary>
+        /// <param name="p">perk to be displayed</param>
         public void Display(Perk p) {
+            if (p is null) {
+                NoPerk();
+                return;
+            }
             perkName.text = $"<color={GlobalColor.Perk.PerkType(p.type)}>{p.name}</color>";
             info.text = Info(p);
             
@@ -61,21 +100,26 @@ namespace UI {
             
             if (p.Level != 0) {
                 // unlocked color
-                SetOutline(GlobalColor.Perk.TopLeftOutline, topLefts);
-                SetOutline(GlobalColor.Perk.BotRightOutline, botRights);
+                SetColor(GlobalColor.Perk.TopLeftOutline, topLefts);
+                SetColor(GlobalColor.Perk.BotRightOutline, botRights);
             } else {
                 // locked color
-                SetOutline(GlobalColor.Perk.LockedTopLeftOutline, topLefts);
-                SetOutline(GlobalColor.Perk.LockedBotRightOutline, botRights);
+                SetColor(GlobalColor.Perk.LockedTopLeftOutline, topLefts);
+                SetColor(GlobalColor.Perk.LockedBotRightOutline, botRights);
             }
-
-            void SetOutline(string color, Image[] targets) {
-                if (ColorUtility.TryParseHtmlString(color, out c)) {
-                    c.a = GlobalColor.Perk.OutlineOpacity;
-                    foreach (var item in targets)
-                        item.color = c;
-                } else throw new System.Exception("Bad color");
-            }
+        }
+        
+        /// <summary>
+        /// change the panel to no perk
+        /// </summary>
+        public void NoPerk() {
+            perkName.text = $"No Perk";
+            info.text = "No perk has been selected yet.";
+            ColorUtility.TryParseHtmlString(NOPERK, out Color c);
+            line.color = c;
+            outline.color = c;
+            SetColor(GlobalColor.Perk.LockedTopLeftOutline, topLefts);
+            SetColor(GlobalColor.Perk.LockedBotRightOutline, botRights);
         }
     }
 }
