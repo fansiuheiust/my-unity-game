@@ -69,7 +69,7 @@ namespace UI {
             if (gear is null) {
                 gearName.text = $"No {gearType}";
                 info.text = $"You have not equipped {gearType}.";
-                RecolorUI("$#FFFFFF");
+                RecolorUI("#FFFFFF");
                 return;
             }
             gearName.text = GearName(gear);
