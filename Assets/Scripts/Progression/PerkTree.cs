@@ -175,6 +175,7 @@ namespace Progression {
         public float this[string name] => Attribute(name);
         public float Attribute(string name) => stats[name].Value(Level);
         public string AttributeString(string name) => stats[name].ValueInString();
+        public string AttributeString(string name, uint level) => stats[name].ValueInString(level);
         /// <summary>
         /// Whether the perk contains an attribute
         /// </summary>

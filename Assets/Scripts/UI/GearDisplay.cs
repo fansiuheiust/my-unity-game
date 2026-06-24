@@ -11,7 +11,6 @@ namespace UI {
         static readonly string STATTEXT = "#FFFFFF", GOODSTAT = "#00FF00", BADSTAT = "#FF0000",
             ABILITYHEADER = "#AA00AA", ABILITYKEY = "#FF00FF", ABILITYDESC = "#FFFFFF", ABILITYATT = "#00FFFF", COOLDOWNTEXT = "#888888", COOLDOWNVALUE = "#FFFF00", MANACOSTTEXT = "#888888", MANACOSTVALUE = "#00BBBB";
         //                                  Common  Rare        Epic        Legendary   Mythical
-        static readonly string[] TIERS = {"#FFFFFF", "#00BB00", "#AA00AA", "#EECC00", "#FF00FF" };
         [SerializeField] TextMeshProUGUI gearName;
         [SerializeField] TextMeshProUGUI info;
         [SerializeField] Image outline, line;
@@ -54,7 +53,7 @@ namespace UI {
             return ri;
         }
 
-        public static string GearName(Gear gear) => $"<color={TIERS[gear.tier]}>{gear.name}</color>";
+        public static string GearName(Gear gear) => $"<color={GlobalColor.RarityTiers[gear.tier]}>{gear.name}</color>";
 
         /// <summary>
         /// Returns the TextMeshPro string for a gear
@@ -62,7 +61,7 @@ namespace UI {
         /// <param name="gear">gear</param>
         /// <param name="gearType">type of gear, e.g. helmet, chestplate</param>
         public static string Gear(Gear gear, string gearType) {
-            return $"{Stats(gear.@base, gear.scaling)}{(gear.ability is not null? Ability(gear.ability) : "")}\n\n<color={TIERS[gear.tier]}><b>{Global.Rarities[gear.tier]} {gearType}</b></color>";
+            return $"{Stats(gear.@base, gear.scaling)}{(gear.ability is not null? Ability(gear.ability) : "")}\n\n<color={GlobalColor.RarityTiers[gear.tier]}><b>{Global.Rarities[gear.tier]} {gearType}</b></color>";
         }
 
         void Display(Gear gear, string gearType) {
@@ -74,7 +73,7 @@ namespace UI {
             }
             gearName.text = GearName(gear);
             info.text = Gear(gear, gearType);
-            RecolorUI(TIERS[gear.tier]);
+            RecolorUI(GlobalColor.RarityTiers[gear.tier]);
         }
         void RecolorUI(string colorCode) {
             if (ColorUtility.TryParseHtmlString(colorCode, out Color c)) {
