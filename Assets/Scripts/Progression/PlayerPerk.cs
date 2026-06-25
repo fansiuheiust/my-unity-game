@@ -65,6 +65,22 @@ namespace Progression {
             })[perkID]);
         public bool CanAfford(Perk target) => target.Level != target.maxLevel && coins[target.Cost.type][target.Cost.tier] >= target.Cost.value;
 
+        /// <summary>
+        /// Levels up a perk if affordable and not violating dependency/exclusions
+        /// </summary>
+        /// <param name="perkType">type of the perk</param>
+        /// <param name="perkID">ID of the perk</param>
+        /// <returns>true iff leveled up</returns>
+        public bool TryLevelUp(CoinType perkType, string perkID) {
+            if (!CanAfford(perkType, perkID)) return false;
+            if (!TreeOf(perkType).Contains(perkID)) return false;
+            if (!TreeOf(perkType).Unlockable(perkID)) return false;
+            var (type, tier, value) = TreeOf(perkType)[perkID].Cost;
+            coins[type][tier] -= value;
+            TreeOf(perkType).LevelUp(perkID);
+            return true;
+        }
+
         public PerkTree TreeOf(CoinType type) => type switch {
             CoinType.Floor => FloorPerks,
             CoinType.RNG => RNGPerks,

@@ -43,7 +43,7 @@ namespace UI {
                 ri += $"<color={INACTIVE}>0</color>/{p.maxLevel}";
             else
                 ri += $"<color={ACTIVESTAT}>{p.Level}</color>/{p.maxLevel}";
-            ri += $"\n\n<color={(StageController.PlayerPerk.CanAfford(p)? FULFILLED: UNFULFILLED)}>Upgrade cost:</color>\n<color={INACTIVE}>";
+            ri += $"\n\n<color={(StageController.PlayerPerk.CanAfford(p)? FULFILLED: UNFULFILLED)}>Upgrade Cost:</color>\n<color={INACTIVE}>";
             for (uint l = 1; l <= p.maxLevel; l++) {
                 // Note: I assume that Perk type dictates cost
                 var (_, tier, amount) = p.CostAt(l);
@@ -96,11 +96,6 @@ namespace UI {
                 foreach (var item in targets)
                     item.color = c;
             } else throw new System.Exception("Bad color");
-        }
-
-        private void Start() {
-            Display(StageController.PlayerPerk.FloorPerks["Scaler1"]);
-            // Display(null);
         }
 
         /// <summary>
