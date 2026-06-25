@@ -10,6 +10,7 @@ namespace UI {
         [field: SerializeField] public CoinType perkType { get; private set; }
         [SerializeField] Image[] topLefts, bottomRights;
         public Button button;
+        public Perk Perk => StageController.PlayerPerk.TreeOf(perkType)[perkID];
 
         [SerializeField] TextMeshProUGUI text;
         private void Awake() {
@@ -30,14 +31,14 @@ namespace UI {
 
         public void UpdatePerk(Perk p) {
             text.text = p.name;
-            if (ColorUtility.TryParseHtmlString(p.Level > 0 ? GlobalColor.Perk.TopLeftOutline : GlobalColor.Perk.LockedTopLeftOutline, out Color c)) {
+            if (ColorUtility.TryParseHtmlString(p.Level > 0 ? GlobalColor.Perk.TopLeftOutline : StageController.PlayerPerk.CanUnlock(p) ? GlobalColor.Perk.UnlockableTopLeftOutline : GlobalColor.Perk.LockedTopLeftOutline, out Color c)) {
                 c.a = GlobalColor.Perk.OutlineOpacity;
                 foreach (var item in topLefts)
                     item.color = c;
             } else {
                 throw new System.Exception("Invalid color code");
             }
-            if (ColorUtility.TryParseHtmlString(p.Level > 0 ? GlobalColor.Perk.BotRightOutline : GlobalColor.Perk.LockedBotRightOutline, out c)) {
+            if (ColorUtility.TryParseHtmlString(p.Level > 0 ? GlobalColor.Perk.BotRightOutline : StageController.PlayerPerk.CanUnlock(p)? GlobalColor.Perk.UnlockableBotRightOutline: GlobalColor.Perk.LockedBotRightOutline, out c)) {
                 c.a = GlobalColor.Perk.OutlineOpacity;
                 foreach (var item in bottomRights)
                     item.color = c;

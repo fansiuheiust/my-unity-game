@@ -54,8 +54,8 @@ namespace UI {
             PerkTree tree = StageController.PlayerPerk.TreeOf(p.type);
             if (p.dependencies.Length != 0) {
                 ri += $"<color={(tree.FulfilledDependencies(p)? FULFILLED: UNFULFILLED)}>Required Perks:</color>\n";
-                foreach (Dependency d in p.dependencies) {
-                    ri += $"<color={(tree.FulfilledDependency(p, d)? ACTIVEDEP: INACTIVE)}>{tree[d.id].name}: "+(d.type switch {
+                foreach (Progression.Dependency d in p.dependencies) {
+                    ri += $"<color={(tree.FulfilledDependency(p, d)? ACTIVEDEP : INACTIVE)}>{tree[d.id].name}: "+(d.type switch {
                         DependencyType.Existential => "Unlocked",
                         DependencyType.Max => "Maxed",
                         DependencyType.Levelled => "Same Level",
@@ -67,7 +67,7 @@ namespace UI {
             if (p.exclusions.Length != 0) {
                 ri += $"<color={(tree.FulfilledExclusions(p)? FULFILLED: UNFULFILLED)}>Exclusions:</color>\n";
                 foreach (string e in p.exclusions) {
-                    ri += $"<color={(tree.FulfilledExclusion(e)? INACTIVE: ACTIVEEXCL)}>{tree[e].name}</color>";
+                    ri += $"<color={(tree.FulfilledExclusion(e)? INACTIVE: ACTIVEEXCL)}>{tree[e].name}</color>\n";
                 }
             }
             return ri;

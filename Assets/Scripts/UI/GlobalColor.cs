@@ -11,7 +11,7 @@ namespace UI {
                 CoinType.Class => "#DDEE00",
                 _ => throw new System.NotImplementedException("Please implement color in GlobalColor for perk type " + type.ToString())
             };
-            public static readonly string TopLeftOutline = "#FF0000", BotRightOutline = "#00FFFF", LockedTopLeftOutline = "#555555", LockedBotRightOutline = "#AAAAAA";
+            public static readonly string TopLeftOutline = "#FF0000", BotRightOutline = "#00FFFF", LockedTopLeftOutline = "#555555", LockedBotRightOutline = "#AAAAAA", UnlockableTopLeftOutline = "#00FF00", UnlockableBotRightOutline = "#00FF00";
             public static readonly float OutlineOpacity = 0.5f;
         }
     }

@@ -31,6 +31,7 @@ MonoBehaviour:
     serializedDependencies: []
     exclusions:
     - Scaler
+    - BossierBoss
     serializedCosts:
     - tier: 0
       value: 5
