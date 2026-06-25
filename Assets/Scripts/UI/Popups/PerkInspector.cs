@@ -8,7 +8,16 @@ using UnityEngine.UI;
 namespace UI {
     public class PerkInspector : MonoBehaviour {
 
-        static readonly string CANNOTUPGRADE = "#FF0000", DEFAULTDEPENDENCYLINE = "#AAAAAA", EXCLUSION = "#FF0000", DEPENDENT = "#00FFFF";
+        static readonly string CANNOTUPGRADE = "#FF0000", DEFAULTDEPENDENCYLINE = "#AAAAAA", EXCLUSION = "#FF0000", DEPENDENT = "#00FFFF",
+            COIN = "#EECC00";
+
+        static string CoinDisplayText(CoinType type) {
+            string ri = $"<b>Your <color={GlobalColor.Perk.PerkType(type)}>{type}</color> Coins</b>\n<size=14>";
+            for (uint i = 0; i < Global.Rarities.Length; i++) {
+                ri += $"<color={GlobalColor.RarityTiers[i]}><b>{Global.Rarities[i]}</b></color> <color={COIN}>{StageController.PlayerPerk.Coin(type, i)}</color>\n";
+            }
+            return ri+"</size>";
+        }
 
 
         [SerializeField] PerkDisplay display;
@@ -16,6 +25,7 @@ namespace UI {
         [SerializeField] Button levelUpButton;
         [SerializeField] TextMeshProUGUI levelUpText;
         [SerializeField] GameObject dependencyLine;
+        [SerializeField] TextMeshProUGUI coinText;
         readonly Dictionary<string, PerkButton> perkButtons = new();
         readonly Dictionary<string, Dictionary<string, DependencyLine>> dependencyLines = new();
         readonly Dictionary<string, Dictionary<string, DependencyLine>> exclusionLines = new();
@@ -91,11 +101,13 @@ namespace UI {
                 levelUpButton.interactable = false;
                 levelUpText.text = $"<color={CANNOTUPGRADE}>{(!fulfilledCost? "Insufficient Coins": !fulfilledDep? "Unfulfilled Requirements": "Conflicted Exclusion")}</color>";
             }
+            coinText.text = CoinDisplayText(perkType);
         }
         void NoPerk() {
             levelUpButton.interactable = false;
-            levelUpText.text = "No perk selected";
+            levelUpText.text = "";
             display.NoPerk();
+            coinText.text = "";
         }
 
         void LevelUp(Perk p) {
