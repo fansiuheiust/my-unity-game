@@ -143,10 +143,10 @@ namespace Progression {
         /// </summary>
         public static void TestDependencyExclusion() {
             Perk[] perks = new Perk[] {
-                new("a", 10),
-                new("b", 4, new Dependency("a", DependencyType.Existential)),
-                new("c", 3, new Dependency("a", DependencyType.Max)),
-                new("d", 8, new Dependency("b", DependencyType.Levelled), new Dependency("c", DependencyType.Levelled)),
+                new("a", "A", "A", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{ (0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0), }, 10, new Dependency[0], new string[0]),
+                new("b", "B", "B", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0),(0, 0), }, 4, new Dependency[]{new("a", DependencyType.Existential) }, new string[0]),
+                new("c", "C", "C", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0), }, 3, new Dependency[]{new("a", DependencyType.Max) }, new string[0]),
+                new("d", "D", "D", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0), }, 8, new Dependency[]{new("b", DependencyType.Levelled), new("c", DependencyType.Levelled) }, new string[0]),
             };
             PerkTree pt = new(perks);
             Debug.Assert(pt.Unlockable("b") == false && pt.Unlockable("c") == false);

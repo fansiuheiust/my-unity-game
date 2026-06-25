@@ -9,7 +9,8 @@ namespace UI {
         [SerializeField] Image[] topLefts, botRights;
         [SerializeField] Image line, outline;
 
-        static readonly string INACTIVESTAT = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF", ACTIVECOST = "#EECC00", INACTIVECOST = "#AAAAAA";
+        static readonly string INACTIVE = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF",
+            UNFULFILLED = "#888888", FULFILLED = "#00FF00", ACTIVECOST = "#EECC00", ACTIVEDEP = "#00FFFF", ACTIVEEXCL = "#FF0000";
         /// <summary>
         /// Parsed description of a perk
         /// </summary>
@@ -18,7 +19,7 @@ namespace UI {
             string ri = "";
             for (int i = 0; i < p.rawDescription.Length; i++) {
                 if (p.rawDescription[i] == '{') {
-                    ri += $"<color={INACTIVESTAT}>";
+                    ri += $"<color={INACTIVE}>";
                     int j = i + 1;
                     for (; j < p.rawDescription.Length; j++)
                         if (p.rawDescription[j] == '}') break;
@@ -36,25 +37,50 @@ namespace UI {
             return ri+"\n";
         }
 
+        public static string LevelInfo(Perk p) {
+            string ri = "Level ";
+            if (p.Level == 0)
+                ri += $"<color={INACTIVE}>0</color>/{p.maxLevel}";
+            else
+                ri += $"<color={ACTIVESTAT}>{p.Level}</color>/{p.maxLevel}";
+            ri += $"\n\n<color={(StageController.PlayerPerk.CanAfford(p)? FULFILLED: UNFULFILLED)}>Upgrade cost:</color>\n<color={INACTIVE}>";
+            for (uint l = 1; l <= p.maxLevel; l++) {
+                // Note: I assume that Perk type dictates cost
+                var (_, tier, amount) = p.CostAt(l);
+                ri += (l - 1 == p.Level) ? $"<b><color={ACTIVECOST}>{amount} <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color></color></b>" : $"{amount} {Global.Rarities[tier]}";
+                if (l != p.maxLevel) ri += "/";
+            }
+            ri += $"\n\n";
+            PerkTree tree = StageController.PlayerPerk.TreeOf(p.type);
+            if (p.dependencies.Length != 0) {
+                ri += $"<color={(tree.FulfilledDependencies(p)? FULFILLED: UNFULFILLED)}>Required Perks:</color>\n";
+                foreach (Dependency d in p.dependencies) {
+                    ri += $"<color={(tree.FulfilledDependency(p, d)? ACTIVEDEP: INACTIVE)}>{tree[d.id].name}: "+(d.type switch {
+                        DependencyType.Existential => "Unlocked",
+                        DependencyType.Max => "Maxed",
+                        DependencyType.Levelled => "Same Level",
+                        _ => throw new System.NotImplementedException($"Unimplemented dependency {d.type}")
+                    })+"</color>\n";
+                }
+                ri += "\n";
+            }
+            if (p.exclusions.Length != 0) {
+                ri += $"<color={(tree.FulfilledExclusions(p)? FULFILLED: UNFULFILLED)}>Exclusions:</color>\n";
+                foreach (string e in p.exclusions) {
+                    ri += $"<color={(tree.FulfilledExclusion(e)? INACTIVE: ACTIVEEXCL)}>{tree[e].name}</color>";
+                }
+            }
+            return ri;
+        }
+
         /// <summary>
         /// Comprehensive information about the perk
         /// </summary>
         /// <param name="p">perk to extract info from</param>
         public static string Info(Perk p) {
             string ri = Description(p);
-            ri += "\n\nLevel ";
-            if (p.Level == 0)
-                ri += $"<color={INACTIVESTAT}>0</color>/{p.maxLevel}\n";
-            else
-                ri += $"<color={ACTIVESTAT}>{p.Level}</color>/{p.maxLevel}\n";
-            ri += $"Upgrade cost: <color={INACTIVECOST}>";
-            for (uint l = 1; l <= p.maxLevel; l++) {
-                // Note: I assume that Perk type dictates cost
-                var (_, tier, amount) = p.CostAt(l);
-                ri += (l-1 == p.Level)? $"<b><color={ACTIVECOST}>{amount} <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color></color></b>": $"{amount} {Global.Rarities[tier]}";
-                if (l != p.maxLevel) ri += "/";
-            }
-            ri += $"</color>\n\n<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>";
+            ri += $"\n\n<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>\n\n";
+            ri += LevelInfo(p);
             return ri;
         }
 
@@ -73,7 +99,7 @@ namespace UI {
         }
 
         private void Start() {
-            Display(StageController.PlayerPerk.FloorPerks["RoomSkipper1"]);
+            Display(StageController.PlayerPerk.FloorPerks["Scaler1"]);
             // Display(null);
         }
 

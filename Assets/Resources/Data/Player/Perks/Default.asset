@@ -140,17 +140,18 @@ MonoBehaviour:
       value: 20
   - id: Scaler
     name: Scaler
-    rawDescription: The difficulty and rewards of this floor are 1/2/3 floors higher
+    rawDescription: The difficulty and rewards of this floor are increased by {Floor
+      Difficulty Increase} and {Floor Reward Increase} floors respectively.
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - name: Difficulty Floor Increase
+    - name: Floor Difficulty Increase
       type: 0
       values:
       - 1
       - 2
       - 3
-    - name: Reward Floor Increase
+    - name: Floor Reward Increase
       type: 0
       values:
       - 1

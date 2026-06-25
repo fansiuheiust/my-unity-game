@@ -524,13 +524,41 @@ MonoBehaviour:
   m_text: 'No perk has been selected yet.
 
 
-    Level 0
+    <b>Perk for something</b>
 
-    Upgrade cost: <color=#AAAAAA><color=#EECC00><b>10
+
+    Level
+    0
+
+
+    <color=#888888>Upgrade cost:</color>
+
+    <color=#AAAAAA><color=#EECC00><b>10
     Common</b></color>/20 Common/10 Rare</color>
 
+    Note: green if the section
+    is satisfied, #888888 otherwise
 
-    <b>Perk for something</b>'
+
+    <color=#888888>Requirements:</color>
+
+    <color=#AAAAAA>Perk
+    A: Unlocked</color>
+
+    <color=#AAAAAA>Perk B: Maxxed</color>
+
+    <color=#00FFFF>Perk
+    C: Same Level</color>
+
+
+    <color=#888888>Exclusions:</color>
+
+    <color=#FF0000>Perk
+    D</color>
+
+    <color=#AAAAAA>Perk E</color>
+
+    <color=#AAAAAA>Perk F</color>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

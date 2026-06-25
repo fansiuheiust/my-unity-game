@@ -74,7 +74,7 @@ namespace Combat {
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
                 _player.PerkManager.FloorPerks["RoomSkipper1"].LevelUp();
-                //Progression.UnitTest.TestLevelGearScaling();
+                // Progression.UnitTest.TestDependencyExclusion();
                 // Combat.UnitTest.TestUpdateFinal();
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {

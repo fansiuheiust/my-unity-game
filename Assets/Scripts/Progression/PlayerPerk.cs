@@ -51,5 +51,25 @@ namespace Progression {
         /// Obtains a number of quantity for a coin
         /// </summary>
         public void GainCoin(CoinType type, uint tier, uint quantity = 1) => coins[type][tier]+= quantity;
+
+        /// <summary>
+        /// Whether player can upgrade a perk, maxed out perks are treated as unaffordable
+        /// </summary>
+        /// <param name="perkType">type of the perk</param>
+        /// <param name="perkID">ID of a perk</param>
+        public bool CanAfford(CoinType perkType, string perkID) => CanAfford((perkType switch {
+                CoinType.Class => ClassPerks,
+                CoinType.Floor => FloorPerks,
+                CoinType.RNG => RNGPerks,
+                _ => throw new System.NotImplementedException($"Please implement for {perkType}")
+            })[perkID]);
+        public bool CanAfford(Perk target) => target.Level != target.maxLevel && coins[target.Cost.type][target.Cost.tier] >= target.Cost.value;
+
+        public PerkTree TreeOf(CoinType type) => type switch {
+            CoinType.Floor => FloorPerks,
+            CoinType.RNG => RNGPerks,
+            CoinType.Class => ClassPerks,
+            _ => throw new System.NotImplementedException($"No implementation for {type}")
+        };
     }
 }
