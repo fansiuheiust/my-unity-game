@@ -38,6 +38,7 @@ public class StageController : MonoBehaviour
 
     void LoadPlayerData() {
         Player = FindFirstObjectByType<Player>();
+        PlayerPerk = new();
         if (loadFromSave && File.Exists(saveFilePath)) {
             BinaryFormatter formatter = new();
             FileStream stream = new(saveFilePath, FileMode.Open);
@@ -45,18 +46,17 @@ public class StageController : MonoBehaviour
                 SaveData data = formatter.Deserialize(stream) as SaveData;
 
                 PlayerLevel = new(data.level, data.point);
-                PlayerPerk = new(data.coins, data.floorPerks, data.rngPerks, data.classPerks);
+                PlayerPerk.LoadFromSave(data.coins, data.floorPerks, data.rngPerks, data.classPerks);
 
-            } catch {
-                Debug.Log("Player data file load failed.");
+            } catch (System.Exception e) {
+                Debug.Log($"Player data file load failed due to exception.");
                 PlayerLevel = new();
-                PlayerPerk = new();
+                throw e;
             } finally {
                 stream.Close();
             }
         } else {
             PlayerLevel = new();
-            PlayerPerk = new();
         }
     }
 

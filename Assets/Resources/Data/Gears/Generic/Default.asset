@@ -12,7 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e75f00d5885c7674eb09e2218ef6c6be, type: 3}
   m_Name: Default
   m_EditorClassIdentifier: 
-  armors: []
+  armors:
+  - id: generalist
+    name: Generalist
+    tier: 3
+    stats:
+      base:
+        <Atk>k__BackingField: 4
+        <Def>k__BackingField: 4
+        <MaxHp>k__BackingField: 4
+        <MaxMana>k__BackingField: 4
+        <ManaRegen>k__BackingField: 4
+      scaling:
+        <Atk>k__BackingField: 0.1
+        <Def>k__BackingField: 0.1
+        <MaxHp>k__BackingField: 0.1
+        <MaxMana>k__BackingField: 0.1
+        <ManaRegen>k__BackingField: 0.1
+        <WalkSpeed>k__BackingField: 0.1
+        <AtkSpeed>k__BackingField: 0.1
+        <CritRate>k__BackingField: 0.1
+        <CritDmg>k__BackingField: 0.1
+        <DmgReduction>k__BackingField: 0.1
+        <Knockback>k__BackingField: 0.1
+        <KnockbackResistance>k__BackingField: 0.1
+      hashedScaling:
+      - stats: 0
+        data: 0.1
+      - stats: 1
+        data: 0.1
+      - stats: 2
+        data: 0.1
+      - stats: 3
+        data: 0.1
+      - stats: 4
+        data: 0.1
+    abilityID: Speedy
+    type: 0
   melees:
   - id: long_sword
     name: Long Sword

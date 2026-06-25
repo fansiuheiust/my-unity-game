@@ -67,13 +67,16 @@ namespace Combat {
             _playerInput.actions["save"].performed += OnSave;
             _playerInput.actions["ability"].performed += OnAbility;
             _playerInput.actions["inspectgears"].performed += OnGearInspection;
+            _playerInput.actions["inspectperks"].performed += OnPerkInspection;
 
             // popup
             _playerInput.actions["quit"].performed += OnPopupEsc;
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
-                Progression.UnitTest.TestLevelGearScaling();
+                _player.PerkManager.GainCoin(CoinType.Floor, 0, 5);
+                // _player.PerkManager.FloorPerks["RoomSkipper1"].LevelUp();
+                // Progression.UnitTest.TestDependencyExclusion();
                 // Combat.UnitTest.TestUpdateFinal();
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
@@ -231,6 +234,9 @@ namespace Combat {
         void OnGearInspection(InputAction.CallbackContext _) {
             CreatePopup((GameObject)Resources.Load("Prefabs/UI/GearInspector"));
         }
+        void OnPerkInspection(InputAction.CallbackContext _) {
+            CreatePopup((GameObject)Resources.Load("Prefabs/UI/PerkInspector"));
+        }
 
 
         void OnPopupEsc(InputAction.CallbackContext _) {
@@ -244,6 +250,11 @@ namespace Combat {
             _popup = Instantiate(prefab).GetComponent<Popup>();
             _popup.OnExit.AddListener(OnPopupDeath);
             return true;
+        }
+        public void ReplacePopup(GameObject prefab) {
+            if (_popup != null)
+                _popup.OnExitPressed();
+            CreatePopup(prefab);
         }
 
         void OnPopupDeath() {

@@ -31,7 +31,7 @@ namespace Progression.Balance {
             get {
                 List<SerializedPerk> perks = new();
                 for (uint i =1; i <= 9; i++) { // note that no perks can be used for the last floor
-                    perks.AddRange(floorPerks.Select(x => x.Modified(i.ToString(), $" (floor {i})", (i-1)/2, i%2==1? 1: FloorPerkCostMultiplier)));
+                    perks.AddRange(floorPerks.Select(x => x.Modified($"_{i}", $" (floor {i})", (i-1)/2, i%2==1? 1: FloorPerkCostMultiplier)));
                 }
                 return new(perks.Select(x => x.UseDefaultCoinType ? x.ToPerk(CoinType.Floor) : x.AsPerk).ToArray());
             }

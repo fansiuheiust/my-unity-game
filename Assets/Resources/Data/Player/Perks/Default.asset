@@ -17,13 +17,12 @@ MonoBehaviour:
   floorPerks:
   - id: RoomSkipper
     name: Room Skipper
-    rawDescription: The floor will consist of {Room Reduction} less rooms, with there
-      being only the start room and final room in the final tier.
+    rawDescription: The floor will consist of {Room Reduction} less rooms.
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 2
-      name: Room Reduction
+    - name: Room Reduction
+      type: 2
       values:
       - 10
       - 25
@@ -32,6 +31,7 @@ MonoBehaviour:
     serializedDependencies: []
     exclusions:
     - Scaler
+    - BossierBoss
     serializedCosts:
     - tier: 0
       value: 5
@@ -46,8 +46,8 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 0
-      name: Coin Per Skip
+    - name: Coin Per Skip
+      type: 0
       values:
       - 1
       - 2
@@ -73,8 +73,8 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 0
-      name: Buffs
+    - name: Buffs
+      type: 0
       values:
       - 1
       - 2
@@ -100,8 +100,8 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 2
-      name: HP Reduction
+    - name: HP Reduction
+      type: 2
       values:
       - 10
       - 25
@@ -125,8 +125,8 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 0
-      name: Retained Buffs
+    - name: Retained Buffs
+      type: 0
       values:
       - 3
     maxLevel: 1
@@ -141,18 +141,19 @@ MonoBehaviour:
       value: 20
   - id: Scaler
     name: Scaler
-    rawDescription: The difficulty and rewards of this floor are 1/2/3 floors higher
+    rawDescription: The difficulty and rewards of this floor are increased by {Floor
+      Difficulty Increase} and {Floor Reward Increase} floors respectively.
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 0
-      name: Difficulty Floor Increase
+    - name: Floor Difficulty Increase
+      type: 0
       values:
       - 1
       - 2
       - 3
-    - type: 0
-      name: Reward Floor Increase
+    - name: Floor Reward Increase
+      type: 0
       values:
       - 1
       - 2
@@ -190,14 +191,14 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 0
-      name: Additional Boss Abilities
+    - name: Additional Boss Abilities
+      type: 0
       values:
       - 1
       - 2
       - 3
-    - type: 2
-      name: Reward Increase
+    - name: Reward Increase
+      type: 2
       values:
       - 30
       - 65
@@ -221,14 +222,14 @@ MonoBehaviour:
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
-    - type: 1
-      name: Cooldown
+    - name: Cooldown
+      type: 1
       values:
       - 5
       - 2
       - 2
-    - type: 0
-      name: Power
+    - name: Power
+      type: 0
       values:
       - 1
       - 2

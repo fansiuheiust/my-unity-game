@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
 using Progression.Balance;
 using Combat;
+using NUnit.Framework.Constraints;
 
 namespace Progression {
     public class PerkTree {
@@ -24,26 +25,43 @@ namespace Progression {
             if (toCheck == null) return false;
             if (!perks.ContainsKey(toCheck.id)) return false;
             if (toCheck.Level == toCheck.maxLevel) return false;
-            foreach (Dependency d in toCheck.dependencies) {
-                if (!perks.ContainsKey(d.id)) return false; // it is impossible to unlock if the dependency is not a valid perk anyways
-                Perk dependent = perks[d.id];
-                switch (d.type) {
-                    case DependencyType.Existential:
-                        if (dependent.Level == 0) return false;
-                        break;
-                    case DependencyType.Max:
-                        if (dependent.maxLevel != dependent.Level) return false;
-                        break;
-                    case DependencyType.Levelled:
-                        if (dependent.Level <= toCheck.Level && dependent.Level != dependent.maxLevel) return false;
-                        break;
-                }
-            }
-            foreach (string e in toCheck.exclusions) {
-                if (perks.ContainsKey(e) && Unlocked(e)) return false;
+            if (!FulfilledDependencies(toCheck)) return false;
+            if (!FulfilledExclusions(toCheck)) return false;
+            return true;
+        }
+
+        public bool FulfilledDependencies(Perk p) {
+            foreach (Dependency d in p.dependencies) {
+                if (!Contains(d.id)) throw new System.Exception($"Perk tree does not contain Perk {d.id}");
+                if (!FulfilledDependency(p, d)) return false;
             }
             return true;
         }
+        /// <summary>
+        /// True if the perk did not violate any exclusions
+        /// </summary>
+        /// <param name="p">Perk in question</param>
+        public bool FulfilledExclusions(Perk p) {
+            foreach (string e in p.exclusions) {
+                if (!Contains(e)) throw new System.Exception($"Perk tree does not contain Perk {e}");
+                if (!FulfilledExclusion(e)) return false;
+            }
+            return true;
+        }
+        
+
+        public bool FulfilledDependency(Perk p, in Dependency d) => d.type switch {
+            DependencyType.Existential => this[d.id].Level != 0,
+            DependencyType.Max => this[d.id].Level == this[d.id].maxLevel,
+            DependencyType.Levelled => this[d.id].Level > p.Level || this[d.id].Level == this[d.id].maxLevel,
+            _ => throw new System.NotImplementedException($"Please implement for dependency type {d.type}")
+        };
+
+        /// <summary>
+        /// True if an exclusion is not violated.
+        /// </summary>
+        /// <param name="id">ID of the perk in exclusion</param>
+        public bool FulfilledExclusion(string id) => this[id].Level == 0;
 
         public bool Unlockable(string id) {
             if (!perks.ContainsKey(id)) return false;
@@ -139,7 +157,7 @@ namespace Progression {
             this.exclusions = exclusions.ToArray();
         }
 
-        public Perk Clone() => new(id, name, rawDescription, stats, type, costs.ToArray(), maxLevel, dependencies.ToArray(), exclusions.ToArray());
+        public Perk Clone() => new(id, name, rawDescription, stats, type, costs is not null ? costs.ToArray(): new (uint tier, uint value)[0], maxLevel, dependencies is not null? dependencies.ToArray(): new Dependency[0], exclusions is not null ? exclusions.ToArray() : new string[0]);
 
         /// <summary>
         /// Levels up a perk, bypassing dependency/exclusion check
@@ -175,6 +193,7 @@ namespace Progression {
         public float this[string name] => Attribute(name);
         public float Attribute(string name) => stats[name].Value(Level);
         public string AttributeString(string name) => stats[name].ValueInString();
+        public string AttributeString(string name, uint level) => stats[name].ValueInString(level);
         /// <summary>
         /// Whether the perk contains an attribute
         /// </summary>

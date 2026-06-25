@@ -75,28 +75,28 @@ namespace Progression {
             Debug.Assert(!floorPerks.Contains("UltimateSkipper"));
 
             for (int i = 1; i <= 9; i++) {
-                Debug.Assert(floorPerks.Contains($"RoomSkipper{i}"));
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"].name == $"Room Skipper (floor {i})");
-                Debug.Assert(floorPerks.Contains($"Rebuff{i}"));
-                Debug.Assert(floorPerks.Contains($"UltimateSkipper{i}"));
+                Debug.Assert(floorPerks.Contains($"RoomSkipper_{i}"));
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"].name == $"Room Skipper (floor {i})");
+                Debug.Assert(floorPerks.Contains($"Rebuff_{i}"));
+                Debug.Assert(floorPerks.Contains($"UltimateSkipper_{i}"));
 
                 // test if dependencies and exclusions are correctly updated
-                Debug.Assert(floorPerks[$"Scavenge{i}"].dependencies[0].id == $"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"Scavenge{i}"].dependencies[0].type == DependencyType.Existential);
-                Debug.Assert(floorPerks[$"Scaler{i}"].exclusions[0] == $"RoomSkipper{i}");
+                Debug.Assert(floorPerks[$"Scavenge_{i}"].dependencies[0].id == $"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"Scavenge_{i}"].dependencies[0].type == DependencyType.Existential);
+                Debug.Assert(floorPerks[$"Scaler_{i}"].exclusions[0] == $"RoomSkipper_{i}");
 
                 // test cloning of stats
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(Mathf.Abs(floorPerks[$"RoomSkipper{i}"]["Room Reduction"]-0.1f) < 0.001f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 0.25f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 0.5f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 1f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(Mathf.Abs(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"]-0.1f) < 0.001f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 0.25f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 0.5f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 1f);
 
                 // test cost
-                var (_, tier, value) = floorPerks[$"RoomSkipper{i}"].CostAt(2);
+                var (_, tier, value) = floorPerks[$"RoomSkipper_{i}"].CostAt(2);
                 Debug.Assert(tier == (i-1)/2);
                 Debug.Assert(value == (i % 2 == 1? 6: 12));
             }
@@ -143,10 +143,10 @@ namespace Progression {
         /// </summary>
         public static void TestDependencyExclusion() {
             Perk[] perks = new Perk[] {
-                new("a", 10),
-                new("b", 4, new Dependency("a", DependencyType.Existential)),
-                new("c", 3, new Dependency("a", DependencyType.Max)),
-                new("d", 8, new Dependency("b", DependencyType.Levelled), new Dependency("c", DependencyType.Levelled)),
+                new("a", "A", "A", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{ (0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0), }, 10, new Dependency[0], new string[0]),
+                new("b", "B", "B", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0),(0, 0), }, 4, new Dependency[]{new("a", DependencyType.Existential) }, new string[0]),
+                new("c", "C", "C", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0), }, 3, new Dependency[]{new("a", DependencyType.Max) }, new string[0]),
+                new("d", "D", "D", new Stats(new Attribute[0]), CoinType.Floor, new (uint, uint)[]{(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0), }, 8, new Dependency[]{new("b", DependencyType.Levelled), new("c", DependencyType.Levelled) }, new string[0]),
             };
             PerkTree pt = new(perks);
             Debug.Assert(pt.Unlockable("b") == false && pt.Unlockable("c") == false);
