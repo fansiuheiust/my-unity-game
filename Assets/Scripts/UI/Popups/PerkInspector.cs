@@ -26,19 +26,37 @@ namespace UI {
         [SerializeField] TextMeshProUGUI levelUpText;
         [SerializeField] GameObject dependencyLine;
         [SerializeField] TextMeshProUGUI coinText;
-        [SerializeField] GameObject perkTreeChooser;
-        readonly Dictionary<string, PerkButton> perkButtons = new();
-        readonly Dictionary<string, Dictionary<string, DependencyLine>> dependencyLines = new();
-        readonly Dictionary<string, Dictionary<string, DependencyLine>> exclusionLines = new();
+        [SerializeField] GameObject floorChooser;
+        Button[] floorButtons = null;
+        Dictionary<string, PerkButton> perkButtons = new();
+        Dictionary<string, Dictionary<string, DependencyLine>> dependencyLines = new();
+        Dictionary<string, Dictionary<string, DependencyLine>> exclusionLines = new();
         Perk selectedPerk = null;
-        public void LoadTree(string treeName) {
-            Destroy(perkTreeChooser);
+
+        private void Awake() {
+            floorButtons = floorChooser.transform.GetComponentsInChildren<Button>();
+            foreach (Button b in floorButtons) {
+                b.onClick.AddListener(() =>LoadTree("Floor", b.name));
+            }
+            levelUpButton.onClick.AddListener(() => LevelUp(selectedPerk));
+        }
+
+        public void LoadTree(string treeName) => LoadTree(treeName, "");
+        void LoadTree(string treeName, string floorString) {
+            perkButtons = new();
+            dependencyLines = new();
+            exclusionLines = new();
+            if (treeView.transform.childCount != 0)
+                Destroy(treeView.transform.GetChild(0).gameObject);
             Transform perkTree = ((GameObject)Instantiate(Resources.Load($"UI/Menus/PerkTrees/{treeName}"), treeView.transform)).GetComponent<Transform>();
             treeView.GetComponent<ScrollRect>().content = perkTree.GetComponent<RectTransform>();
             PerkButton[] buttons = perkTree.GetComponentsInChildren<PerkButton>();
             foreach (var b in buttons) {
                 b.button.onClick.AddListener(()=>Select(b.perkID, b.perkType));
+                if (treeName == "Floor" && floorString != "")
+                    b.AttachFloorNumber(floorString);
                 perkButtons.Add(b.perkID, b);
+                
             }
             if (ColorUtility.TryParseHtmlString(DEFAULTDEPENDENCYLINE, out Color c)) {
                 c.a = GlobalColor.Perk.OutlineOpacity;
@@ -84,8 +102,13 @@ namespace UI {
                 if (b.Perk.Level != 0)
                     UpdateExclusionLines(b.Perk);
             }
-            levelUpButton.onClick.AddListener(() => LevelUp(selectedPerk));
             NoPerk();
+
+
+            if (treeName == "Floor")
+                SetInteractableForFloorButtons(true);
+            else
+                SetInteractableForFloorButtons(false);
         }
         void Select(string perkID, CoinType perkType) {
             PerkTree tree = StageController.PlayerPerk.TreeOf(perkType);
@@ -150,6 +173,11 @@ namespace UI {
                 l.Color = c;
             }
 
+        }
+
+        void SetInteractableForFloorButtons(bool interactable) {
+            foreach (Button b in floorButtons)
+                b.interactable = interactable;
         }
     }
 }

@@ -2,6 +2,7 @@ using Progression;
 using Progression.Balance;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace UI {
@@ -16,6 +17,8 @@ namespace UI {
         private void Awake() {
             if (perkID == "")
                 perkID = gameObject.name;
+            if (perkType == CoinType.Floor)
+                perkID += "_1";
         }
         private void Start() {
             PerkTree tree = perkType switch {
@@ -45,6 +48,12 @@ namespace UI {
             } else {
                 throw new System.Exception("Invalid color code");
             }
+        }
+
+        public void AttachFloorNumber(string floorInString) {
+            int lastUnderscore = perkID.LastIndexOf("_");
+            perkID = perkID[0..(lastUnderscore+1)]+ floorInString;
+            Start();
         }
     }
 }

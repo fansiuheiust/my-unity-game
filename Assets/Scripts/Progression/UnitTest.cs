@@ -75,28 +75,28 @@ namespace Progression {
             Debug.Assert(!floorPerks.Contains("UltimateSkipper"));
 
             for (int i = 1; i <= 9; i++) {
-                Debug.Assert(floorPerks.Contains($"RoomSkipper{i}"));
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"].name == $"Room Skipper (floor {i})");
-                Debug.Assert(floorPerks.Contains($"Rebuff{i}"));
-                Debug.Assert(floorPerks.Contains($"UltimateSkipper{i}"));
+                Debug.Assert(floorPerks.Contains($"RoomSkipper_{i}"));
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"].name == $"Room Skipper (floor {i})");
+                Debug.Assert(floorPerks.Contains($"Rebuff_{i}"));
+                Debug.Assert(floorPerks.Contains($"UltimateSkipper_{i}"));
 
                 // test if dependencies and exclusions are correctly updated
-                Debug.Assert(floorPerks[$"Scavenge{i}"].dependencies[0].id == $"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"Scavenge{i}"].dependencies[0].type == DependencyType.Existential);
-                Debug.Assert(floorPerks[$"Scaler{i}"].exclusions[0] == $"RoomSkipper{i}");
+                Debug.Assert(floorPerks[$"Scavenge_{i}"].dependencies[0].id == $"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"Scavenge_{i}"].dependencies[0].type == DependencyType.Existential);
+                Debug.Assert(floorPerks[$"Scaler_{i}"].exclusions[0] == $"RoomSkipper_{i}");
 
                 // test cloning of stats
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(Mathf.Abs(floorPerks[$"RoomSkipper{i}"]["Room Reduction"]-0.1f) < 0.001f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 0.25f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 0.5f);
-                floorPerks.LevelUp($"RoomSkipper{i}");
-                Debug.Assert(floorPerks[$"RoomSkipper{i}"]["Room Reduction"] == 1f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(Mathf.Abs(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"]-0.1f) < 0.001f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 0.25f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 0.5f);
+                floorPerks.LevelUp($"RoomSkipper_{i}");
+                Debug.Assert(floorPerks[$"RoomSkipper_{i}"]["Room Reduction"] == 1f);
 
                 // test cost
-                var (_, tier, value) = floorPerks[$"RoomSkipper{i}"].CostAt(2);
+                var (_, tier, value) = floorPerks[$"RoomSkipper_{i}"].CostAt(2);
                 Debug.Assert(tier == (i-1)/2);
                 Debug.Assert(value == (i % 2 == 1? 6: 12));
             }

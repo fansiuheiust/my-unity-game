@@ -286,7 +286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: Rebuff1
+      value: Rebuff
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -394,7 +394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: Scavenge1
+      value: Scavenge
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -500,7 +500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: UltimateSkipper1
+      value: UltimateSkipper
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -682,7 +682,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3575696167216854104, guid: 020954898b633e247abd81587ed74863, type: 3}
       propertyPath: m_Name
-      value: FloorPerks
+      value: Floor
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -738,7 +738,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: Scaler1
+      value: Scaler
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -844,7 +844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: RoomSkipper1
+      value: RoomSkipper
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -950,7 +950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: MasterScaler1
+      value: MasterScaler
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -1056,7 +1056,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: BossierBoss1
+      value: BossierBoss
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x
@@ -1162,7 +1162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2878992052303344806, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Name
-      value: Autoslay1
+      value: Autoslay
       objectReference: {fileID: 0}
     - target: {fileID: 8938707973869050374, guid: 0f5d37b0c4890934798854d82fa89e9b, type: 3}
       propertyPath: m_Pivot.x

@@ -67,6 +67,7 @@ namespace Combat {
             _playerInput.actions["save"].performed += OnSave;
             _playerInput.actions["ability"].performed += OnAbility;
             _playerInput.actions["inspectgears"].performed += OnGearInspection;
+            _playerInput.actions["inspectperks"].performed += OnPerkInspection;
 
             // popup
             _playerInput.actions["quit"].performed += OnPopupEsc;
@@ -232,6 +233,9 @@ namespace Combat {
 
         void OnGearInspection(InputAction.CallbackContext _) {
             CreatePopup((GameObject)Resources.Load("Prefabs/UI/GearInspector"));
+        }
+        void OnPerkInspection(InputAction.CallbackContext _) {
+            CreatePopup((GameObject)Resources.Load("Prefabs/UI/PerkInspector"));
         }
 
 
