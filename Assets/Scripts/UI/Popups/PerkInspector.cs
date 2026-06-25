@@ -39,6 +39,7 @@ namespace UI {
                 b.onClick.AddListener(() =>LoadTree("Floor", b.name));
             }
             levelUpButton.onClick.AddListener(() => LevelUp(selectedPerk));
+            NoPerk();
         }
 
         public void LoadTree(string treeName) => LoadTree(treeName, "");
