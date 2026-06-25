@@ -21,18 +21,20 @@ namespace UI {
 
 
         [SerializeField] PerkDisplay display;
-        [SerializeField] GameObject treeView;
+        public GameObject treeView;
         [SerializeField] Button levelUpButton;
         [SerializeField] TextMeshProUGUI levelUpText;
         [SerializeField] GameObject dependencyLine;
         [SerializeField] TextMeshProUGUI coinText;
+        [SerializeField] GameObject perkTreeChooser;
         readonly Dictionary<string, PerkButton> perkButtons = new();
         readonly Dictionary<string, Dictionary<string, DependencyLine>> dependencyLines = new();
         readonly Dictionary<string, Dictionary<string, DependencyLine>> exclusionLines = new();
         Perk selectedPerk = null;
-        private void Start() {
-            if (treeView.transform.childCount != 1) throw new System.Exception("TreeView does not have perk tree as the only child");
-            Transform perkTree = treeView.transform.GetChild(0);
+        public void LoadTree(string treeName) {
+            Destroy(perkTreeChooser);
+            Transform perkTree = ((GameObject)Instantiate(Resources.Load($"UI/Menus/PerkTrees/{treeName}"), treeView.transform)).GetComponent<Transform>();
+            treeView.GetComponent<ScrollRect>().content = perkTree.GetComponent<RectTransform>();
             PerkButton[] buttons = perkTree.GetComponentsInChildren<PerkButton>();
             foreach (var b in buttons) {
                 b.button.onClick.AddListener(()=>Select(b.perkID, b.perkType));
@@ -118,6 +120,7 @@ namespace UI {
             Select(p.id, p.type);
             UpdateDependencyLines(p);
             UpdateExclusionLines(p);
+            coinText.text = CoinDisplayText(p.type);
         }
         void UpdateDependencyLines(Perk p) {
             string id = p.id;

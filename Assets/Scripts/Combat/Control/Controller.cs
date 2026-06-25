@@ -247,6 +247,11 @@ namespace Combat {
             _popup.OnExit.AddListener(OnPopupDeath);
             return true;
         }
+        public void ReplacePopup(GameObject prefab) {
+            if (_popup != null)
+                _popup.OnExitPressed();
+            CreatePopup(prefab);
+        }
 
         void OnPopupDeath() {
             _popup = null;
