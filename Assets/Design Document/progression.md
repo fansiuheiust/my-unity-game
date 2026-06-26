@@ -13,11 +13,9 @@
 * Progression will be granted in the format of progression points of different categories
 * Progression points can be gained by opening loot chests, dropped from mobs, or from end of floor rewards
 * Progression points can be used to buy perks, for the following:
-
 1.  	Choose to either skip (no or less rewards), or increase the difficulty (more rewards) of floors of lower difficulty
 2.  	Predetermine items or buffs from the starting chest/loot chests in the dungeon to a category, rarity, or even specify items
 3.  	Gain miscellaneous stat boosts
-
 * Perks of each category will be presented as a tree
 * Each player has a level from 1 to 20, determined by number of progression points
 * Gears and buffs obtained will be stronger as the player levels up
@@ -92,10 +90,10 @@ For buffing, the progression is as follows:
 
 Upgrades:
 
-* <class> Fixation: Gears can only be generic or <class>-oriented
-* Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive
+* <class> Fixation: 20%/40%/60%/80%/100% of the gears obtained will be drawn only from the <class> pool
+* Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive (implementation will be delayed)
+* Selective <gear type>: You can select <gear type> of rarity at most common/rare/epic/legendary/mythical that you have obtained before from starter chest.
 * Fated <gear type>: <gear type> obtained from starter chest must be at least rare/epic/legendary/mythical
-* Selective <gear type>: <gear type> obtained from starter can be selected from all common/rare/epic/legendary/mythical <gear type>s that you have obtained once
 
 #### 3.3. Coin of Class (Class and Archetype (blatant name stealing from Wynncraft))
 
