@@ -192,6 +192,7 @@ namespace Progression {
         /// <param name="name">name of the attribute</param>
         public float this[string name] => Attribute(name);
         public float Attribute(string name) => stats[name].Value(Level);
+        public float Attribute(string name, uint level) => stats[name].Value(level);
         public string AttributeString(string name) => stats[name].ValueInString();
         public string AttributeString(string name, uint level) => stats[name].ValueInString(level);
         /// <summary>

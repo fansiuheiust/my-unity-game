@@ -1,4 +1,6 @@
 using Progression;
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,13 @@ namespace UI {
 
         static readonly string INACTIVE = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF",
             UNFULFILLED = "#888888", FULFILLED = "#00FF00", ACTIVECOST = "#EECC00", ACTIVEDEP = "#00FFFF", ACTIVEEXCL = "#FF0000";
+
+        static readonly Dictionary<string, Func<float, bool, string>> Commands = new() {
+            { "Rarity", (x, active)=> {
+                uint tier = (uint) x;
+                return active? $"<color={GlobalColor.RarityTiers[tier]}><b>{Global.Rarities[tier]}</b></color>": Global.Rarities[tier];
+            } }
+        };
         /// <summary>
         /// Parsed description of a perk
         /// </summary>
@@ -21,11 +30,19 @@ namespace UI {
                 if (p.rawDescription[i] == '{') {
                     ri += $"<color={INACTIVE}>";
                     int j = i + 1;
-                    for (; j < p.rawDescription.Length; j++)
+                    int commandStart = -1;
+                    int keyStart = i+1;
+                    for (; j < p.rawDescription.Length; j++) {                // 0123456789012
+                        if (p.rawDescription[j] == '[') commandStart = j + 1; // [Rarity]Tier}
+                        if (p.rawDescription[j] == ']') keyStart = j+1;
                         if (p.rawDescription[j] == '}') break;
-                    string key = p.rawDescription.Substring(i + 1, j - i - 1);
+                    }
+                    string key = p.rawDescription.Substring(keyStart, j - keyStart);
                     for (uint k = 1; k <= p.maxLevel; k++) {
-                        ri += k == p.Level ? $"<color={ACTIVESTAT}>{p.AttributeString(key, k)}</color>": p.AttributeString(key, k);
+                        if (commandStart != -1)
+                            ri += Commands[p.rawDescription.Substring(commandStart, keyStart - commandStart-1)](p.Attribute(key, k), k == p.Level);
+                        else
+                            ri += k == p.Level ? $"<color={ACTIVESTAT}>{p.AttributeString(key, k)}</color>" : p.AttributeString(key, k);
                         if (k != p.maxLevel) ri += "/";
                     }
                     ri += "</color>";

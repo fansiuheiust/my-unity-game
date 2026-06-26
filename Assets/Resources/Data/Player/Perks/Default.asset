@@ -214,7 +214,35 @@ MonoBehaviour:
       value: 12
     - tier: 0
       value: 12
-  rngPerks: []
+  rngPerks:
+  - id: SampleRNGPerk
+    name: Sample RNG Perk
+    rawDescription: Something to do with rarity {[Rarity]Tier}
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - name: Tier
+      type: 0
+      values:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+    maxLevel: 5
+    serializedDependencies: []
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 1
+    - tier: 0
+      value: 1
+    - tier: 0
+      value: 1
+    - tier: 0
+      value: 1
+    - tier: 0
+      value: 1
   classPerks:
   - id: SampleClassAbility
     name: Sample Class Ability

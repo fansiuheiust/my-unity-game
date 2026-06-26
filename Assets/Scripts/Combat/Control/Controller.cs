@@ -74,7 +74,7 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
-                _player.PerkManager.GainCoin(CoinType.Floor, 0, 5);
+                _player.PerkManager.GainCoin(CoinType.RNG, 0, 5);
                 // _player.PerkManager.FloorPerks["RoomSkipper1"].LevelUp();
                 // Progression.UnitTest.TestDependencyExclusion();
                 // Combat.UnitTest.TestUpdateFinal();
