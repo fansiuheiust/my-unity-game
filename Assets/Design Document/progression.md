@@ -103,13 +103,32 @@ Mainly gained from mob drops, but can be found in loot chests or upon completing
 
 Wields a melee weapon.
 
+* Melee: Wielding a melee weapon gives you 5%/10%/25% more damage. (Excl: Ranged, Mage)
+
 ##### 3.3.2. Ranged
 
 Wields a ranged weapon.
 
+* Ranged: Wielding a melee weapon gives you 5%/10%/25% more damage. (Excl: Melee, Mage)
+* Faster Charge: Reduces weapon charging time by 5%/15%/30%/50%.
+* Snipe: Projectiles' damage increase by up to 5%/10%/20%/33% as it travels. Max projectile damage is attained if it has travelled half of its range. (Excl: Epins)
+* Epins: Projectiles' damage increase to 5%/10%/20%/33%, this effect decreases as it travels, losing the effect if it has travelled half of its range. (Excl: Snipe)
+* Barrage (Damage Ability): Automatically shoots projectile at a rate 1/1.25/2 times your attack speed for 3/3/5 seconds. Cooldown: 10 seconds.
+* Agility: Increases dodge movement magnitude by 5%/10%/20%/33%. (Excl: Skillful Dodge)
+* Skillful Dodge: Increases dodge immunity duration by 0.05/0.1/0.15/0.2 seconds. (Excl: Agility)
+* ...
+
+3 mutually-exclusive ultimates to choose from
+
+* Sharpshoot: Enters focus mode (Reduced FOV and first person mode, lock movement, ult again to force exit). In this state, looking at an enemy at most 1/1/2 times your attack range forces it in front of you as long as they are not knockback immune (bosses). You can attack 2/3/5 times. For each attack, shoot a beam that damages everyone in front of you at most 1/1/2 times your attack range, dealing 200%/200%/300% damage. Max duration: 10/10/10 seconds.
+* Freezeshot: For the next 10/10/10 seconds, hitting an enemy stuns it unless it is immune. At the end of the duration, shoots 4/6/10 environment-piercing projectiles to each hit enemy in a span of 0.5/0.5/0.5 seconds, each dealing 100%/100%/100% damage.
+* TBA
+
 ##### 3.3.3. Mage
 
-Manipulates mana-based items.
+Manipulates mana.
+
+* Mage: Increases your mana regeneration by 5%/10%/25%. (Excl: Melee, Ranged)
 
 
 
