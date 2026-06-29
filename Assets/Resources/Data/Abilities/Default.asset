@@ -18,7 +18,7 @@ MonoBehaviour:
     rawDescription: Gives you {Speed Boost} more speed for {Duration} seconds.
     cooldown: 10
     manaCost: 0
-    triggerKey: 2
+    triggerKey: 4
     attributes:
     - name: Speed Boost
       type: 2

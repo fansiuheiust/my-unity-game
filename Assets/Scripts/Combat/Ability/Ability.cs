@@ -11,7 +11,7 @@ namespace Combat {
     /// <c>Misc</c>: Miscalleneous abilities, e.g. buffing self, debuffing enemy, etc, triggered by pressing <c>C</c><br />
     /// </summary>
     public enum AbilityTriggerKey {
-        Damage, Ultimate, Movement, Misc, None
+        Damage, Ultimate, Movement, Misc, Weapon, None
     }
     public class Ability {
         public readonly string id;

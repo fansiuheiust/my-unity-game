@@ -226,13 +226,13 @@ namespace Combat {
         }
 
         void OnAbility(InputAction.CallbackContext context) {
-            _player.UseAbility(context.control.name switch {
-                "e" => AbilityTriggerKey.Damage,
-                "q" => AbilityTriggerKey.Ultimate,
-                "x" => AbilityTriggerKey.Movement,
-                "c" => AbilityTriggerKey.Misc,
-                _ => AbilityTriggerKey.None,
-            });
+            foreach (AbilityTriggerKey key in Enum.GetValues(typeof(AbilityTriggerKey))) {
+                if (key == AbilityTriggerKey.None) continue;
+                if (Global.AbilityKey(key).ToLower() == context.control.name) {
+                    _player.UseAbility(key);
+                    break;
+                }
+            }
         }
 
         void OnGearInspection(InputAction.CallbackContext _) {
