@@ -334,7 +334,8 @@ MonoBehaviour:
   classPerks:
   - id: SampleClassAbility
     name: Sample Class Ability
-    rawDescription: Test
+    rawDescription: Something with {One Int Attribute}, {One Decimal Attribute},
+      and {One Percentage Attribute},
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
@@ -350,14 +351,26 @@ MonoBehaviour:
       - 1
       - 2
       - 3
+    - name: One Int Attribute
+      type: 0
+      values:
+      - 67
+    - name: One Decimal Attribute
+      type: 1
+      values:
+      - 67.67
+    - name: One Percentage Attribute
+      type: 2
+      values:
+      - 1.67
     maxLevel: 3
     serializedDependencies: []
     exclusions: []
     serializedCosts:
     - tier: 1
-      value: 1
+      value: 0
     - tier: 1
-      value: 2
+      value: 0
     - tier: 1
-      value: 3
+      value: 0
   <FloorPerkCostMultiplier>k__BackingField: 2

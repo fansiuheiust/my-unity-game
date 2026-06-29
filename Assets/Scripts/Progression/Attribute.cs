@@ -54,8 +54,8 @@ namespace Progression {
         public IntAttribute(string name, params int[] values): base(name) {
             this.values = values.ToArray();
         }
-        public override string ValueInString(uint level) => values[level-1].ToString();
-        public override float Value(uint level) => values[level-1];
+        public override string ValueInString(uint level) => values.Length == 1? values[0].ToString(): values[level-1].ToString();
+        public override float Value(uint level) => values.Length == 1? values[0]: values[level-1];
     }
 
     public class DecimalAttribute : Attribute {
@@ -63,14 +63,14 @@ namespace Progression {
         public DecimalAttribute(string name, params float[] values) : base(name) {
             this.values = values.ToArray();
         }
-        public override string ValueInString(uint level) => $"{values[level - 1]:F2}";
-        public override float Value(uint level) => values[level - 1];
+        public override string ValueInString(uint level) => $"{(values.Length == 1? values[0]: values[level - 1]):F2}";
+        public override float Value(uint level) => values.Length == 1 ? values[0] : values[level - 1];
     }
 
     public class PercentageAttribute: DecimalAttribute {
         public PercentageAttribute(string name, params float[] values) : base(name, values) {
         }
-        public override string ValueInString(uint level) => $"{(values[level - 1] * 100):F0}%";
+        public override string ValueInString(uint level) => $"{((values.Length == 1 ? values[0] : values[level - 1]) * 100):F0}%";
     }
 
 }
