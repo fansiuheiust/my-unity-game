@@ -13,11 +13,9 @@
 * Progression will be granted in the format of progression points of different categories
 * Progression points can be gained by opening loot chests, dropped from mobs, or from end of floor rewards
 * Progression points can be used to buy perks, for the following:
-
 1.  	Choose to either skip (no or less rewards), or increase the difficulty (more rewards) of floors of lower difficulty
 2.  	Predetermine items or buffs from the starting chest/loot chests in the dungeon to a category, rarity, or even specify items
 3.  	Gain miscellaneous stat boosts
-
 * Perks of each category will be presented as a tree
 * Each player has a level from 1 to 20, determined by number of progression points
 * Gears and buffs obtained will be stronger as the player levels up
@@ -92,10 +90,10 @@ For buffing, the progression is as follows:
 
 Upgrades:
 
-* <class> Fixation: Gears can only be generic or <class>-oriented
-* Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive
+* <class> Fixation: 20%/40%/60%/80%/100% of the gears obtained will be drawn only from the <class> pool
+* Utilitarianism: Starter chest contains 10 explosives/20 explosives/1 infinite explosive (implementation will be delayed)
+* Selective <gear type>: You can select <gear type> of rarity at most common/rare/epic/legendary/mythical that you have obtained before from starter chest.
 * Fated <gear type>: <gear type> obtained from starter chest must be at least rare/epic/legendary/mythical
-* Selective <gear type>: <gear type> obtained from starter can be selected from all common/rare/epic/legendary/mythical <gear type>s that you have obtained once
 
 #### 3.3. Coin of Class (Class and Archetype (blatant name stealing from Wynncraft))
 
@@ -105,13 +103,54 @@ Mainly gained from mob drops, but can be found in loot chests or upon completing
 
 Wields a melee weapon.
 
+* Melee: Registers for class Melee. Wielding a melee weapon gives you 5%/10%/25% more damage. (Excl: Ranged, Mage)
+* Blockade: Successfully blocking enemies stun them for 1/2 seconds. (Excl: Safeguard)
+* Safeguard: During block stance, reduces damage taken by 40%/50%/65% regardless of whether the block was successful. (Excl: Blockade)
+* Diversity: Each unique swing pattern increases your melee damage by 5%/10%/20%. (Excl: University)
+* University: Increases your melee damage by 5%/10%/20%. This effect is multiplied by the largest number of the same swing pattern. (Excl: Diversity)
+* Swinger (Damage Ability): Summons 2/3/5 rotating swords rotating 1/1/1 circle per second, each deals 75%/60%/50% of your original damage and breaks after 2/5/5 uses. Duration: 6/8/10 seconds. Cooldown: 20/15/15 seconds.
+* ...
+
+2 mutually-exclusive movements to choose from
+
+* Blitz: For the next 3/5/8 seconds, gradually increases your momentum by 10 per second, up to 20/20/30 momentums. Each momentum increases your movement speed by 1%/2%/2%. Colliding with an enemy resets momentum and deals 8%/12%/13% of your original damage per momentum.
+* B
+
+3 mutually-exclusive ultimates to choose from
+
+* All In: For the next 20/20/20 seconds, following effects: Replaces your swings with a more advanced version. Losing 1% HP makes you gain +3%/4%/5% melee damage. Gains an misc ability which removes 5%/5%/5% of your HP with cooldown 1/1/0.5 seconds. After the duration or using the ultimate again: Swings your weapon 360 degrees, dealing 6%/8%/10% of your damage for every 1% HP lost, then resets your HP back to its original value.
+* Wombo Combo: For the next 10/10/15 seconds, following effects: Each hit gives you +1 combo. Each combo increases your attack speed by 1%/2%/2%. After reaching 100/200/300 combos or after the duration expires: Summons rotating swords equal to the amount of combos you have, each dealing 5%/5%/5% of your original damage, each breaks after 1 hit or after 5/10/10 seconds.
+* TBA
+
 ##### 3.3.2. Ranged
 
 Wields a ranged weapon.
 
+* Ranged: Registers for class Ranged. Wielding a melee weapon gives you 5%/10%/25% more damage. (Excl: Melee, Mage)
+* Faster Charge: Reduces weapon charging time by 5%/15%/30%/50%.
+* Snipe: Projectiles' damage increase by up to 5%/10%/20%/33% as it travels. Max projectile damage is attained if it has travelled half of its range. (Excl: Epins)
+* Epins: Projectiles' damage increase to 5%/10%/20%/33%, this effect decreases as it travels, losing the effect if it has travelled half of its range. (Excl: Snipe)
+* Barrage (Damage Ability): Automatically shoots projectile at a rate 1/1.25/2 times your attack speed for 3/3/5 seconds. Cooldown: 10 seconds.
+* Agility: Increases dodge movement magnitude by 5%/10%/20%/33%. (Excl: Skillful Dodge)
+* Skillful Dodge: Increases dodge immunity duration by 0.05/0.1/0.15/0.2 seconds. (Excl: Agility)
+* ...
+
+2 mutually-exclusive movements to choose from
+
+* Unground: Launches you up the air. Ignores gravity for 3/5/10 seconds. Mana cost: 20/25/35. Cooldown: 5/5/10 seconds.
+* Nimble: For the next 3/5/8 seconds, increases your movement speed by 20%/40%/80%, and allows you to pass through enemies. Mana cost: 20/30/40. Cooldown: 4/6/10 seconds.
+
+3 mutually-exclusive ultimates to choose from
+
+* Sharpshoot: Enters focus mode (Reduced FOV and first person mode, lock movement, ult again to force exit). In this state, looking at an enemy at most 1/1/2 times your attack range forces it in front of you as long as they are not knockback immune (bosses). You can attack 2/3/5 times. For each attack, shoot a beam that damages everyone in front of you at most 1/1/2 times your attack range, dealing 200%/200%/300% damage. Max duration: 10/10/10 seconds.
+* Freezeshot: For the next 10/10/10 seconds, hitting an enemy stuns it unless it is immune. At the end of the duration, shoots 4/6/10 environment-piercing projectiles to each hit enemy in a span of 0.5/0.5/0.5 seconds, each dealing 100%/100%/100% damage.
+* TBA
+
 ##### 3.3.3. Mage
 
-Manipulates mana-based items.
+Manipulates mana.
+
+* Mage: Registers for class Mage. Increases your mana regeneration by 5%/10%/25%. (Excl: Melee, Ranged)
 
 
 

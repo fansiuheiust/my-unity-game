@@ -29,6 +29,9 @@ namespace UI {
         [SerializeField] GameObject floorChooser;
         Button[] floorButtons = null;
         Dictionary<string, PerkButton> perkButtons = new();
+        /// <summary>
+        /// Invariant: dependencyLines[a][b]: the dependency where b depends on a
+        /// </summary>
         Dictionary<string, Dictionary<string, DependencyLine>> dependencyLines = new();
         Dictionary<string, Dictionary<string, DependencyLine>> exclusionLines = new();
         Perk selectedPerk = null;
@@ -143,38 +146,49 @@ namespace UI {
             perkButtons[p.id].UpdatePerk(p);
             Select(p.id, p.type);
             UpdateDependencyLines(p);
+            UpdateleveledDependencyLines(p);
             UpdateExclusionLines(p);
             coinText.text = CoinDisplayText(p.type);
         }
         void UpdateDependencyLines(Perk p) {
             string id = p.id;
             if (!dependencyLines.ContainsKey(id)) return;
-            if (ColorUtility.TryParseHtmlString(DEPENDENT, out Color c)) {
-                c.a = GlobalColor.Perk.OutlineOpacity;
-            } else {
-                throw new System.Exception("Bad color");
-            }
+            Color c = LineColor(DEPENDENT);
             PerkTree tree = StageController.PlayerPerk.TreeOf(p.type);
             foreach (var l in dependencyLines[id]) {
                 Perk dependentPerk = tree[l.Key];
-                Dependency d = dependentPerk.dependencies.Where(x=>x.id == id).FirstOrDefault();
+                Dependency d = dependentPerk.dependencies.Where(x => x.id == id).FirstOrDefault();
                 if (tree.FulfilledDependency(dependentPerk, d))
                     l.Value.Color = c;
             }
         }
+        void UpdateleveledDependencyLines(Perk p) {
+            Color c = LineColor(DEFAULTDEPENDENCYLINE);
+            foreach (Dependency d in p.dependencies) {
+                if (d.type != DependencyType.Levelled || StageController.PlayerPerk.TreeOf(p.type).FulfilledDependency(p, d)) continue;
+                dependencyLines[d.id][p.id].Color = c;
+            }
+        }
+
         void UpdateExclusionLines(Perk p) {
             string id = p.id;
             if (!exclusionLines.ContainsKey(id)) return;
-            if (ColorUtility.TryParseHtmlString(EXCLUSION, out Color c)) {
-                c.a = GlobalColor.Perk.OutlineOpacity;
-            } else {
-                throw new System.Exception("Bad color");
-            }
+            Color c = LineColor(EXCLUSION);
             foreach (var l in exclusionLines[id].Values) {
                 l.Color = c;
             }
 
         }
+
+        static Color LineColor(string code) {
+            if (ColorUtility.TryParseHtmlString(code, out Color c)) {
+                c.a = GlobalColor.Perk.OutlineOpacity;
+            } else {
+                throw new System.Exception("Bad color");
+            }
+            return c;
+        }
+
 
         void SetInteractableForFloorButtons(bool interactable) {
             foreach (Button b in floorButtons)

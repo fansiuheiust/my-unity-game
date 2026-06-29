@@ -46,7 +46,7 @@ namespace Progression.Balance {
         string id;
         [SerializeField]
         string name;
-        [SerializeField]
+        [SerializeField, Tooltip("Description of the perk, you can embed attributewith name \"A Name\"via: {A Name}, you can also use commands e.g. {[Command]A name}")]
         string rawDescription;
         [field: SerializeField, Tooltip("Whether the type of coin should use the coin type according to a perk tree's category")]
         public bool UseDefaultCoinType { get; private set; } = true;

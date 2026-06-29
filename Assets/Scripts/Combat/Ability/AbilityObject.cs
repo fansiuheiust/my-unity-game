@@ -14,6 +14,9 @@ namespace Combat {
 
         void OnDestroy() {
             AbilityRemovalBehaviour();
+            StopAllCoroutines();
+            if (TriggerKey != AbilityTriggerKey.None)
+                Owner.OnAbilityUseAttempt -= OnAbilityUseAttempted;
         }
 
 

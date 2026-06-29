@@ -26,7 +26,7 @@ namespace Progression.Balance {
         float cooldown;
         [SerializeField, Min(0f)]
         float manaCost;
-        [SerializeField]
+        [SerializeField, Tooltip("Conventionally, abilities triggered by weapons should use trigger key Weapon.")]
         AbilityTriggerKey triggerKey;
         [SerializeField]
         SingleValuedAttribute[] attributes;

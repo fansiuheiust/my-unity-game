@@ -74,7 +74,11 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
-                _player.PerkManager.GainCoin(CoinType.Floor, 0, 5);
+                _player.PerkManager.GainCoin(CoinType.RNG, 0, 100);
+                _player.PerkManager.GainCoin(CoinType.RNG, 1, 100);
+                _player.PerkManager.GainCoin(CoinType.RNG, 2, 100);
+                _player.PerkManager.GainCoin(CoinType.RNG, 3, 100);
+                _player.PerkManager.GainCoin(CoinType.RNG, 4, 100);
                 // _player.PerkManager.FloorPerks["RoomSkipper1"].LevelUp();
                 // Progression.UnitTest.TestDependencyExclusion();
                 // Combat.UnitTest.TestUpdateFinal();
@@ -222,13 +226,13 @@ namespace Combat {
         }
 
         void OnAbility(InputAction.CallbackContext context) {
-            _player.UseAbility(context.control.name switch {
-                "e" => AbilityTriggerKey.Damage,
-                "q" => AbilityTriggerKey.Ultimate,
-                "x" => AbilityTriggerKey.Movement,
-                "c" => AbilityTriggerKey.Misc,
-                _ => AbilityTriggerKey.None,
-            });
+            foreach (AbilityTriggerKey key in Enum.GetValues(typeof(AbilityTriggerKey))) {
+                if (key == AbilityTriggerKey.None) continue;
+                if (Global.AbilityKey(key).ToLower() == context.control.name) {
+                    _player.UseAbility(key);
+                    break;
+                }
+            }
         }
 
         void OnGearInspection(InputAction.CallbackContext _) {

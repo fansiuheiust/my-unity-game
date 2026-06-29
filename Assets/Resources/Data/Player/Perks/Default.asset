@@ -214,11 +214,128 @@ MonoBehaviour:
       value: 12
     - tier: 0
       value: 12
-  rngPerks: []
+  rngPerks:
+  - id: Fixation
+    name: Fixation
+    rawDescription: '{Pool Proportion} of the gears will be obtained from the gear
+      pool of your choice.'
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - name: Pool Proportion
+      type: 2
+      values:
+      - 20
+      - 40
+      - 60
+      - 80
+      - 100
+    maxLevel: 5
+    serializedDependencies: []
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 15
+    - tier: 1
+      value: 15
+    - tier: 2
+      value: 15
+    - tier: 3
+      value: 15
+    - tier: 4
+      value: 15
+  - id: MeleeFixation
+    name: Melee Fixation
+    rawDescription: Choose Melee for perk Fixation.
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats: []
+    maxLevel: 1
+    serializedDependencies:
+    - id: Fixation
+      type: 0
+    exclusions:
+    - RangedFixation
+    serializedCosts:
+    - tier: 0
+      value: 0
+  - id: RangedFixation
+    name: Ranged Fixation
+    rawDescription: Choose Ranged for perk Fixation.
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats: []
+    maxLevel: 1
+    serializedDependencies:
+    - id: Fixation
+      type: 0
+    exclusions:
+    - MeleeFixation
+    serializedCosts:
+    - tier: 0
+      value: 0
+  - id: SelectiveWeapon
+    name: Selective Weapon
+    rawDescription: You can select weapons of rarity at most {[Rarity]Tier} that
+      you have obtained before from starter chest.
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - name: Tier
+      type: 0
+      values:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+    maxLevel: 5
+    serializedDependencies: []
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 20
+    - tier: 1
+      value: 20
+    - tier: 2
+      value: 20
+    - tier: 3
+      value: 20
+    - tier: 4
+      value: 20
+  - id: FatedWeapon
+    name: Fated Weapon
+    rawDescription: Non-determined weapons obtained from starter chest must be at
+      least {[Rarity]Tier}
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - name: Tier
+      type: 0
+      values:
+      - 1
+      - 2
+      - 3
+      - 4
+    maxLevel: 4
+    serializedDependencies:
+    - id: SelectiveWeapon
+      type: 2
+    exclusions: []
+    serializedCosts:
+    - tier: 1
+      value: 30
+    - tier: 2
+      value: 30
+    - tier: 3
+      value: 30
+    - tier: 4
+      value: 30
   classPerks:
   - id: SampleClassAbility
     name: Sample Class Ability
-    rawDescription: Test
+    rawDescription: Something with {One Int Attribute}, {One Decimal Attribute},
+      and {One Percentage Attribute},
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
     stats:
@@ -234,14 +351,26 @@ MonoBehaviour:
       - 1
       - 2
       - 3
+    - name: One Int Attribute
+      type: 0
+      values:
+      - 67
+    - name: One Decimal Attribute
+      type: 1
+      values:
+      - 67.67
+    - name: One Percentage Attribute
+      type: 2
+      values:
+      - 1.67
     maxLevel: 3
     serializedDependencies: []
     exclusions: []
     serializedCosts:
     - tier: 1
-      value: 1
+      value: 0
     - tier: 1
-      value: 2
+      value: 0
     - tier: 1
-      value: 3
+      value: 0
   <FloorPerkCostMultiplier>k__BackingField: 2

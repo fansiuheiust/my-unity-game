@@ -367,6 +367,17 @@
                 },
                 {
                     "name": "",
+                    "id": "af462449-97f9-4ae1-a1cf-f0a6b7ede377",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "995b662c-80c5-4665-a23e-2046bfab0840",
                     "path": "<Keyboard>/g",
                     "interactions": "",

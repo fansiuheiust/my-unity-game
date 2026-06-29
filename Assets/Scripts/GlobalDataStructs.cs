@@ -9,12 +9,17 @@ public static class Global {
         "Common", "Rare", "Epic", "Legendary", "Mythical"
     };
 
+    /// <summary>
+    /// Upper case string of the key for triggering an ability
+    /// </summary>
+    /// <param name="key">Trigger key of the ability</param>
     public static string AbilityKey(AbilityTriggerKey key) => key switch {
         
         AbilityTriggerKey.Damage => "E",
         AbilityTriggerKey.Ultimate => "Q",
         AbilityTriggerKey.Movement => "X",
         AbilityTriggerKey.Misc => "C",
+        AbilityTriggerKey.Weapon => "Z",
         _ => ""
     };
 
