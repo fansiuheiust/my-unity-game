@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace UI {
     public class PerkInspector : MonoBehaviour {
 
-        static readonly string CANNOTUPGRADE = "#FF0000", DEFAULTDEPENDENCYLINE = "#AAAAAA", EXCLUSION = "#FF0000", DEPENDENT = "#00FFFF",
+        static readonly string CANNOTUPGRADE = "#FF0000", MAXED = "#00FFFF", DEFAULTDEPENDENCYLINE = "#AAAAAA", EXCLUSION = "#FF0000", DEPENDENT = "#00FFFF",
             COIN = "#EECC00";
 
         static string CoinDisplayText(CoinType type) {
@@ -123,7 +123,10 @@ namespace UI {
             }
             display.Display(selectedPerk);
             bool fulfilledCost = StageController.PlayerPerk.CanAfford(selectedPerk), fulfilledDep = tree.FulfilledDependencies(selectedPerk), fulfilledExcl = tree.FulfilledExclusions(selectedPerk);
-            if (fulfilledCost && fulfilledDep && fulfilledExcl) {
+            if (selectedPerk.Level == selectedPerk.maxLevel) {
+                levelUpButton.interactable = false;
+                levelUpText.text = $"<color={MAXED}>Maxed</color>";
+            } else if (fulfilledCost && fulfilledDep && fulfilledExcl) {
                 levelUpButton.interactable = true;
                 levelUpText.text = "Level Up";
             } else {

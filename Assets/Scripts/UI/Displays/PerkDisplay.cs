@@ -64,7 +64,7 @@ namespace UI {
                         if (p.rawDescription[j] == ']') keyStart = j+1;
                         if (p.rawDescription[j] == '}') break;
                     }
-                    string key = p.rawDescription.Substring(keyStart, j - keyStart), command = (commandStart != -1)? p.rawDescription.Substring(commandStart, keyStart - commandStart +1): "";
+                    string key = p.rawDescription.Substring(keyStart, j - keyStart), command = (commandStart != -1)? p.rawDescription.Substring(commandStart, keyStart - commandStart -1): "";
                     ri += Stats(p, key, command);
                     ri += "</color>";
                     i = j;
@@ -128,7 +128,7 @@ namespace UI {
         /// <param name="p">perk to extract info from</param>
         public static string Info(Perk p) {
             string ri = Description(p);
-            ri += $"\n\n<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>\n\n";
+            ri += $"<color={GlobalColor.Perk.PerkType(p.type)}><b>{p.type} Perk</b></color>\n\n";
             ri += LevelInfo(p);
             return ri;
         }
