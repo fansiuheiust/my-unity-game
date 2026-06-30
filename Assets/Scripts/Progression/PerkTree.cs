@@ -191,10 +191,24 @@ namespace Progression {
         /// </summary>
         /// <param name="name">name of the attribute</param>
         public float this[string name] => Attribute(name);
+        /// <summary>
+        /// Attribute value at current level
+        /// </summary>
         public float Attribute(string name) => stats[name].Value(Level);
+        /// <summary>
+        /// Attribute value at a level
+        /// </summary>
         public float Attribute(string name, uint level) => stats[name].Value(level);
         public string AttributeString(string name) => stats[name].ValueInString();
+        /// <summary>
+        /// Attribute in string at current level, notably for display
+        /// </summary>
         public string AttributeString(string name, uint level) => stats[name].ValueInString(level);
+        /// <summary>
+        /// Whether an attribute is constant over levels
+        /// </summary>
+        /// <param name="name">name of the attribute</param>
+        public bool IsConstantAttribute(string name) => stats[name].IsConstant;
         /// <summary>
         /// Whether the perk contains an attribute
         /// </summary>

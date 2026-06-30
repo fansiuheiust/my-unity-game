@@ -334,7 +334,7 @@ MonoBehaviour:
   classPerks:
   - id: SampleClassAbility
     name: Sample Class Ability
-    rawDescription: Something with {One Int Attribute}, {One Decimal Attribute},
+    rawDescription: Something with {Power}, {One Int Attribute}, {One Decimal Attribute},
       and {One Percentage Attribute},
     <UseDefaultCoinType>k__BackingField: 1
     coinType: 0
@@ -363,6 +363,10 @@ MonoBehaviour:
       type: 2
       values:
       - 1.67
+    - name: Mana Cost
+      type: 1
+      values:
+      - 3.14
     maxLevel: 3
     serializedDependencies: []
     exclusions: []
