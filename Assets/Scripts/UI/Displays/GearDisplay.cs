@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace UI {
     public class GearDisplay: MonoBehaviour {
 
-        static readonly string STATTEXT = "#FFFFFF", GOODSTAT = "#00FF00", BADSTAT = "#FF0000",
+        public static readonly string STATTEXT = "#FFFFFF", GOODSTAT = "#00FF00", BADSTAT = "#FF0000",
             ABILITYHEADER = "#AA00AA", ABILITYKEY = "#FF00FF", ABILITYDESC = "#FFFFFF", ABILITYATT = "#00FFFF", COOLDOWNTEXT = "#888888", COOLDOWNVALUE = "#FFFF00", MANACOSTTEXT = "#888888", MANACOSTVALUE = "#00BBBB";
         //                                  Common  Rare        Epic        Legendary   Mythical
         [SerializeField] TextMeshProUGUI gearName;

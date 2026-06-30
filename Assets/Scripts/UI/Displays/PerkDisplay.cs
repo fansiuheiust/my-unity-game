@@ -1,7 +1,10 @@
+using NUnit.Framework.Internal.Commands;
 using Progression;
+using Progression.Balance;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,12 +17,36 @@ namespace UI {
         static readonly string INACTIVE = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF",
             UNFULFILLED = "#888888", FULFILLED = "#00FF00", ACTIVECOST = "#EECC00", ACTIVEDEP = "#00FFFF", ACTIVEEXCL = "#FF0000";
 
-        static readonly Dictionary<string, Func<float, bool, string>> Commands = new() {
-            { "Rarity", (x, active)=> {
-                uint tier = (uint) x;
+        static readonly Dictionary<string, Func<Perk, string, uint, bool, string>> Commands = new() {
+            { "Rarity", (p, key, level, active)=> {
+                uint tier = (uint) p.Attribute(key, level);
                 return active? $"<color={GlobalColor.RarityTiers[tier]}><b>{Global.Rarities[tier]}</b></color>": Global.Rarities[tier];
-            } }
+            } },
+            { "Cooldown", (p, key, level, active) => active? $"<color={GearDisplay.COOLDOWNVALUE}>{p.AttributeString(key, level)}</color>": p.AttributeString(key, level) },
+            { "ManaCost", (p, key, level, active) => active? $"<color={GearDisplay.MANACOSTVALUE}>{p.AttributeString(key, level)}</color>": p.AttributeString(key, level) }
         };
+
+        static string Attribute(Perk p, string key, string command, uint level, bool active) {
+            string ri = "";
+            if (command != "")
+                ri += Commands[command](p, key, level, active);
+            else
+                ri += active ? $"<color={ACTIVESTAT}>{p.AttributeString(key, level)}</color>" : p.AttributeString(key, level);
+            return ri;
+        }
+        static string Stats(Perk p, string key, string command) {
+            string ri = "";
+            if (p.IsConstantAttribute(key)) {
+                ri += Attribute(p, key, command, 1, p.Level > 0);
+            } else {
+                for (uint k = 1; k <= p.maxLevel; k++) {
+                    ri += Attribute(p, key, command, k, p.Level == k);
+                    if (k != p.maxLevel) ri += "/";
+                }
+            }
+            return ri;
+        }
+
         /// <summary>
         /// Parsed description of a perk
         /// </summary>
@@ -37,21 +64,26 @@ namespace UI {
                         if (p.rawDescription[j] == ']') keyStart = j+1;
                         if (p.rawDescription[j] == '}') break;
                     }
-                    string key = p.rawDescription.Substring(keyStart, j - keyStart);
-                    for (uint k = 1; k <= p.maxLevel; k++) {
-                        if (commandStart != -1)
-                            ri += Commands[p.rawDescription.Substring(commandStart, keyStart - commandStart-1)](p.Attribute(key, k), k == p.Level);
-                        else
-                            ri += k == p.Level ? $"<color={ACTIVESTAT}>{p.AttributeString(key, k)}</color>" : p.AttributeString(key, k);
-                        if (k != p.maxLevel) ri += "/";
-                    }
+                    string key = p.rawDescription.Substring(keyStart, j - keyStart), command = (commandStart != -1)? p.rawDescription.Substring(commandStart, keyStart - commandStart +1): "";
+                    ri += Stats(p, key, command);
                     ri += "</color>";
                     i = j;
                     continue;
                 }
                 ri += p.rawDescription[i];
             }
-            return ri+"\n";
+            ri += "\n";
+            if (AbilityDatabase.ContainsAbility(p.id)) {
+                ri += $"\n<color={GearDisplay.ABILITYHEADER}><b>Perk with Ability</b></color>\n";
+                if (p.ContainsAttribute("Cooldown")) {
+                    ri += $"<color={GearDisplay.COOLDOWNTEXT}>Cooldown: </color><color={INACTIVE}>" + Stats(p, "Cooldown", "Cooldown") + "</color>\n";
+                }
+                if (p.ContainsAttribute("Mana Cost")) {
+                    ri += $"<color={GearDisplay.MANACOSTTEXT}>Mana Cost: </color><color={INACTIVE}>" + Stats(p, "Mana Cost", "ManaCost") + "</color>\n";
+                }
+                ri += "\n";
+            }
+            return ri;
         }
 
         public static string LevelInfo(Perk p) {

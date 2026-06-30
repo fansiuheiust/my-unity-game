@@ -47,6 +47,11 @@ namespace Progression {
         /// value of hte attribute at level 1
         /// </summary>
         public float Value() => Value(1);
+
+        /// <summary>
+        /// Whether the attribute only has 1 value
+        /// </summary>
+        public abstract bool IsConstant { get; }
     }
 
     public class IntAttribute: Attribute {
@@ -54,8 +59,10 @@ namespace Progression {
         public IntAttribute(string name, params int[] values): base(name) {
             this.values = values.ToArray();
         }
-        public override string ValueInString(uint level) => values.Length == 1? values[0].ToString(): values[level-1].ToString();
-        public override float Value(uint level) => values.Length == 1? values[0]: values[level-1];
+        public override string ValueInString(uint level) => IsConstant? values[0].ToString(): values[level-1].ToString();
+        public override float Value(uint level) => IsConstant? values[0]: values[level-1];
+
+        public override bool IsConstant => values.Length == 1;
     }
 
     public class DecimalAttribute : Attribute {
@@ -63,14 +70,15 @@ namespace Progression {
         public DecimalAttribute(string name, params float[] values) : base(name) {
             this.values = values.ToArray();
         }
-        public override string ValueInString(uint level) => $"{(values.Length == 1? values[0]: values[level - 1]):F2}";
-        public override float Value(uint level) => values.Length == 1 ? values[0] : values[level - 1];
+        public override string ValueInString(uint level) => $"{(IsConstant ? values[0]: values[level - 1]):F2}";
+        public override float Value(uint level) => IsConstant ? values[0] : values[level - 1];
+        public override bool IsConstant => values.Length == 1;
     }
 
     public class PercentageAttribute: DecimalAttribute {
         public PercentageAttribute(string name, params float[] values) : base(name, values) {
         }
-        public override string ValueInString(uint level) => $"{((values.Length == 1 ? values[0] : values[level - 1]) * 100):F0}%";
+        public override string ValueInString(uint level) => $"{((IsConstant ? values[0] : values[level - 1]) * 100):F0}%";
     }
 
 }
