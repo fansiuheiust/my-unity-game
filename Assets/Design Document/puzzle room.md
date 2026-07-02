@@ -26,7 +26,12 @@ Eventually, there should be like 50 to 100 games. But most may just turn into UI
 
 ### Rewards
 
-As seen in puzzles, most are just be half as optimal to pass. For those, variation of reward to how optimal the player is should be linear towards 100% when you are 100% optimal. For speed test, the "optimal" time would just be half of the puzzle's time limit.
+As seen in puzzles, most are just be half as optimal to pass. For those, variation of reward to how optimal the player is should be linear towards 100% when you are 100% optimal. For time-limited puzzles, the "optimal" time would just be half of the puzzle's time limit.
 
-As for what rewards are gained, check this md in another day.
+Three rewards may be harvested from puzzles: coins, buffs, and gears. They vary to optimality (how close to optimal the player is).
+
+* 50%: Coins can be obtained
+* 75%: add 1 buff to the rewards
+* 100%/90%/85%/75%: Player can choose the obtained coin type (requires corresponding RNG perk)
+* 100%: obtain 1 gear (more customization of the gear requires corresponding RNG perks, includes: rarity guarantee, choice of gear type, n choose 1 instead of 1 choose 1)
 
