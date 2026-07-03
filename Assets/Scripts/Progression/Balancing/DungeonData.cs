@@ -42,7 +42,12 @@ namespace Progression.Balance {
         [SerializeField, Tooltip("Options of normal room")]
         string[] normalRoomShapes;
         public string NormalRoomShapes(uint i) => normalRoomShapes[i];
-        public uint NormalRoomShapeLength => (uint)normalRoomShapes.Length;
+        public uint NumNormalRoomShapes => (uint)normalRoomShapes.Length;
+
+        [SerializeField, Tooltip("IDs of the puzzles that can be featured in puzzle room")]
+        string[] puzzles;
+        public string Puzzles(uint i) => puzzles[i];
+        public uint NumPuzzles => (uint)puzzles.Length;
 
     }
 }

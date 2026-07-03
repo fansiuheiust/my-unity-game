@@ -29,7 +29,7 @@ namespace Dungeon {
 
         public void CompileDungeon() {
             List<(string, RoomType, Vector2Int[])> options = new();
-            for (uint i = 0; i < StageController.DungeonData.NormalRoomShapeLength; i++) {
+            for (uint i = 0; i < StageController.DungeonData.NumNormalRoomShapes; i++) {
                 options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
             }
 
