@@ -155,8 +155,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 359256493739813262, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
-      value: You will be given a mathematical expression, enter the answer within
-        the time limit.
+      value: You will be given a mathematical expression, choose the  correct answer
+        within the time limit.
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
