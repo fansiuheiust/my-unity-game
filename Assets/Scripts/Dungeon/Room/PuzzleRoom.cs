@@ -9,6 +9,11 @@ namespace Dungeon {
         PuzzleStarter starter;
         public void Awake() {
             starter.puzzleID = Puzzle;
+            starter.OnBegin.AddListener(StartPuzzle);
+        }
+
+        void StartPuzzle() {
+            GetComponent<Puzzle>().StartPuzzle();
         }
     }
 }

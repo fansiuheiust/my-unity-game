@@ -1,6 +1,7 @@
 using Combat;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace BuildingBlocks {
     public class PuzzleStarter : MonoBehaviour, IInteractable {
@@ -17,6 +18,8 @@ namespace BuildingBlocks {
         /// started puzzle
         /// </summary>
         bool started = false;
+
+        public UnityEvent OnBegin;
         public void Interact(Mob m) {
             usingUI = true;
             puzzleIntro = StageController.PlayerControl.CreatePopup(puzzleIntroPrefab).GetComponent<PuzzleIntro>();
@@ -29,6 +32,8 @@ namespace BuildingBlocks {
         void OnPuzzleBegin() {
             started = true;
             puzzleIntro.GetComponent<Popup>().OnExitPressed();
+            OnBegin.Invoke();
+            Destroy(gameObject);
         }
         void OnIntroClose() {
             usingUI = false;

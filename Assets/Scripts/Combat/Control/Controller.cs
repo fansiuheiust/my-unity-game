@@ -256,10 +256,13 @@ namespace Combat {
             _popup.OnExit.AddListener(OnPopupDeath);
             return _popup;
         }
-        public void ReplacePopup(GameObject prefab) {
+        /// <summary>
+        /// Closes the current popup if it exists
+        /// </summary>
+        public Popup ForceCreatePopup(GameObject prefab) {
             if (_popup != null)
                 _popup.OnExitPressed();
-            CreatePopup(prefab);
+            return CreatePopup(prefab);
         }
 
         void OnPopupDeath() {

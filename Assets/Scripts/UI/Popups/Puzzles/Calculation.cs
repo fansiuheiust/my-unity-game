@@ -51,7 +51,6 @@ namespace UI {
 
             choices = choiceLayout.GetComponentsInChildren<Button>();
             correctChoice = Random.Range(0, choices.Length-1);
-            Debug.Log(correctChoice);
             UpdateButtonValues();
             for (int i = 0; i < choices.Length; i++)
                 choices[i].onClick.AddListener((i == correctChoice)? ()=>OnResponse(true): ()=>OnResponse(false));
@@ -66,7 +65,6 @@ namespace UI {
         }
 
         void OnResponse(bool correct) {
-            Debug.Log(correct);
             DisableGame();
             if (!correct) {
                 Clear(0);
