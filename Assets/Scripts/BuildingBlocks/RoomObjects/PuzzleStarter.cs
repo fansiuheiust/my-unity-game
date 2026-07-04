@@ -22,7 +22,7 @@ namespace BuildingBlocks {
         public UnityEvent OnBegin;
         public void Interact(Mob m) {
             usingUI = true;
-            puzzleIntro = StageController.PlayerControl.CreatePopup(puzzleIntroPrefab).GetComponent<PuzzleIntro>();
+            puzzleIntro = StageController.PlayerControl.EnqueuePopup(puzzleIntroPrefab).GetComponent<PuzzleIntro>();
             puzzleIntro.GetComponent<Popup>().OnExit.AddListener(OnIntroClose);
             
             puzzleIntro.StartButton.onClick.AddListener(OnPuzzleBegin);

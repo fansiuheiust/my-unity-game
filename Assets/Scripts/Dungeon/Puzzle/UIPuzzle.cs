@@ -15,7 +15,7 @@ namespace Dungeon {
         /// Assumption: the UI before this, which is PuzzleStarter UI, can always be closed
         /// </summary>
         public override void StartPuzzle() {
-            puzzle = StageController.PlayerControl.ForceCreatePopup(UIPrefab).GetComponent<PuzzlePopup>();
+            puzzle = StageController.PlayerControl.EnqueuePopup(UIPrefab).GetComponent<PuzzlePopup>();
             puzzle.OnExit.AddListener(Exit);
             puzzle.OnClear.AddListener(Clear);
         }

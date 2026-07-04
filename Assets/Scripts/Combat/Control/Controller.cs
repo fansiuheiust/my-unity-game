@@ -240,10 +240,10 @@ namespace Combat {
         }
 
         void OnGearInspection(InputAction.CallbackContext _) {
-            CreatePopup(gearInspector);
+            EnqueuePopup(gearInspector);
         }
         void OnPerkInspection(InputAction.CallbackContext _) {
-            CreatePopup(perkInspector);
+            EnqueuePopup(perkInspector);
         }
 
 
@@ -251,24 +251,13 @@ namespace Combat {
             _popup.OnExitPressed();
         }
 
-        public Popup CreatePopup(GameObject prefab) {
+        Popup CreatePopup(GameObject prefab) {
             if (_popup != null) return null;
             Cursor.visible = true;
             _playerInput.SwitchCurrentActionMap("PopupControl");
             _popup = Instantiate(prefab).GetComponent<Popup>();
             _popup.OnExit.AddListener(OnPopupDeath);
             return _popup;
-        }
-        /// <summary>
-        /// Closes the current popup if it exists
-        /// </summary>
-        public Popup ForceCreatePopup(GameObject prefab) {
-            if (_popup != null) {
-                _popup.OnExit.RemoveListener(OnPopupDeath);
-                _popup.OnExitPressed();
-                _popup = null;
-            }
-            return CreatePopup(prefab);
         }
 
         public Popup EnqueuePopup(GameObject prefab) {
