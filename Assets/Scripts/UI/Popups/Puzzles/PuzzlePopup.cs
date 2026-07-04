@@ -9,6 +9,7 @@ namespace UI {
         /// <c>int2</c>: optimal score<br />
         /// </summary>
         public UnityEvent<int, int> OnClear;
+        public UnityEvent OnExit;
         bool cleared = false;
 
         protected virtual void Awake() {
@@ -18,6 +19,7 @@ namespace UI {
         public void OnUIExited() {
             if (!cleared)
                 Clear(0, 1);
+            OnExit.Invoke();
         }
 
         protected void Clear(int score, int optimalScore) {

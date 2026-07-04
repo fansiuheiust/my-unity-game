@@ -37,6 +37,7 @@ namespace Combat {
         public Transform cam;
 
         Popup _popup = null;
+        Queue<Popup> popupQueue = new();
 
         float _xAxisRotation = 0;
 
@@ -75,11 +76,13 @@ namespace Combat {
 
             // temp stuff
             _playerInput.actions["tempstun"].performed += _ => {
-                _player.PerkManager.GainCoin(CoinType.RNG, 0, 100);
-                _player.PerkManager.GainCoin(CoinType.RNG, 1, 100);
-                _player.PerkManager.GainCoin(CoinType.RNG, 2, 100);
-                _player.PerkManager.GainCoin(CoinType.RNG, 3, 100);
-                _player.PerkManager.GainCoin(CoinType.RNG, 4, 100);
+                EnqueuePopup(perkInspector);
+                EnqueuePopup(gearInspector);
+                // _player.PerkManager.GainCoin(CoinType.RNG, 0, 100);
+                // _player.PerkManager.GainCoin(CoinType.RNG, 1, 100);
+                // _player.PerkManager.GainCoin(CoinType.RNG, 2, 100);
+                // _player.PerkManager.GainCoin(CoinType.RNG, 3, 100);
+                // _player.PerkManager.GainCoin(CoinType.RNG, 4, 100);
                 // _player.PerkManager.FloorPerks["RoomSkipper1"].LevelUp();
                 // Progression.UnitTest.TestDependencyExclusion();
                 // Combat.UnitTest.TestUpdateFinal();
@@ -260,16 +263,33 @@ namespace Combat {
         /// Closes the current popup if it exists
         /// </summary>
         public Popup ForceCreatePopup(GameObject prefab) {
-            if (_popup != null)
+            if (_popup != null) {
+                _popup.OnExit.RemoveListener(OnPopupDeath);
                 _popup.OnExitPressed();
+                _popup = null;
+            }
             return CreatePopup(prefab);
+        }
+
+        public Popup EnqueuePopup(GameObject prefab) {
+            if (_popup == null) return CreatePopup(prefab); 
+            Popup p = Instantiate(prefab).GetComponent<Popup>();
+            p.gameObject.SetActive(false);
+            popupQueue.Enqueue(p);
+            return p;
         }
 
         void OnPopupDeath() {
             _popup = null;
-            _playerInput.SwitchCurrentActionMap("MovementControl");
-            _playerInput.actions["blockrotate"].Disable();
-            ResetMouse();
+            if (popupQueue.Count > 0) {
+                _popup = popupQueue.Dequeue();
+                _popup.gameObject.SetActive(true);
+                _popup.OnExit.AddListener(OnPopupDeath);
+            } else {
+                _playerInput.SwitchCurrentActionMap("MovementControl");
+                _playerInput.actions["blockrotate"].Disable();
+                ResetMouse();
+            }
         }
     }
 }

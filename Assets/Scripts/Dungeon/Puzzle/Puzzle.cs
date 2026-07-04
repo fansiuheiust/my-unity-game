@@ -9,6 +9,10 @@ namespace Dungeon {
         /// <c>int2</c>: optimal score
         /// </summary>
         public UnityEvent<int, int> OnClear;
+        /// <summary>
+        /// Called when the player exits puzzle state
+        /// </summary>
+        public UnityEvent OnExit;
         public abstract void StartPuzzle();
 
         protected virtual void Clear(int score, int optimal) {
