@@ -4,10 +4,11 @@ using UnityEngine.Events;
 namespace UI {
     public abstract class PuzzlePopup : MonoBehaviour {
         /// <summary>
-        /// Called when the dungeon is cleared.<br />
-        /// <c>float</c>: optimality - how close to optimal was the player's solution
+        /// <para>Called when the dungeon is cleared.</para>
+        /// <c>int1</c>: score<br />
+        /// <c>int2</c>: optimal score<br />
         /// </summary>
-        public UnityEvent<float> OnClear;
+        public UnityEvent<int, int> OnClear;
         bool cleared = false;
 
         protected virtual void Awake() {
@@ -16,13 +17,13 @@ namespace UI {
 
         public void OnUIExited() {
             if (!cleared)
-                Clear(0);
+                Clear(0, 1);
         }
 
-        protected void Clear(float optimality) {
+        protected void Clear(int score, int optimalScore) {
             if (cleared)
                 throw new System.Exception("Double clear");
-            OnClear.Invoke(optimality);
+            OnClear.Invoke(score, optimalScore);
             cleared = true;
         }
     }

@@ -67,26 +67,27 @@ namespace UI {
         void OnResponse(bool correct) {
             DisableGame();
             if (!correct) {
-                Clear(0);
+                Clear(0, timeLimit);
                 timer.color = Color.red;
                 timer.text = "Wrong!";
             } else {
-                float optimality = Mathf.Min(1f, 0.5f + (float)remainingTime/timeLimit);
-                Clear(optimality);
+                Clear(Mathf.Min(remainingTime + (int)Mathf.Ceil(timeLimit/2), timeLimit), timeLimit);
                 timer.color = Color.green;
-                timer.text = $"Correct! Optimality: {(optimality*100):F0}%";
+                timer.text = $"Correct!";
             }
         }
         void Timeout() {
             DisableGame();
-            Clear(0);
+            Clear(0, timeLimit);
             timer.color = Color.red;
             timer.text = "Time's up!";
         }
 
         void DisableGame() {
-            foreach (Button button in choices)
+            foreach (Button button in choices) {
                 button.interactable = false;
+                button.onClick.RemoveAllListeners();
+            }
             StopCoroutine(_timer);
             _timer = null;
         }

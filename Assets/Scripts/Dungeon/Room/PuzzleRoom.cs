@@ -7,6 +7,8 @@ namespace Dungeon {
         public string Puzzle { get; private set; }
         [SerializeField]
         PuzzleStarter starter;
+        [SerializeField]
+        GameObject outroPrefab;
         public void Awake() {
             starter.puzzleID = Puzzle;
             starter.OnBegin.AddListener(StartPuzzle);

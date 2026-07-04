@@ -81,4 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdff20030730d0f499e3e3c6e8c99dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnClear:
+    m_PersistentCalls:
+      m_Calls: []
   UIPrefab: {fileID: 684822451790214550, guid: 27c3c54c2c34851459a0b7d4e45ff80c, type: 3}

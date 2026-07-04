@@ -16,6 +16,12 @@ namespace Dungeon {
         /// </summary>
         public override void StartPuzzle() {
             puzzle = StageController.PlayerControl.ForceCreatePopup(UIPrefab).GetComponent<PuzzlePopup>();
+            puzzle.OnClear.AddListener(Clear);
+        }
+
+        protected override void Clear(int score, int optimalScore) {
+            puzzle.OnClear.RemoveListener(Clear);
+            base.Clear(score, optimalScore);
         }
     }
 }
