@@ -28,21 +28,32 @@ namespace Dungeon {
 
 
         public void CompileDungeon() {
+            PerkTree floorPerks = StageController.PlayerPerk.FloorPerks;
             List<(string, RoomType, Vector2Int[])> options = new();
-            for (uint i = 0; i < StageController.DungeonData.NormalRoomShapeLength; i++) {
-                options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
+
+            uint numMainPath = StageController.DungeonData.MainPathCounts(floor), numMobRooms = StageController.DungeonData.MobRoomCounts(floor);
+            uint numPuzzleRooms = StageController.DungeonData.PuzzleRoomCounts(floor);
+            if (floor != StageController.DungeonData.NumFloors && floorPerks.Unlocked($"RoomSkipper_{floor}")) { // last floor does not have floor perk
+                numMainPath = (uint)(numMainPath * (1 - floorPerks[$"RoomSkipper_{floor}"]["Room Reduction"]));
+                numMobRooms = (uint)Mathf.CeilToInt(numMobRooms * (1 - floorPerks[$"RoomSkipper_{floor}"]["Room Reduction"]));
+                numPuzzleRooms = (uint)Mathf.RoundToInt(numPuzzleRooms * (1 - floorPerks[$"RoomSkipper_{floor}"]["Room Reduction"]));
             }
 
-            PerkTree floorPerks = StageController.PlayerPerk.FloorPerks;
-            // TODO: puzzle room
-            // TODO: miniboss room
-            uint numMainPath = StageController.DungeonData.MainPathCounts(floor), numMobRooms = StageController.DungeonData.MobRoomCounts(floor);
-            if (floor != StageController.DungeonData.NumFloors && floorPerks.Unlocked($"RoomSkipper{floor}")) { // last floor does not have floor perk
-                numMainPath = (uint)(numMainPath * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
-                numMobRooms = (uint)Mathf.CeilToInt(numMobRooms * (1 - floorPerks[$"RoomSkipper{floor}"]["Room Reduction"]));
+            if (numMobRooms > 0) {
+                for (uint i = 0; i < StageController.DungeonData.NumNormalRoomShapes; i++) {
+                    options.Add((StageController.DungeonData.NormalRoomShapes(i), RoomType.Mob, shapeToKey[StageController.DungeonData.NormalRoomShapes(i)]));
+                }
             }
+
+            if (numPuzzleRooms > 0) {
+                const string puzzleShape = "1x1";
+                options.Add((puzzleShape, RoomType.Puzzle, shapeToKey[puzzleShape]));
+            }
+            // TODO: miniboss room
+            
             dungeon = new(options.ToArray(), numMainPath, new() { 
                 { RoomType.Mob, numMobRooms },
+                {RoomType.Puzzle, numPuzzleRooms }
             }, false);
         }
 

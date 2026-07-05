@@ -27,14 +27,17 @@ namespace Combat {
         /// How far the item can be if interacting with it
         /// </summary>
         [SerializeField] float interactionRange = 4f;
+        [SerializeField] GameObject gearInspector;
+        [SerializeField] GameObject perkInspector;
 
 
 
         Player _player;
         PlayerInput _playerInput;
-        public Transform _camera;
+        public Transform cam;
 
         Popup _popup = null;
+        Queue<Popup> popupQueue = new();
 
         float _xAxisRotation = 0;
 
@@ -42,7 +45,6 @@ namespace Combat {
         void Awake() {
             if (!TryGetComponent(out _player))
                 throw new NullReferenceException($"{gameObject} does not have an attached Mob script");
-            _camera = transform.Find("Camera");
             _playerInput = GetComponent<PlayerInput>();
 
             _playerInput.enabled = false;
@@ -136,7 +138,7 @@ namespace Combat {
         void OnRotate(InputAction.CallbackContext context) {
             Vector2 v = context.ReadValue<Vector2>();
             _xAxisRotation += v.y * sensitivity;
-            _camera.localEulerAngles = new Vector3(_xAxisRotation = Mathf.Min(Mathf.Max(_xAxisRotation, -75), 75), _camera.localEulerAngles.y + v.x * sensitivity, 0);
+            cam.localEulerAngles = new Vector3(_xAxisRotation = Mathf.Min(Mathf.Max(_xAxisRotation, -75), 75), cam.localEulerAngles.y + v.x * sensitivity, 0);
             _player.RotateMovement(Quaternion.Euler(0, v.x * sensitivity, 0));
             Mouse.current.WarpCursorPosition(new(Screen.width / 2f, Screen.height / 2f));
         }
@@ -214,7 +216,7 @@ namespace Combat {
             // collection of interactable with available interaction in player's range that is in front of the camera, sorted by how close the camera is aiming at the interactable
             IEnumerable<IInteractable> hits = Physics.OverlapSphere(transform.position, interactionRange)
                 .Where(h => h.TryGetComponent(out IInteractable inter) && inter.IsInteractable)
-                .OrderByDescending(h => Vector3.Dot((h.transform.position - _camera.transform.position).normalized, _camera.forward))
+                .OrderByDescending(h => Vector3.Dot((h.transform.position - cam.transform.position).normalized, cam.forward))
                 .Select(h => h.GetComponent<IInteractable>());
             if (hits.Count() != 0)
                 hits.FirstOrDefault().Interact(_player);
@@ -236,10 +238,10 @@ namespace Combat {
         }
 
         void OnGearInspection(InputAction.CallbackContext _) {
-            CreatePopup((GameObject)Resources.Load("Prefabs/UI/GearInspector"));
+            EnqueuePopup(gearInspector);
         }
         void OnPerkInspection(InputAction.CallbackContext _) {
-            CreatePopup((GameObject)Resources.Load("Prefabs/UI/PerkInspector"));
+            EnqueuePopup(perkInspector);
         }
 
 
@@ -247,25 +249,34 @@ namespace Combat {
             _popup.OnExitPressed();
         }
 
-        public bool CreatePopup(GameObject prefab) {
-            if (_popup != null) return false;
+        Popup CreatePopup(GameObject prefab) {
+            if (_popup != null) return null;
             Cursor.visible = true;
             _playerInput.SwitchCurrentActionMap("PopupControl");
             _popup = Instantiate(prefab).GetComponent<Popup>();
             _popup.OnExit.AddListener(OnPopupDeath);
-            return true;
+            return _popup;
         }
-        public void ReplacePopup(GameObject prefab) {
-            if (_popup != null)
-                _popup.OnExitPressed();
-            CreatePopup(prefab);
+
+        public Popup EnqueuePopup(GameObject prefab) {
+            if (_popup == null) return CreatePopup(prefab); 
+            Popup p = Instantiate(prefab).GetComponent<Popup>();
+            p.gameObject.SetActive(false);
+            popupQueue.Enqueue(p);
+            return p;
         }
 
         void OnPopupDeath() {
             _popup = null;
-            _playerInput.SwitchCurrentActionMap("MovementControl");
-            _playerInput.actions["blockrotate"].Disable();
-            ResetMouse();
+            if (popupQueue.Count > 0) {
+                _popup = popupQueue.Dequeue();
+                _popup.gameObject.SetActive(true);
+                _popup.OnExit.AddListener(OnPopupDeath);
+            } else {
+                _playerInput.SwitchCurrentActionMap("MovementControl");
+                _playerInput.actions["blockrotate"].Disable();
+                ResetMouse();
+            }
         }
     }
 }

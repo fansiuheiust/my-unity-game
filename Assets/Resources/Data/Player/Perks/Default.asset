@@ -331,6 +331,32 @@ MonoBehaviour:
       value: 30
     - tier: 4
       value: 30
+  - id: OptimalFinancer
+    name: Optimal Financer
+    rawDescription: If you complete a puzzle with at least {Optimality Threshold}
+      optimality, you can choose the coin to obtain.
+    <UseDefaultCoinType>k__BackingField: 1
+    coinType: 0
+    stats:
+    - name: Optimality Threshold
+      type: 2
+      values:
+      - 100
+      - 90
+      - 85
+      - 75
+    maxLevel: 4
+    serializedDependencies: []
+    exclusions: []
+    serializedCosts:
+    - tier: 0
+      value: 20
+    - tier: 2
+      value: 15
+    - tier: 3
+      value: 15
+    - tier: 4
+      value: 10
   classPerks:
   - id: SampleClassAbility
     name: Sample Class Ability

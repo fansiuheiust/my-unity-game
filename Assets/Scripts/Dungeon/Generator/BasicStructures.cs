@@ -12,7 +12,7 @@ namespace Dungeon.Generator {
     /// <c>Final</c>: The room that leads you to the final boss<br />
     /// </summary>
     public enum RoomType {
-        Start, Mob, Final, Ladder
+        Start, Mob, Final, Ladder, Puzzle   
     }
 
     /// <summary>

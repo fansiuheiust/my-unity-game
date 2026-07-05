@@ -10,6 +10,10 @@ public class StageController : MonoBehaviour
 {
     // Player stats
     public static Player Player { get; private set; }
+    /// <summary>
+    /// Includes UI opening
+    /// </summary>
+    public static Controller PlayerControl { get; private set; }
     public static PlayerLevel PlayerLevel { get; private set; }
     public static PlayerPerk PlayerPerk { get; private set; }
     [SerializeField, Min(1), Tooltip("Current floor of the game")]
@@ -38,6 +42,7 @@ public class StageController : MonoBehaviour
 
     void LoadPlayerData() {
         Player = FindFirstObjectByType<Player>();
+        PlayerControl = FindFirstObjectByType<Controller>();
         PlayerPerk = new();
         if (loadFromSave && File.Exists(saveFilePath)) {
             BinaryFormatter formatter = new();

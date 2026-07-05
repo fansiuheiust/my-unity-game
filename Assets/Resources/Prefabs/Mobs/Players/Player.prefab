@@ -455,7 +455,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 0.1
   interactionRange: 4
-  _camera: {fileID: 0}
+  gearInspector: {fileID: 7839359751556477607, guid: 776300736f46b3243a3625feaea7a5a6, type: 3}
+  perkInspector: {fileID: 1880137318008430380, guid: 922e543faf985b64eb146a4412ec155f, type: 3}
+  cam: {fileID: 398216671129498044}
 --- !u!114 &7548214735368995962
 MonoBehaviour:
   m_ObjectHideFlags: 0

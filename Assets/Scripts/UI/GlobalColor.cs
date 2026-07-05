@@ -4,6 +4,9 @@ using UnityEngine;
 namespace UI {
     public static class GlobalColor {
         public static readonly string[] RarityTiers = { "#FFFFFF", "#00BB00", "#AA00AA", "#EECC00", "#FF00FF" };
+        public static readonly string Coin = "#EECC00";
+        public static readonly string Buff = "#00FFCC";
+        public static readonly string Gear = "#FFFFFF";
         public static class Perk {
             public static string PerkType(CoinType type) => type switch {
                 CoinType.Floor => "#00FF00",
@@ -13,6 +16,12 @@ namespace UI {
             };
             public static readonly string TopLeftOutline = "#FF0000", BotRightOutline = "#00FFFF", LockedTopLeftOutline = "#555555", LockedBotRightOutline = "#AAAAAA", UnlockableTopLeftOutline = "#00FF00", UnlockableBotRightOutline = "#00FF00";
             public static readonly float OutlineOpacity = 0.5f;
+        }
+
+        public static Color Parse(string code) {
+            if (ColorUtility.TryParseHtmlString(code, out Color c))
+                return c;
+            throw new System.Exception("Bad color");
         }
     }
 }
