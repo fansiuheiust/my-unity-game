@@ -717,6 +717,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 913505750673480636, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
+      propertyPath: m_text
+      value: Perk Inspector
+      objectReference: {fileID: 0}
     - target: {fileID: 1402369950637170289, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
       propertyPath: m_Name
       value: PerkInspector
@@ -800,6 +804,14 @@ PrefabInstance:
     - target: {fileID: 5582048023883522274, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656636969527913951, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656636969527913951, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 500
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

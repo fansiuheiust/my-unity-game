@@ -15,7 +15,7 @@ namespace UI {
         [SerializeField] Image line, outline;
 
         static readonly string INACTIVE = "#AAAAAA", ACTIVESTAT = "#00FFFF", NOPERK = "#FFFFFF",
-            UNFULFILLED = "#888888", FULFILLED = "#00FF00", ACTIVECOST = "#EECC00", ACTIVEDEP = "#00FFFF", ACTIVEEXCL = "#FF0000";
+            UNFULFILLED = "#888888", FULFILLED = "#00FF00", ACTIVECOST = GlobalColor.Coin, ACTIVEDEP = "#00FFFF", ACTIVEEXCL = "#FF0000";
 
         static readonly Dictionary<string, Func<Perk, string, uint, bool, string>> Commands = new() {
             { "Rarity", (p, key, level, active)=> {
