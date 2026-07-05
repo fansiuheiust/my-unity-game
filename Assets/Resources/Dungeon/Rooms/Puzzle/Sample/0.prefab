@@ -786,6 +786,12 @@ MonoBehaviour:
   <Puzzle>k__BackingField: 
   starter: {fileID: 1250062446821209349}
   outroPrefab: {fileID: 9155659861931022408, guid: 176b38f491ab88c478e1be98dd8eda46, type: 3}
+  coinRewardPrefab: {fileID: 4988598577228659287, guid: a80627b8e238bfb42b7b5bb7ced856df, type: 3}
+  buffRewardPrefab: {fileID: 7576467943920565743, guid: 142fb121c767d2942b187690bab35854, type: 3}
+  gearRewardPrefab: {fileID: 7576467943920565743, guid: 46060c13d3ffb744385b6fc7db07d345, type: 3}
+  coinRewardThreshold: 0.5
+  buffRewardThreshold: 0.75
+  gearRewardThreshold: 1
 --- !u!1 &8874813950617747671
 GameObject:
   m_ObjectHideFlags: 0

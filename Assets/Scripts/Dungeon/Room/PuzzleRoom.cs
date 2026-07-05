@@ -11,6 +11,11 @@ namespace Dungeon {
         [SerializeField]
         GameObject outroPrefab;
         Puzzle puzzle;
+        [SerializeField]
+        GameObject coinRewardPrefab, buffRewardPrefab, gearRewardPrefab;
+
+        [SerializeField, Min(0f)]
+        float coinRewardThreshold = 0.5f, buffRewardThreshold = 0.75f, gearRewardThreshold = 1f;
 
         PuzzleOutro outro;
         public void Awake() {
@@ -37,6 +42,14 @@ namespace Dungeon {
             puzzle.OnExit.RemoveListener(OnPuzzleExited);
             outro = StageController.PlayerControl.EnqueuePopup(outroPrefab).GetComponent<PuzzleOutro>();
             outro.Init(score, optimalScore);
+            float optimality = (float)score / optimalScore;
+            if (optimality >= coinRewardThreshold)
+                StageController.PlayerControl.EnqueuePopup(coinRewardPrefab).GetComponent<CoinReward>().Init(optimality);
+            if (optimality >= buffRewardThreshold)
+                StageController.PlayerControl.EnqueuePopup(buffRewardPrefab); // TODO: once implemented, init this also
+            if (optimality >= gearRewardThreshold)
+                StageController.PlayerControl.EnqueuePopup(gearRewardPrefab); // TODO: once implemented, init this also
+
         }
     }
 }

@@ -48,20 +48,20 @@ namespace UI {
             uint totalAwardedCoin = (uint)Mathf.RoundToInt(optimality * Random.Range(minCoin, maxCoin));
             float coinTierDistribution = StageController.DungeonData.CoinTier.Evaluate(StageController.Floor);
             uint tier = (uint)coinTierDistribution;
-            float lowTierProportion = coinTierDistribution - tier;
+            float lowTierProportion = 1-(coinTierDistribution - tier);
             uint lowTierCoins = (uint)(lowTierProportion * totalAwardedCoin);
             uint highTierCoins = totalAwardedCoin - lowTierCoins;
             if (lowTierCoins > 0)
                 StageController.PlayerPerk.GainCoin(type, tier, lowTierCoins);
             if (highTierCoins > 0)
                 StageController.PlayerPerk.GainCoin(type, tier + 1, highTierCoins);
-            string toPrint = "";
+            string toPrint = "You have obtained:\n";
             if (lowTierCoins > 0)
                 toPrint += RewardInfo(type, tier, lowTierCoins) + "\n";
             if (highTierCoins > 0)
                 toPrint += RewardInfo(type, tier+1, highTierCoins) + "\n";
             rewardList.text = toPrint;
         }
-        string RewardInfo(CoinType type, uint tier, uint amount) => $"<color={GlobalColor.Coin}>{amount}</color><b> <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color> <color={GlobalColor.Perk.PerkType(type)}>{type}</b>";
+        string RewardInfo(CoinType type, uint tier, uint amount) => $"<color={GlobalColor.Coin}>+{amount}<b> <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color> <color={GlobalColor.Perk.PerkType(type)}>{type}</color></b> coin(s)</color>";
     }
 }
