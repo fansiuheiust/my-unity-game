@@ -24,14 +24,14 @@ MonoBehaviour:
         <MaxMana>k__BackingField: 4
         <ManaRegen>k__BackingField: 4
       scaling:
-        <Atk>k__BackingField: -1
+        <Atk>k__BackingField: 0.1
         <Def>k__BackingField: 0.1
         <MaxHp>k__BackingField: 0.1
         <MaxMana>k__BackingField: 0.1
         <ManaRegen>k__BackingField: 0.1
         <WalkSpeed>k__BackingField: 0.1
         <AtkSpeed>k__BackingField: 0.1
-        <CritRate>k__BackingField: -5
+        <CritRate>k__BackingField: 0.1
         <CritDmg>k__BackingField: 0.1
         <DmgReduction>k__BackingField: 0.1
         <Knockback>k__BackingField: 0.1

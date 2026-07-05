@@ -36,6 +36,7 @@ namespace Dungeon {
             puzzle.OnClear.RemoveListener(OnPuzzleCleared);
             this.score = score;
             this.optimalScore = optimalScore;
+            Cleared = true;
         }
 
         void OnPuzzleExited() {
