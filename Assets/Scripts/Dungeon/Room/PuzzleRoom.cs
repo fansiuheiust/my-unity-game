@@ -39,10 +39,11 @@ namespace Dungeon {
         }
 
         void OnPuzzleExited() {
+
+            float optimality = (float)score / optimalScore;
             puzzle.OnExit.RemoveListener(OnPuzzleExited);
             outro = StageController.PlayerControl.EnqueuePopup(outroPrefab).GetComponent<PuzzleOutro>();
-            outro.Init(score, optimalScore);
-            float optimality = (float)score / optimalScore;
+            outro.Init(score, optimalScore, optimality >= coinRewardThreshold, optimality >= buffRewardThreshold, optimality >= gearRewardThreshold);
             if (optimality >= coinRewardThreshold)
                 StageController.PlayerControl.EnqueuePopup(coinRewardPrefab).GetComponent<CoinReward>().Init(optimality);
             if (optimality >= buffRewardThreshold)

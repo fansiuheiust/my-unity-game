@@ -544,3 +544,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optimalityDisplay: {fileID: 8736970118138829888}
+  eligableRewards: {fileID: 3836650738642848479}
