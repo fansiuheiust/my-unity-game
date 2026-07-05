@@ -21,7 +21,9 @@ namespace UI {
         [SerializeField, Min(0)]
         int valueMin, valueMax;
         [SerializeField, Min(1)]
-        int timeLimit;
+        int baseTimeLimit=4;
+        [SerializeField, Min(0)]
+        int timeLimitPerPlus = 1, timeLimitPerMinus = 1, timeLimitPerTimes = 3;
         [SerializeField, Min(20), Tooltip("Largest difference between incorrect and correct choice")]
         int choiceVariation;
 
@@ -33,7 +35,7 @@ namespace UI {
         Button[] choices;
         int correctChoice;
 
-
+        int timeLimit;
         int remainingTime;
         
 
@@ -56,10 +58,10 @@ namespace UI {
                 choices[i].onClick.AddListener((i == correctChoice)? ()=>OnResponse(true): ()=>OnResponse(false));
 
             UpdateExpression();
-            
 
-            remainingTime = timeLimit;
-            timer.text = timeLimit.ToString();
+
+            UpdateTimeLimit();
+            timer.text = timeLimit.ToString() + "/" + timeLimit.ToString();
             _timer = StartCoroutine(Timer());
             
         }
@@ -71,7 +73,7 @@ namespace UI {
                 timer.color = Color.red;
                 timer.text = "Wrong!";
             } else {
-                Clear(Mathf.Min(remainingTime + (int)Mathf.Ceil(timeLimit/2), timeLimit), timeLimit);
+                Clear(Mathf.Min(remainingTime + Mathf.CeilToInt(timeLimit/2), timeLimit), timeLimit);
                 timer.color = Color.green;
                 timer.text = $"Correct!";
             }
@@ -92,6 +94,16 @@ namespace UI {
             _timer = null;
         }
 
+        void UpdateTimeLimit() {
+            timeLimit = baseTimeLimit;
+            foreach (Operator op in operations)
+                timeLimit += op switch {
+                    Operator.Plus => timeLimitPerPlus,
+                    Operator.Minus => timeLimitPerMinus,
+                    _ => timeLimitPerTimes
+                };
+            remainingTime = timeLimit;
+        }
         void UpdateButtonValues() {
             choices[correctChoice].GetComponentInChildren<TextMeshProUGUI>().text = correctAnswer.ToString();
             int[] distractions = new int[choices.Length - 1];
@@ -133,7 +145,7 @@ namespace UI {
             while (true) {
                 yield return new WaitForSeconds(1);
                 remainingTime--;
-                timer.text = remainingTime.ToString();
+                timer.text = remainingTime.ToString() + "/" + timeLimit.ToString();
                 if (remainingTime < 0)
                     Timeout();
             }

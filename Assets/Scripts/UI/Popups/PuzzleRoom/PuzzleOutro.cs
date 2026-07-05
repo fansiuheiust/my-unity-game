@@ -13,7 +13,7 @@ namespace UI {
         public void Init(int score, int optimalScore, bool coinEligable, bool buffEligable, bool gearEligable) {
             this.score = score;
             this.optimalScore = optimalScore;
-            optimalityDisplay.text = $"{score}/{optimalScore} ({Optimality*100:F0}%)";
+            optimalityDisplay.text = $"{score}/{optimalScore} ({Mathf.FloorToInt(Optimality*100)}%)";
             optimalityDisplay.color = score * 2 >= optimalScore ? Color.green: Color.red;
             string toPrint;
             if (coinEligable || buffEligable || gearEligable) {
