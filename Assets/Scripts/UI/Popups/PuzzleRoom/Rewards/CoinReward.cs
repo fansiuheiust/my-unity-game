@@ -19,6 +19,7 @@ namespace UI {
         public void Init(float optimality) {
             this.optimality = optimality;
             if (StageController.PlayerPerk.RNGPerks.Unlocked("OptimalFinancer") && optimality >= StageController.PlayerPerk.RNGPerks["OptimalFinancer"]["Optimality Threshold"]) {
+                GetComponent<Popup>().CanExit = false;
                 InitChooser();
                 rewardList.text = "";
                 return;
@@ -43,6 +44,7 @@ namespace UI {
             classChooser.onClick.RemoveAllListeners();
             Destroy(rewardChooser);
             AwardCoin(type);
+            GetComponent<Popup>().CanExit = true;
         }
         public void AwardCoin(CoinType type) {
             uint totalAwardedCoin = (uint)Mathf.RoundToInt(optimality * Random.Range(minCoin, maxCoin));

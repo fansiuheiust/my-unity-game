@@ -14,11 +14,12 @@ namespace UI {
 
         protected virtual void Awake() {
             GetComponent<Popup>().OnExit.AddListener(OnUIExited);
+            GetComponent<Popup>().CanExit = false;
         }
 
         public void OnUIExited() {
             if (!cleared)
-                Clear(0, 1);
+                throw new System.Exception("Exited UI before puzzle completion");
             OnExit.Invoke();
         }
 
@@ -27,6 +28,7 @@ namespace UI {
                 throw new System.Exception("Double clear");
             OnClear.Invoke(score, optimalScore);
             cleared = true;
+            GetComponent<Popup>().CanExit = true;
         }
     }
 }

@@ -7,8 +7,18 @@ namespace UI {
         [SerializeField] Button exitButton;
         public UnityEvent OnExit;
         public virtual void OnExitPressed() {
+            if (!CanExit) return;
             OnExit.Invoke();
             Destroy(gameObject);
+        }
+
+        bool _canExit = true;
+        public bool CanExit {
+            get => _canExit;
+            set {
+                _canExit = value;
+                exitButton.interactable = value;
+            }
         }
     }
 }

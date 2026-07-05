@@ -98,7 +98,7 @@ namespace UI {
             for (int i = 0; i < distractions.Length; i++) {
                 bool appeared, equalsCorrect;
                 do {
-                    distractions[i] = Random.Range(correctChoice - choiceVariation, correctChoice + choiceVariation);
+                    distractions[i] = Random.Range(correctAnswer - choiceVariation, correctAnswer + choiceVariation);
                     equalsCorrect = distractions[i] == correctAnswer;
                     appeared = false;
                     for (int j = 0; j < i; j++)

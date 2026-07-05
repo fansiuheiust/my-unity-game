@@ -727,7 +727,7 @@ MonoBehaviour:
   maxLength: 8
   valueMin: 0
   valueMax: 9
-  timeLimit: 10
+  timeLimit: 12
   choiceVariation: 20
 --- !u!224 &3350791098999166109 stripped
 RectTransform:
