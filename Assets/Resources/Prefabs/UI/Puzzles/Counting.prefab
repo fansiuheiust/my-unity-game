@@ -1031,9 +1031,9 @@ MonoBehaviour:
   scoreDisplay: {fileID: 6970347569459557589}
   timeDisplay: {fileID: 5641490275445841294}
   resetWarning: {fileID: 3874871452027696144}
-  initialScore: 10
-  additiveMin: 10
-  additiveMax: 20
+  initialScore: 20
+  additiveMin: 5
+  additiveMax: 40
   multiplicativeMin: 1.5
   multiplicativeMax: 1.5
   time: 10
