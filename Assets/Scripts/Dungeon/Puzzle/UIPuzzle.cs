@@ -1,4 +1,4 @@
-using UI;
+using UI.Puzzle;
 using UnityEngine;
 
 namespace Dungeon {

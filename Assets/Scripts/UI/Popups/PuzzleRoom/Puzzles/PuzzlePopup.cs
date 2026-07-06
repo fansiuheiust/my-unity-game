@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UI {
+namespace UI.Puzzle {
     public abstract class PuzzlePopup : MonoBehaviour {
         /// <summary>
         /// <para>Called when the dungeon is cleared.</para>

@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI {
+namespace UI.Puzzle {
     public class Calculation : PuzzlePopup {
         [SerializeField]
         Transform choiceLayout;
