@@ -87,4 +87,4 @@ MonoBehaviour:
   OnExit:
     m_PersistentCalls:
       m_Calls: []
-  UIPrefab: {fileID: 0}
+  UIPrefab: {fileID: 6139039457122564280, guid: 66a206843db536c4fbde6131e6781d59, type: 3}

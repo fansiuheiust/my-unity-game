@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UI.Puzzle.LightAsSteelUtil;
-using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEngine.Tilemaps;
+using System.Collections;
 
 namespace UI.Puzzle {
     namespace LightAsSteelUtil {
@@ -13,12 +12,14 @@ namespace UI.Puzzle {
             public int flightDur;
             public readonly bool horizontal;
             public readonly Train owner;
-            public Wagon(int row, int col, bool horizontal, Train owner) {
+            public readonly bool isHead;
+            public Wagon(int row, int col, bool horizontal, Train owner, bool isHead) {
                 Row = row;
                 Col = col;
                 flightDur = 0;
                 this.horizontal = horizontal;
                 this.owner = owner;
+                this.isHead = isHead;
             }
             public void Forward() {
                 if (horizontal) {
@@ -58,7 +59,7 @@ namespace UI.Puzzle {
                 this.horizontal = horizontal;
                 wagons = new Wagon[numWagons];
                 for (int i = 0; i < numWagons; i++) {
-                    wagons[i] = new(horizontal ? row : row - i, horizontal ? col - i : col, horizontal, this);
+                    wagons[i] = new(horizontal ? row : row - i, horizontal ? col - i : col, horizontal, this, i == 0);
                 }
             }
             /// <summary>
@@ -72,18 +73,18 @@ namespace UI.Puzzle {
                 foreach (var wagon in wagons) {
                     // update the relevant grid if the wagon is within it
                     Wagon[,] toNull = wagon.flightDur > 0 ? air : ground;
-                    if (Row >= 0 && Col >= 0 && Row < toNull.GetLength(0) && Col < toNull.GetLength(1))
-                        toNull[Row, Col] = null;
+                    if (wagon.Row >= 0 && wagon.Col >= 0 && wagon.Row < toNull.GetLength(0) && wagon.Col < toNull.GetLength(1))
+                        toNull[wagon.Row, wagon.Col] = null;
                     wagon.Forward();
                     // send a grounded wagon flying if it lies on 1 of its ramps
                     if (wagon.flightDur == 0 && (horizontal && ramps.Contains(wagon.Col-1) || !horizontal && ramps.Contains(wagon.Row-1)))
                         wagon.flightDur = LightAsSteel.RampDur;
                     // update the relevant grid if the wagon is within it
                     Wagon[,] toSet = wagon.flightDur > 0 ? air : ground;
-                    if (Row >= 0 && Col >= 0 && Row < toSet.GetLength(0) && Col < toSet.GetLength(1)) {
-                        if (toSet[Row, Col] != null)
-                            crashed = toSet[Row, Col];
-                        toSet[Row, Col] = wagon;
+                    if (wagon.Row >= 0 && wagon.Col >= 0 && wagon.Row < toSet.GetLength(0) && wagon.Col < toSet.GetLength(1)) {
+                        if (toSet[wagon.Row, wagon.Col] != null)
+                            crashed = toSet[wagon.Row, wagon.Col];
+                        toSet[wagon.Row, wagon.Col] = wagon;
                     }
                 }
                 Row = wagons[0].Row;
@@ -103,8 +104,8 @@ namespace UI.Puzzle {
             public void RemoveFromGrid(Wagon[,] ground, Wagon[,] air) {
                 foreach (Wagon wagon in wagons) {
                     Wagon[,] toNull = wagon.flightDur > 0? air : ground;
-                    if (Row >= 0 && Col >= 0 && Row < toNull.GetLength(0) && Col < toNull.GetLength(1))
-                        toNull[Row, Col] = null;
+                    if (wagon.Row >= 0 && wagon.Col >= 0 && wagon.Row < toNull.GetLength(0) && wagon.Col < toNull.GetLength(1))
+                        toNull[wagon.Row, wagon.Col] = null;
                 }
             }
         }
@@ -119,9 +120,21 @@ namespace UI.Puzzle {
         LightAsSteelTile[,] tiles;
         Button[,] buttons;
 
+        Wagon[,] groundGrid, airGrid;
+        HashSet<Train> trains = new();
+
 
         [SerializeField]
         int rampDur;
+        [SerializeField, Tooltip("Row is 0 for vertical trains, Col is 0 for horizontal trains")]
+        int[] horizontalSpawns, verticalSpawns;
+
+        [SerializeField, Min(1)]
+        int minTrainLength = 2, maxTrainLength = 5;
+        [SerializeField, Min(1), Tooltip("Number of cycles for each train spawn")]
+        int cyclesPerSpawn = 4;
+        [SerializeField, Min(1), Tooltip("May not attain minSpawnPerCycle if there is no available positions")]
+        int minSpawnPerInterval = 1, maxSpawnPerInterval = 4;
 
         public static int RampDur { get; private set; }
         
@@ -130,11 +143,20 @@ namespace UI.Puzzle {
             base.Awake();
             RampDur = rampDur;
             InitializeTiles();
+            StartCoroutine(Loop());
+        }
+        IEnumerator Loop() {
+            while (true) {
+                GameCycle();
+                yield return new WaitForSeconds(0.5f);
+            }
         }
 
         void InitializeTiles() {
             tiles = new LightAsSteelTile[rows, cols];
             buttons = new Button[rows, cols];
+            groundGrid = new Wagon[rows, cols];
+            airGrid = new Wagon[rows, cols];
             foreach (var t in tileContainer.GetComponentsInChildren<LightAsSteelTile>()) {
                 tiles[t.Row, t.Col] = t;
                 buttons[t.Row, t.Col] = t.GetComponent<Button>();
@@ -142,8 +164,88 @@ namespace UI.Puzzle {
                 buttons[t.Row, t.Col].onClick.AddListener(()=>OnButtonClick(t.Row, t.Col));
             }
         }
-        void OnButtonClick(int r, int c) {
 
+
+        static readonly string GroundHead = "#080", GroundNormal = "#0F0", AirHead = "#00F", AirNormal = "#0FF", Default = "#FFF";
+        void UpdateButtons() {
+            for (int i =0; i < rows;i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (buttons[i, j] == null) continue;
+                    buttons[i, j].interactable = false;
+                    string toUse = Default;
+                    if (groundGrid[i, j] != null) {
+                        toUse = groundGrid[i, j].isHead ? GroundHead : GroundNormal;
+                        if (groundGrid[i, j].isHead)
+                            buttons[i, j].interactable = true;
+                    }
+                    if (airGrid[i, j] != null)
+                        toUse = airGrid[i, j].isHead? AirHead: AirNormal;
+                    buttons[i, j].GetComponent<Image>().color = GlobalColor.Parse(toUse);
+                }
+            }
+        }
+
+        void OnButtonClick(int r, int c) {
+            
+        }
+
+
+        int cycles = 0;
+        void GameCycle() {
+            HashSet<Train> toDelete = new();
+            foreach (var t in trains) {
+                if (toDelete.Contains(t)) continue;
+                Wagon collided = t.Forward(groundGrid, airGrid);
+                if (collided != null) {
+                    toDelete.Add(t);
+                    toDelete.Add(collided.owner);
+                }
+                // out of range entirely
+                if (t.wagons[^1].Row >= rows || t.wagons[^1].Col >= cols)
+                    toDelete.Add(t);
+            }
+            foreach (var t in toDelete) {
+                t.RemoveFromGrid(groundGrid, airGrid);
+                trains.Remove(t);
+            }
+
+            if (cycles % cyclesPerSpawn == 0) {
+                // spawn new trains if possible
+                List<int> availableVerticles = new(), availableHorizontals = new();
+                foreach (int v in verticalSpawns)
+                    if (groundGrid[0, v] == null)
+                        availableVerticles.Add(v);
+                foreach (int h in horizontalSpawns)
+                    if (groundGrid[h,0] == null)
+                        availableHorizontals.Add(h);
+                int numSpawn = Mathf.Min(Random.Range(minSpawnPerInterval, maxSpawnPerInterval+1), availableHorizontals.Count + availableVerticles.Count);
+                Shuffle(availableHorizontals);
+                Shuffle(availableVerticles);
+                int currV = 0, currH = 0;
+                for (int i = 0; i < numSpawn; i++) {
+                    Train t;
+                    if (Random.Range(0, 2) == 0 && currH < availableHorizontals.Count) {
+                        // choose Horizontal
+                        t = new(availableHorizontals[currH++], 0, true, Random.Range(minTrainLength, maxTrainLength+1));
+                    } else if (currV < availableVerticles.Count) {
+                        t = new(0, availableVerticles[currV++], false, Random.Range(minTrainLength, maxTrainLength+1));
+                    } else {
+                        break;
+                    }
+                    groundGrid[t.Row, t.Col] = t.wagons[0];
+                    trains.Add(t);
+                }
+            }
+            cycles++;
+
+            UpdateButtons();
+        }
+
+        void Shuffle<T>(List<T> list) {
+            for (int i = list.Count-1; i > 0; i--) {
+                int k = Random.Range(0, i+1);
+                (list[k], list[i]) = (list[i], list[k]);
+            }
         }
     }
 }
