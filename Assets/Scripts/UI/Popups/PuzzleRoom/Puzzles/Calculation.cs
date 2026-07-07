@@ -41,18 +41,18 @@ namespace UI.Puzzle {
 
         protected override void Awake() {
             base.Awake();
-            length = Random.Range(minLength, maxLength);
+            length = Random.Range(minLength, maxLength+1);
             values = new int[length];
             operations = new Operator[length-1];
             for (int i = 0; i < length; i++) {
-                values[i] = Random.Range(valueMin, valueMax);
+                values[i] = Random.Range(valueMin, valueMax+1);
             }
             for (int i = 0; i < length - 1; i++)
                 operations[i] = (Operator)Random.Range(0, 3);
             correctAnswer = Evaluate(0, length - 1);
 
             choices = choiceLayout.GetComponentsInChildren<Button>();
-            correctChoice = Random.Range(0, choices.Length-1);
+            correctChoice = Random.Range(0, choices.Length);
             UpdateButtonValues();
             for (int i = 0; i < choices.Length; i++)
                 choices[i].onClick.AddListener((i == correctChoice)? ()=>OnResponse(true): ()=>OnResponse(false));
@@ -110,7 +110,7 @@ namespace UI.Puzzle {
             for (int i = 0; i < distractions.Length; i++) {
                 bool appeared, equalsCorrect;
                 do {
-                    distractions[i] = Random.Range(correctAnswer - choiceVariation, correctAnswer + choiceVariation);
+                    distractions[i] = Random.Range(correctAnswer - choiceVariation, correctAnswer + choiceVariation+1);
                     equalsCorrect = distractions[i] == correctAnswer;
                     appeared = false;
                     for (int j = 0; j < i; j++)

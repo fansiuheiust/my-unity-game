@@ -115,8 +115,8 @@ namespace UI.Puzzle {
             for (int _ = 0; _ < numChoices; _++) {
                 SetButtonInteractable(false);
                 for (int i = 0; i < buttons.Length; i++) {
-                    operators[i] = (Operator)Random.Range(0, 3);
-                    values[i] = operators[i] == Operator.Plus || operators[i] == Operator.Minus ? Random.Range(additiveMin, additiveMax) : Mathf.Round(Random.Range(multiplicativeMin, multiplicativeMax)*10)/10;
+                    operators[i] = (Operator)Random.Range(0, 4);
+                    values[i] = operators[i] == Operator.Plus || operators[i] == Operator.Minus ? Random.Range(additiveMin, additiveMax+1) : Mathf.Round(Random.Range(multiplicativeMin, multiplicativeMax)*10)/10;
                 }
                 UpdateButtonDisplay();
                 UpdateOptimal();

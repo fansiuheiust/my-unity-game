@@ -59,12 +59,12 @@ namespace UI.Puzzle {
             base.Awake();
             NumJumps = 0;
             noJumpDisplay.alpha = 0;
-            optimalJump = Random.Range(minOptimalJumps, maxOptimalJumps);
+            optimalJump = Random.Range(minOptimalJumps, maxOptimalJumps+1);
             int pass = 0;
             Regenerate:
             CreateButtons();
             
-            jumpRange = Random.Range(minJumpRange, maxJumpRange);
+            jumpRange = Random.Range(minJumpRange, maxJumpRange+1);
             jumpRangeDisplay.text = $"Jump range: <color={ValueColor}>{jumpRange}</color>";
 
 
@@ -87,11 +87,11 @@ namespace UI.Puzzle {
                 goto Regenerate;
             }
             // position the player on a tower that can do at least 1 jump
-            CurrTower = validIndices[Random.Range(0, validIndices.Count-1)];
+            CurrTower = validIndices[Random.Range(0, validIndices.Count)];
         }
 
         void CreateButtons() {
-            int numTowers = Random.Range(minTowers, maxTowers);
+            int numTowers = Random.Range(minTowers, maxTowers+1);
             towers = new Button[numTowers];
             heights = new int[numTowers];
             optimalJumps = new int[numTowers];
@@ -99,7 +99,7 @@ namespace UI.Puzzle {
             for (int i = 0; i < numTowers; i++)
                 heights[i] = i + 1;
             for (int i = numTowers-1; i > 0; i--) {
-                int k = Random.Range(0, i);
+                int k = Random.Range(0, i+1);
                 (heights[k], heights[i]) = (heights[i], heights[k]);
             }
             for (int i = 0; i < numTowers; i++) {
