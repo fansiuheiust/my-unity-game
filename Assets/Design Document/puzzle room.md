@@ -16,7 +16,7 @@ There should be many puzzles, spanning in diverse areas <- which is not yet achi
 
 * Math: given n numbers, n-1 operators, find the result within 10 seconds. Faster solving implies better rewards, m is treated as the player taking 2^m times longer to solve.
 * Counting Game: 5 seconds of gameplay, (+-) (same color) (\*/)(same color) operators attached to a value appear on screen every second, expiring on the next second. Clicking will cause player score to <operator>= <value> (+=, -=, \*=, /=). Player must gain at least half of best solution to pass.
-* Tower of Hanoi: self-explanatory, player must make no more than twice the optimal moves to pass.
+* "Light" as Steel: in lanes forming a shape of #, trains will pass either left to right or top to bottom. Ramps are 1-use objects on a track that send a train flying over a few lanes. Goal: make all trains go to the opposite lane without collision. Collision happens when a ground train hits another ground train, or a flying train hits another flying train.
 * Jump Game V: Refer to Leetcode. Given n horizontally placed towers, player is at index i, and they can only jump to another shorter tower with no tower taller than current index between, at most a distance d. Player must make at least half of optimal jumps to pass.
 * Obstacle Course: next 10 seconds, disable all non-movement player inputs. Obstacles of varying shape move towards player. To pass, the player must survive for at least half of the duration, i.e. 5 seconds.
 
