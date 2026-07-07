@@ -19,11 +19,11 @@ PrefabInstance:
         if they are on the <color=#0ff>same medium</color> (ground, air).
 
         -
-        You can place <color=#0ff>one-use ramps</color> to send a train <color=#0ff>flying</color>
-        for several tiles (actual amount disclosed in game).
+        You can place a <color=#0ff>ramp</color> on the <color=#0ff>head of a train</color>
+        to send it <color=#0ff>flying</color> for several tiles (actual amount disclosed
+        in game).
 
-        - Make as many
-        trains survive as possible.'
+        - Make as many trains survive as possible.'
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
