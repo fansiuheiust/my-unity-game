@@ -185,7 +185,6 @@ namespace UI.Puzzle {
 
         protected override void Awake() {
             base.Awake();
-            gameOverDisplay.alpha = 0;
             Collisions = 0;
             Survivals = 0;
             Spawned = 0;
@@ -195,6 +194,11 @@ namespace UI.Puzzle {
             StartCoroutine(Loop());
         }
         IEnumerator Loop() {
+            for (int i = 3; i > 0; i--) {
+                gameOverDisplay.text = i.ToString();
+                yield return new WaitForSeconds(1);
+            }
+            gameOverDisplay.text = "";
             while (true) {
                 GameCycle();
                 if (Collisions + Survivals == numTrains) {
@@ -206,7 +210,7 @@ namespace UI.Puzzle {
         }
 
         void GameOver() {
-            gameOverDisplay.alpha = 1;
+            gameOverDisplay.text = "Game over!";
             Clear(Survivals, numTrains);
         }
 
@@ -275,8 +279,6 @@ namespace UI.Puzzle {
                 trains.Remove(t);
             }
 
-            cycles++;
-
             if (cycles % cyclesPerSpawn == 0) {
                 // spawn new trains if possible
                 List<int> availableVerticles = new(), availableHorizontals = new();
@@ -307,6 +309,7 @@ namespace UI.Puzzle {
                 }
                 Spawned += actualSpawn;
             }
+            cycles++;
 
             UpdateButtons();
         }

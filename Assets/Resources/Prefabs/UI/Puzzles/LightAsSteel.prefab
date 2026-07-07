@@ -4464,13 +4464,13 @@ MonoBehaviour:
   rampDur: 3
   horizontalSpawns: 020000000400000006000000
   verticalSpawns: 020000000400000006000000
-  numTrains: 20
+  numTrains: 25
   minTrainLength: 3
-  maxTrainLength: 8
-  cyclesPerSpawn: 6
-  minSpawnPerInterval: 3
-  maxSpawnPerInterval: 5
-  cycleInterval: 1.25
+  maxTrainLength: 9
+  cyclesPerSpawn: 5
+  minSpawnPerInterval: 2
+  maxSpawnPerInterval: 4
+  cycleInterval: 1.375
 --- !u!224 &8228819206539155891 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3780390005900394362, guid: eab73db806b1b4f44b9432318b74e47f, type: 3}
