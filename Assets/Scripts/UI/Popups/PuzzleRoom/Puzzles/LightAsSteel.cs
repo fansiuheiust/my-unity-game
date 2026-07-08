@@ -125,6 +125,8 @@ namespace UI.Puzzle {
         TextMeshProUGUI spawnedDisplay, collisionDisplay, survivedDisplay;
         [SerializeField]
         TextMeshProUGUI gameOverDisplay;
+        [SerializeField]
+        Button speedUpButton;
 
         [SerializeField, Min(1)]
         int rows, cols;
@@ -151,6 +153,8 @@ namespace UI.Puzzle {
         int minSpawnPerInterval = 1, maxSpawnPerInterval = 4;
         [SerializeField, Min(0.5f)]
         float cycleInterval = 0.75f;
+        [SerializeField, Min(0.5f)]
+        float spedUpInterval = 0.5f;
 
         public static int RampDur { get; private set; }
 
@@ -192,6 +196,13 @@ namespace UI.Puzzle {
             RampDur = rampDur;
             InitializeTiles();
             StartCoroutine(Loop());
+            speedUpButton.onClick.AddListener(OnSpeedup);
+        }
+
+        void OnSpeedup() {
+            speedUpButton.interactable = false;
+            speedUpButton.onClick.RemoveAllListeners();
+            cycleInterval = spedUpInterval;
         }
         IEnumerator Loop() {
             for (int i = 3; i > 0; i--) {
@@ -212,6 +223,8 @@ namespace UI.Puzzle {
         void GameOver() {
             gameOverDisplay.text = "Game over!";
             Clear(Survivals, numTrains);
+            foreach (var b in buttons)
+                b.onClick.RemoveAllListeners();
         }
 
 
