@@ -223,8 +223,10 @@ namespace UI.Puzzle {
         void GameOver() {
             gameOverDisplay.text = "Game over!";
             Clear(Survivals, numTrains);
-            foreach (var b in buttons)
-                b.onClick.RemoveAllListeners();
+            foreach (var b in buttons) {
+                if (b != null)
+                    b.onClick.RemoveAllListeners();
+            }
         }
 
 
