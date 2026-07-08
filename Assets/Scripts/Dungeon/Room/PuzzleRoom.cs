@@ -14,6 +14,8 @@ namespace Dungeon {
         [SerializeField]
         GameObject coinRewardPrefab, buffRewardPrefab, gearRewardPrefab;
 
+        [field: SerializeField, Min(1f), Tooltip("Rewards are multiplied by this ratio, this should be proportional to the length of the puzzle")]
+        public float RewardRatio { get; private set; } = 1f;
         [SerializeField, Min(0f)]
         float coinRewardThreshold = 0.5f, buffRewardThreshold = 0.75f, gearRewardThreshold = 1f;
 
@@ -46,7 +48,7 @@ namespace Dungeon {
             outro = StageController.PlayerControl.EnqueuePopup(outroPrefab).GetComponent<PuzzleOutro>();
             outro.Init(score, optimalScore, optimality >= coinRewardThreshold, optimality >= buffRewardThreshold, optimality >= gearRewardThreshold);
             if (optimality >= coinRewardThreshold)
-                StageController.PlayerControl.EnqueuePopup(coinRewardPrefab).GetComponent<CoinReward>().Init(optimality);
+                StageController.PlayerControl.EnqueuePopup(coinRewardPrefab).GetComponent<CoinReward>().Init(optimality, RewardRatio);
             if (optimality >= buffRewardThreshold)
                 StageController.PlayerControl.EnqueuePopup(buffRewardPrefab); // TODO: once implemented, init this also
             if (optimality >= gearRewardThreshold)
