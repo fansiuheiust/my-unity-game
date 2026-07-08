@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -29,6 +30,13 @@ namespace UI.Puzzle {
             OnClear.Invoke(score, optimalScore);
             cleared = true;
             GetComponent<Popup>().CanExit = true;
+        }
+
+        public static void Shuffle<T>(IList<T> list) {
+            for (int i = list.Count - 1; i > 0; i--) {
+                int k = Random.Range(0, i + 1);
+                (list[k], list[i]) = (list[i], list[k]);
+            }
         }
     }
 }

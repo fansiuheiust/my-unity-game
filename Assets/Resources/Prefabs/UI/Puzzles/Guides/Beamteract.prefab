@@ -10,26 +10,24 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 359256493739813262, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
-      value: '- Transmitters on the left, each assigned with a distinct color.
+      value: '- Transmitters on the left, each assigned to a distinct receiver.
 
         -
-        Receivers on the right, each assigned with a distinct color (from transmitter).
+        Every once in a while, a random transmitter receives a <color=#0ff>charge</color>.
 
         -
-        Every once in a while, a random transmitter receives a charge.
+        Charge is <color=#0ff>capped</color> for each transmitter, charging beyond
+        the cap <color=#f00>destroys</color> the charge.
 
-        -
-        Charge is capped for each transmitter, charging beyond the cap destroys the
-        charge.
+        - <color=#0ff>Clicking
+        on a transmitter</color> sends a beam to <color=#0ff>transmit the charges</color>
+        to its respective receiver.
 
-        - Clicking on a transmitter sends a beam to transmit the
-        charges to its receiver of the same color.
+        - If <color=#0ff>beams intersect</color>,
+        the charges sent by the beams will be <color=#f00>destroyed</color>.
 
-        - If beams intersect,
-        the charges sent by the beams will be destroyed.
-
-        Transmit as many
-        charges to the receivers as possible.'
+        Transmit
+        as many charges to the receivers as possible.'
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
