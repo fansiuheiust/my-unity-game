@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4428177292087068519
+--- !u!1001 &5042795740327956022
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,31 +10,36 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 359256493739813262, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
-      value: '- Lanes will form a # shape.
-
-        - Trains either move from <color=#0ff>left
-        to right</color> or <color=#0ff>up to down</color>.
-
-        - 2 trains <color=#0ff>collide</color>
-        if they are on the <color=#0ff>same medium</color> (ground, air).
+      value: '- Transmitters on the left, each assigned to a distinct receiver.
 
         -
-        You can place a <color=#0ff>ramp</color> on the <color=#0ff>head of a train</color>
-        to send it <color=#0ff>flying</color> for several tiles (actual amount disclosed
-        in game).
+        Every once in a while, a random transmitter receives a <color=#0ff>charge</color>.
 
-        - Ramps are limited, you will only gain them when trains
-        spawn.
+        -
+        Charge is <color=#0ff>capped</color> for each transmitter, charging beyond
+        the cap <color=#f00>destroys</color> the charge.
 
-        Make as many trains survive as possible.'
+        - <color=#0ff>Clicking
+        on a transmitter</color> sends a beam to <color=#0ff>transmit the charges</color>
+        to its respective receiver.
+
+        - If <color=#0ff>beams intersect</color>,
+        the charges sent by the beams will be <color=#f00>destroyed</color>.
+
+        -
+        Note that the <color=#0ff>transmission rate</color> of 1 transmitter is <color=#0ff>lower</color>
+        than the <color=#0ff>spawn rate</color> of charges
+
+        Transmit as many
+        charges to the receivers as possible.'
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text
-      value: '"Light" as Steel'
+      value: Beamteract
       objectReference: {fileID: 0}
     - target: {fileID: 3458537118934127047, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_Name
-      value: LightAsSteel
+      value: Beamteract
       objectReference: {fileID: 0}
     - target: {fileID: 8656408485486323551, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_Pivot.x

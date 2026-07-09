@@ -16,7 +16,11 @@ namespace UI {
         int minCoin = 4, maxCoin = 9;
 
         float optimality;
-        public void Init(float optimality) {
+
+        CoinType coinType;
+        float rewardRatio;
+        public void Init(float optimality, float rewardRatio) {
+            this.rewardRatio = rewardRatio;
             this.optimality = optimality;
             if (StageController.PlayerPerk.RNGPerks.Unlocked("OptimalFinancer") && optimality >= StageController.PlayerPerk.RNGPerks["OptimalFinancer"]["Optimality Threshold"]) {
                 GetComponent<Popup>().CanExit = false;
@@ -25,7 +29,8 @@ namespace UI {
                 return;
             }
             Destroy(rewardChooser);
-            AwardCoin((CoinType)Random.Range(0, 2));
+            coinType = (CoinType)Random.Range(0, 2);
+            AwardCoin();
         }
 
         void InitChooser() {
@@ -43,25 +48,26 @@ namespace UI {
             rngChooser.onClick.RemoveAllListeners();
             classChooser.onClick.RemoveAllListeners();
             Destroy(rewardChooser);
-            AwardCoin(type);
+            coinType = type;
+            AwardCoin();
             GetComponent<Popup>().CanExit = true;
         }
-        public void AwardCoin(CoinType type) {
-            uint totalAwardedCoin = (uint)Mathf.RoundToInt(optimality * Random.Range(minCoin, maxCoin));
+        public void AwardCoin() {
+            uint totalAwardedCoin = (uint)Mathf.RoundToInt(optimality * Random.Range(minCoin, maxCoin) * rewardRatio);
             float coinTierDistribution = StageController.DungeonData.CoinTier.Evaluate(StageController.Floor);
             uint tier = (uint)coinTierDistribution;
             float lowTierProportion = 1-(coinTierDistribution - tier);
             uint lowTierCoins = (uint)(lowTierProportion * totalAwardedCoin);
             uint highTierCoins = totalAwardedCoin - lowTierCoins;
             if (lowTierCoins > 0)
-                StageController.PlayerPerk.GainCoin(type, tier, lowTierCoins);
+                StageController.PlayerPerk.GainCoin(coinType, tier, lowTierCoins);
             if (highTierCoins > 0)
-                StageController.PlayerPerk.GainCoin(type, tier + 1, highTierCoins);
+                StageController.PlayerPerk.GainCoin(coinType, tier + 1, highTierCoins);
             string toPrint = "You have obtained:\n";
             if (lowTierCoins > 0)
-                toPrint += RewardInfo(type, tier, lowTierCoins) + "\n";
+                toPrint += RewardInfo(coinType, tier, lowTierCoins) + "\n";
             if (highTierCoins > 0)
-                toPrint += RewardInfo(type, tier+1, highTierCoins) + "\n";
+                toPrint += RewardInfo(coinType, tier+1, highTierCoins) + "\n";
             rewardList.text = toPrint;
         }
         string RewardInfo(CoinType type, uint tier, uint amount) => $"<color={GlobalColor.Coin}>+{amount}<b> <color={GlobalColor.RarityTiers[tier]}>{Global.Rarities[tier]}</color> <color={GlobalColor.Perk.PerkType(type)}>{type}</color></b> coin(s)</color>";

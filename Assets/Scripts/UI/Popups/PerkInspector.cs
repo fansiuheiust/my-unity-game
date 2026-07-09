@@ -72,8 +72,8 @@ namespace UI {
                 foreach (Dependency d in b.Perk.dependencies) {
                     if (!perkButtons.ContainsKey(d.id)) continue;
                     DependencyLine line = Instantiate(dependencyLine, perkTree.Find("Lines")).GetComponent<DependencyLine>();
-                    line.From = perkButtons[d.id].GetComponent<RectTransform>().localPosition;
-                    line.To = b.GetComponent<RectTransform>().localPosition;
+                    line.From = perkButtons[d.id].GetComponent<RectTransform>().position;
+                    line.To = b.GetComponent<RectTransform>().position;
                     line.Width = 10;
                     line.dependencyType = d.type;
                     line.Color = c;
@@ -89,8 +89,8 @@ namespace UI {
                         line = exclusionLines[b.perkID][x];
                     } else {
                         line = Instantiate(dependencyLine, perkTree.Find("Lines")).GetComponent<DependencyLine>();
-                        line.From = perkButtons[x].GetComponent<RectTransform>().localPosition;
-                        line.To = b.GetComponent<RectTransform>().localPosition;
+                        line.From = perkButtons[x].GetComponent<RectTransform>().position;
+                        line.To = b.GetComponent<RectTransform>().position;
                         line.Width = 10;
                         line.dependencyType = DependencyType.Existential;
                         line.Color = c;

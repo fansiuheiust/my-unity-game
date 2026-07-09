@@ -9,6 +9,7 @@ namespace UI {
         Image image;
         RectTransform rectTransform = null;
         public DependencyType dependencyType;
+        public bool local = false;
         public Vector3 From {
             get => from; set {
                 from = value;
@@ -34,7 +35,10 @@ namespace UI {
         }
 
         public void UpdateObject() {
-            rectTransform.localPosition = (from + to) / 2;
+            if (local)
+                rectTransform.localPosition = (from + to) / 2;
+            else
+                rectTransform.position = (from + to) / 2;
             Vector3 delta = to - from;
             rectTransform.sizeDelta = new Vector2(width, delta.magnitude);
             rectTransform.eulerAngles = new Vector3(0, 0, -Mathf.Atan2(delta.x, delta.y) * Mathf.Rad2Deg);
