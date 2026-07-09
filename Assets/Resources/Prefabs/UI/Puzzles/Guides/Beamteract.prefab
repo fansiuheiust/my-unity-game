@@ -26,8 +26,12 @@ PrefabInstance:
         - If <color=#0ff>beams intersect</color>,
         the charges sent by the beams will be <color=#f00>destroyed</color>.
 
-        Transmit
-        as many charges to the receivers as possible.'
+        -
+        Note that the <color=#0ff>transmission rate</color> of 1 transmitter is <color=#0ff>lower</color>
+        than the <color=#0ff>spawn rate</color> of charges
+
+        Transmit as many
+        charges to the receivers as possible.'
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text

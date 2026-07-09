@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: <Puzzle>k__BackingField
       value: Beamteract
       objectReference: {fileID: 0}
+    - target: {fileID: 451800356076228729, guid: cb51bc4db54eb444fbe79886401a05ab, type: 3}
+      propertyPath: <RewardRatio>k__BackingField
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5532049538663541087, guid: cb51bc4db54eb444fbe79886401a05ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
