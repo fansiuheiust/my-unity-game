@@ -3235,7 +3235,7 @@ MonoBehaviour:
   chargeReceivedDisplay: {fileID: 6555096880009228308}
   stateDisplay: {fileID: 9039621073875896448}
   familiarizationTime: 4
-  numCharges: 150
+  numCharges: 240
   transmitterCapacity: 20
-  updateInterval: 0.125
+  updateInterval: 0.15
   intervalPerTransmission: 2

@@ -107,9 +107,8 @@ namespace UI.Puzzle {
             } while (!unequal);
 
             mutex = new bool[transmitters.Length, transmitters.Length];
-            bool needReshuffling = true;
+            int mutexCount = 0;
             for (int i = 0; i < transmitters.Length; i++) {
-                int mutexCount = 0;
                 for (int j = 0; j < transmitters.Length; j++) {
                     if (i == j) continue;
                     int rxi = 0, rxj = 0;
@@ -123,13 +122,11 @@ namespace UI.Puzzle {
                         mutexCount++;
                     }
                 }
-                // no need to reshuffle if there exists a transmitter that has at least <intervalPerTransmission> non-mutexes
-                if (transmitters.Length - mutexCount >= intervalPerTransmission)
-                    needReshuffling = false;
+
             }
             pass++;
-            if (pass >= 100) Debug.Log("Too many passes, resorting to difficult setup");
-            if (needReshuffling && pass < 100) goto Reroll;
+            if (pass >= 200) Debug.Log("Too many passes, resorting to difficult setup");
+            if (transmitters.Length * transmitters.Length - mutexCount < transmitters.Length * intervalPerTransmission && pass < 100) goto Reroll;
         }
 
         void SetupGame() {
