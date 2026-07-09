@@ -23,7 +23,10 @@ PrefabInstance:
         to send it <color=#0ff>flying</color> for several tiles (actual amount disclosed
         in game).
 
-        - Make as many trains survive as possible.'
+        - Ramps are limited, you will only gain them when trains
+        spawn.
+
+        Make as many trains survive as possible.'
       objectReference: {fileID: 0}
     - target: {fileID: 1338741864404335610, guid: 3fecf9e8b70e3b34b9680efa81765bd3, type: 3}
       propertyPath: m_text

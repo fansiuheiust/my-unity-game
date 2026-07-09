@@ -96,11 +96,12 @@ namespace UI.Puzzle {
             /// <summary>
             /// Places a ramp at the head of the train
             /// </summary>
-            public void PlaceRamp() {
+            /// <returns>true if a <b>new</b> ramp is placed</returns>
+            public bool PlaceRamp() {
                 if (horizontal)
-                    ramps.Add(Col);
+                    return ramps.Add(Col);
                 else
-                    ramps.Add(Row);
+                    return ramps.Add(Row);
             }
 
             public void RemoveFromGrid(Wagon[,] ground, Wagon[,] air) {
@@ -115,7 +116,7 @@ namespace UI.Puzzle {
     
     public class LightAsSteel : PuzzlePopup {
 
-        static string ValueColor = "#0ff", CollisionColor="#f00", SurvivedColor="#0f0";
+        static readonly string ValueColor = "#0ff", CollisionColor="#f00", SurvivedColor="#0f0", ZeroColor = "#f00", CappedColor = "#ff0";
 
         [SerializeField]
         RectTransform tileContainer;
@@ -127,6 +128,8 @@ namespace UI.Puzzle {
         TextMeshProUGUI gameOverDisplay;
         [SerializeField]
         Button speedUpButton;
+        [SerializeField]
+        TextMeshProUGUI remainingRampsDisplay;
 
         [SerializeField, Min(1)]
         int rows, cols;
@@ -155,6 +158,10 @@ namespace UI.Puzzle {
         float cycleInterval = 0.75f;
         [SerializeField, Min(0.5f)]
         float spedUpInterval = 0.5f;
+        [SerializeField, Min(1)]
+        int rampCap = 3;
+        [SerializeField, Min(1)]
+        int rampRegeneration = 2;
 
         public static int RampDur { get; private set; }
 
@@ -185,6 +192,17 @@ namespace UI.Puzzle {
                 spawnedDisplay.text = $"Spawned: <color={ValueColor}>{value}</color>/{numTrains}";
             }
         }
+
+        int _ramp;
+        int Ramp {
+            get => _ramp;
+            set {
+                if (value > rampCap)
+                    value = rampCap;
+                _ramp = value;
+                remainingRampsDisplay.text = $"Ramps: <color={(value == 0? ZeroColor: value == rampCap? CappedColor: ValueColor)}>{value}</color>/{rampCap}";
+            }
+        }
         
 
         protected override void Awake() {
@@ -192,6 +210,7 @@ namespace UI.Puzzle {
             Collisions = 0;
             Survivals = 0;
             Spawned = 0;
+            Ramp = rampCap;
             rampDurDisplay.text = $"Ramp Jump: <color={ValueColor}>{rampDur}</color> tiles";
             RampDur = rampDur;
             InitializeTiles();
@@ -264,8 +283,10 @@ namespace UI.Puzzle {
         }
 
         void OnButtonClick(int r, int c) {
-            // note that a button is only clickable if it contains the ground train head
-            groundGrid[r, c].owner.PlaceRamp();
+            // note that a button is only clickable if it contains a ground train head
+            if (Ramp == 0) return;
+            if (groundGrid[r, c].owner.PlaceRamp())
+                Ramp--;
         }
 
 
@@ -295,6 +316,8 @@ namespace UI.Puzzle {
             }
 
             if (cycles % cyclesPerSpawn == 0) {
+                // gain ramps
+                Ramp += rampRegeneration;
                 // spawn new trains if possible
                 List<int> availableVerticles = new(), availableHorizontals = new();
                 foreach (int v in verticalSpawns)

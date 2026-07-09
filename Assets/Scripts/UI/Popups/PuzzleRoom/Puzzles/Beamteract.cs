@@ -166,7 +166,7 @@ namespace UI.Puzzle {
 
         int cycle = 0;
         IEnumerator GameCycle() {
-            stateDisplay.text = "Familiarize yoursel!";
+            stateDisplay.text = "Familiarize yourself!";
             yield return new WaitForSeconds(familiarizationTime);
 
             foreach (var l in lines)
