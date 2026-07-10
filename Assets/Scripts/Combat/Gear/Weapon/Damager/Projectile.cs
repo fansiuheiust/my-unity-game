@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Combat {
@@ -11,6 +12,9 @@ namespace Combat {
         uint pierceLeft;
         float multiplier;
 
+
+        HashSet<Mob> hitMobs = new();
+
         private void Awake() {
             Collider = GetComponent<Collider>();
             RB = GetComponent<Rigidbody>();
@@ -19,20 +23,25 @@ namespace Combat {
         public void Set(Mob owner, float multiplier, Vector3 velocity) {
             Owner = owner;
             Owner.OnWeaponUnequip += Delete;
+            hitMobs.Add(owner);
             Physics.IgnoreCollision(Owner.GetComponent<Collider>(), Collider);
             pierceLeft = ((Ranged)Owner.EquippedWeapon).pierce;
             this.multiplier = multiplier;
             RB.AddForce(velocity, ForceMode.VelocityChange);
         }
 
-        private void OnCollisionEnter(Collision collision) {
+        private void OnTriggerEnter(Collider collider) {
             if (Owner == null) return;
-            Hit(collision.collider.gameObject);
+            Hit(collider.gameObject);
         }
 
         protected virtual void Hit(GameObject gameObject) {
-            if (gameObject.TryGetComponent(out Mob m)) {
-                Hit(m);
+            Mob m = Mob.FindParentingMob(gameObject.transform);
+            // replace below with else if and place if here when adding hitting a blade/shield
+            if (m != null || gameObject.TryGetComponent(out m)) {
+                if (hitMobs.Add(m)) {
+                    Hit(m);
+                }
             } else {
                 // hitting a non-mob
                 Delete();
@@ -40,10 +49,9 @@ namespace Combat {
         }
 
         protected virtual bool Hit(Mob m) {
-            Physics.IgnoreCollision(Collider, m.GetComponent<Collider>());
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
-                Owner.DealKnockback(m, Owner.transform.position, 0.5f);
+                Owner.DealKnockback(m, m.transform.position - RB.linearVelocity, 0.5f);
                 if (pierceLeft == 0) {
                     // ran out of pierces
                     Delete();

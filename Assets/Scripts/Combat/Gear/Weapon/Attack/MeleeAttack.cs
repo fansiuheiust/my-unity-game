@@ -7,7 +7,7 @@ namespace Combat {
         /// <summary>
         /// blade of the melee weapon
         /// </summary>
-        Blade _blade;
+        WeaponBody _blade;
 
         /// <summary>
         /// The active attack animation
@@ -16,7 +16,7 @@ namespace Combat {
 
         protected override void Awake() {
             base.Awake();
-            _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
+            _blade = transform.Find("Model").Find("Blade").GetComponent<WeaponBody>();
             _blade.OnAttackInterrupted += AttackInterruptedByBlock;
         }
 

@@ -3212,11 +3212,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialGears.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: 'initialGears.Array.data[0]'
-      value: dagger
+      value: long_sword
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: 'initialGears.Array.data[1]'
@@ -3232,7 +3232,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data
-      value: 10
+      value: 0.67
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].data

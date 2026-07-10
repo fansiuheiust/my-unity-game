@@ -609,7 +609,7 @@ namespace Combat {
         public static Mob FindParentingMob(Transform t) {
             for (Transform t2 = t; t2 != null; t2 = t2.parent)
                 if (t2.TryGetComponent(out Mob mob)) return mob;
-            throw new Exception($"Cannot find parenting mob for {t}");
+            return null;
         }
     }
 }
