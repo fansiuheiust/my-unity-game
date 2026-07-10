@@ -281,8 +281,8 @@ GameObject:
   - component: {fileID: 2414516610126827853}
   - component: {fileID: 8328474046849236416}
   - component: {fileID: 5368719800082386834}
-  - component: {fileID: 8087964417191868211}
   - component: {fileID: 6687549009490529968}
+  - component: {fileID: 1789776966505603650}
   m_Layer: 2
   m_Name: Blade
   m_TagString: Untagged
@@ -379,21 +379,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8087964417191868211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5062683107950203292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d105491303f7fc43aba8dd5bb052830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isBlockable: 1
-  multiplier: 1
-  attackTime: 0
 --- !u!54 &6687549009490529968
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -421,3 +406,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1789776966505603650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5062683107950203292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc20847e35e61a94ea295136a04b53dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackTime: 0
+  isBlockable: 1
+  multiplier: 1

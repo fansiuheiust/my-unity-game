@@ -9,7 +9,7 @@ namespace Combat {
         /// <summary>
         /// blade of the melee weapon
         /// </summary>
-        Blade _blade;
+        WeaponBody _blade;
 
         /// <summary>
         /// Change to the localPosition of model when started blocking
@@ -21,7 +21,7 @@ namespace Combat {
 
         protected override void Awake() {
             base.Awake();
-            _blade = transform.Find("Model").Find("Blade").GetComponent<Blade>();
+            _blade = transform.Find("Model").Find("Blade").GetComponent<WeaponBody>();
         }
 
         /// <summary>
