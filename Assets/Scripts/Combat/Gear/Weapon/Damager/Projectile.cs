@@ -51,7 +51,7 @@ namespace Combat {
         protected virtual bool Hit(Mob m) {
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
-                Owner.DealKnockback(m, Owner.transform.position, 0.5f);
+                Owner.DealKnockback(m, m.transform.position - RB.linearVelocity, 0.5f);
                 if (pierceLeft == 0) {
                     // ran out of pierces
                     Delete();
