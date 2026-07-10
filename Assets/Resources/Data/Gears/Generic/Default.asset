@@ -169,4 +169,4 @@ MonoBehaviour:
     weaponSpeed: 0
     weaponRange: 100
     prefabName: Default
-    pierce: 1
+    pierce: 3
