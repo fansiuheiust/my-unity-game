@@ -46,7 +46,7 @@ namespace Combat {
         }
 
         public void RotateToCamera() {
-            _rotatable.localEulerAngles = new Vector3(0, Camera.localEulerAngles.y, 0);
+            Rotatable.localEulerAngles = new Vector3(0, Camera.localEulerAngles.y, 0);
         }
 
 

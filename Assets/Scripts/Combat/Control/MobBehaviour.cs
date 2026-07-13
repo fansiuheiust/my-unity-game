@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -46,11 +47,13 @@ namespace Combat {
             }
             set {
                 if (value == null) {
-                    StopCoroutine(_stateChanger);
+                    if (_stateChanger != null)
+                        StopCoroutine(_stateChanger);
                     _stateChanger = null;
                     TargetFinder = StartCoroutine(FindTarget());
                 } else {
-                    StopCoroutine(TargetFinder);
+                    if (TargetFinder != null)
+                        StopCoroutine(TargetFinder);
                     TargetFinder = null;
                     _stateChanger = StartCoroutine(StateChanger());
                 }
@@ -66,6 +69,11 @@ namespace Combat {
         public virtual MobState State {
             get => _state;
             protected set {
+                switch (value) {
+                    case MobState.Attack:
+                        AttackTarget();
+                        break;
+                }
                 _state = value;
             }
         }
@@ -85,6 +93,35 @@ namespace Combat {
             Owner.OnBlockControlReset += OnBlockControlReset;
             TargetFinder = StartCoroutine(FindTarget());
         }
+
+        /// <summary>
+        /// vector from self to target, updated at the start of <c>Update</c>
+        /// </summary>
+        protected Vector3 Delta { get; private set; }
+
+        void Update() {
+            if (Target == null) {
+                MoveDirection = Vector3.zero;
+                return;
+            }
+            Delta = Target.transform.position - transform.position;
+            FollowTarget();
+        }
+
+        /// <summary>
+        /// Moves towards target every update
+        /// </summary>
+        void FollowTarget() {
+            Vector3 scaledDelta = Vector3.Scale(Delta, new Vector3(1, 0, 1));
+            MoveDirection = State switch {
+                MobState.Charge => (Delta.magnitude > (Owner.EquippedWeapon is not null? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange])/2f: 0))? scaledDelta: Vector3.zero,
+                MobState.Escape => -scaledDelta,
+                _ => Vector3.zero
+            };
+        }
+
+        
+
 
         IEnumerator FindTarget() {
             yield return new WaitForSeconds(0);
@@ -110,18 +147,57 @@ namespace Combat {
             while (true) {
                 MobState s = State;
                 yield return new WaitForSeconds(stateChangeInterval);
-                
+
+                if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
+
+                SwitchState();
+
                 // target is too far away
                 if ((Target.transform.position - transform.position).magnitude >= 2 * searchRadius) {
                     Target = null;
                     State = MobState.Idle;
                 }
 
-                if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
-
-                SwitchState();
-
             }
+        }
+
+
+
+        /// <summary>
+        /// indicates whether attack 'control' is reset s.t. the player can attack
+        /// </summary>
+        bool _canAttack = true;
+
+        /// <summary>
+        /// Uses attack if the wepaon is not on cooldown
+        /// </summary>
+        void AttackTarget() {
+            if (_canAttack) {
+                _canAttack = false;
+                AttackAction();
+            }
+        }
+
+        protected virtual void AttackAction() {
+            switch (Owner.EquippedWeapon) {
+                case Melee:
+                    ClickAttack();
+                    LiftAttack();
+                    break;
+                case Ranged:
+                    StartCoroutine(RangedAttack());
+                    break;
+            }
+        }
+
+        IEnumerator RangedAttack() {
+            ClickAttack();
+            float afkTime = 1 / ((1 + Owner.Stats.AtkSpeed) * Owner.EquippedWeapon.BaseAttackSpeed);
+            for (float time = 0; time < afkTime; time += Time.deltaTime) {
+                Owner.Rotatable.forward = Delta;
+                yield return null;
+            }
+            LiftAttack();
         }
 
         /// <summary>
@@ -134,7 +210,7 @@ namespace Combat {
         /// Called every time when attack resets
         /// </summary>
         protected virtual void OnAttackControlReset() {
-
+            _canAttack = true;
         }
         /// <summary>
         /// Called every time when block resets
