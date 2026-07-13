@@ -216,8 +216,8 @@ GameObject:
   - component: {fileID: 3821494878717085630}
   - component: {fileID: 2724573195269945961}
   - component: {fileID: 5516807082123106583}
-  - component: {fileID: 62762652673332940}
   - component: {fileID: 6983130159692096714}
+  - component: {fileID: 7553240356454812361}
   m_Layer: 0
   m_Name: Mob
   m_TagString: Untagged
@@ -396,23 +396,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &62762652673332940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5594697965900854007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c86aeeaa68601e49a0df786f001c649, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  findInterval: 1
-  searchRadius: 10
-  moveRadius: 2.5
-  stateChangeInterval: 1
-  attackRadius: 3
 --- !u!114 &6983130159692096714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,6 +423,7 @@ MonoBehaviour:
       <Knockback>k__BackingField: 0
       <KnockbackResistance>k__BackingField: 0
     <Hp>k__BackingField: 0
+  scalesToFloor: 1
   initialStats:
     base:
       <Atk>k__BackingField: 0
@@ -496,6 +480,22 @@ MonoBehaviour:
   OnMovementChange:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7553240356454812361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594697965900854007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5effc7333c594b4b9eb4e860d66d9b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  findInterval: 2.5
+  searchRadius: 30
+  stateChangeInterval: 2
+  <Faction>k__BackingField: 2
 --- !u!1 &7133706732328440102
 GameObject:
   m_ObjectHideFlags: 0

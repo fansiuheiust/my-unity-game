@@ -82,7 +82,7 @@ namespace Combat {
         /// <summary>
         /// Criteria of the mob to be treated as a target
         /// </summary>
-        protected abstract bool Predicate(Mob m);
+        protected virtual bool Predicate(Mob m) => Owner.CanAttack(m);
 
         protected virtual void Awake() {
             Owner = GetComponent<Mob>();
@@ -92,6 +92,7 @@ namespace Combat {
             Owner.OnAttackControlReset += OnAttackControlReset;
             Owner.OnBlockControlReset += OnBlockControlReset;
             TargetFinder = StartCoroutine(FindTarget());
+            Owner.OnAttackInterrupt.AddListener((m1, m2) => { m1.TakeStun(2, m2); });
         }
 
         /// <summary>
