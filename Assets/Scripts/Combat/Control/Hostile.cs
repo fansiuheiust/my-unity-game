@@ -5,23 +5,20 @@ using System.Collections;
 namespace Combat {
     public abstract class Hostile : MobBehaviour {
         [SerializeField] protected float moveRadius = 2.5f;
-        [SerializeField] protected float stateChangeInterval = 2;
+        
         /// <summary>
         /// vector from self to target, updated at the start of <c>Update</c>
         /// </summary>
         protected Vector3 Delta { get; private set; }
-        protected override Faction Faction => Faction.Enemy;
-        protected override bool Predicate(Mob m) => m.Faction == Faction.Ally;
+        protected override bool Predicate(Mob m) => Owner.CanAttack(m);
 
         protected override Mob Target {
             get => base.Target;
             set {
                 if (value != null) {
                     State = MobState.Idle;
-                    _stateChanger = StartCoroutine(StateChanger());
                 } else {
-                    StopCoroutine(_stateChanger);
-                    _stateChanger = null;
+
                 }
                 base.Target = value;
             }
@@ -82,28 +79,5 @@ namespace Combat {
         protected override void OnAttackControlReset() {
             _canAttack = true;
         }
-
-        Coroutine _stateChanger;
-
-        /// <summary>
-        /// Logic for alternating between different states
-        /// </summary>
-        IEnumerator StateChanger() {
-            yield return new WaitForSeconds(0);
-
-            while (true) {
-                MobState s = State;
-                yield return new WaitForSeconds(stateChangeInterval);
-
-                if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
-
-                SwitchState();
-
-            }
-        }
-        /// <summary>
-        /// Function for deciding which state to switch to
-        /// </summary>
-        protected abstract void SwitchState();
     }
 }

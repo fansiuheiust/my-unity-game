@@ -28,6 +28,10 @@ namespace Combat {
         /// </summary>
         [SerializeField] protected float searchRadius = 10;
 
+        [SerializeField] protected float stateChangeInterval = 2;
+
+        [field: SerializeField] public Faction Faction { get; private set; }
+
         /// <summary>
         /// Self-documenting
         /// </summary>
@@ -36,15 +40,19 @@ namespace Combat {
         /// <summary>
         /// The mob the AI should act on, setting it to null will resume target finding
         /// </summary>
-        protected virtual Mob Target {
+        protected Mob Target {
             get {
                 return _target;
             }
             set {
                 if (value == null) {
+                    StopCoroutine(_stateChanger);
+                    _stateChanger = null;
                     TargetFinder = StartCoroutine(FindTarget());
                 } else {
                     StopCoroutine(TargetFinder);
+                    TargetFinder = null;
+                    _stateChanger = StartCoroutine(StateChanger());
                 }
                 _target = value;
             }
@@ -61,8 +69,6 @@ namespace Combat {
                 _state = value;
             }
         }
-
-        protected abstract Faction Faction { get; }
 
 
         /// <summary>
@@ -91,6 +97,38 @@ namespace Combat {
                 yield return new WaitForSeconds(findInterval);
             }
         }
+
+
+        Coroutine _stateChanger = null;
+
+        /// <summary>
+        /// Logic for alternating between different states
+        /// </summary>
+        IEnumerator StateChanger() {
+            yield return new WaitForSeconds(0);
+
+            while (true) {
+                MobState s = State;
+                yield return new WaitForSeconds(stateChangeInterval);
+                
+                // target is too far away
+                if ((Target.transform.position - transform.position).magnitude >= 2 * searchRadius) {
+                    Target = null;
+                    State = MobState.Idle;
+                }
+
+                if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
+
+                SwitchState();
+
+            }
+        }
+
+        /// <summary>
+        /// Function for deciding which state to switch to
+        /// </summary>
+        protected abstract void SwitchState();
+
         // Events
         /// <summary>
         /// Called every time when attack resets
