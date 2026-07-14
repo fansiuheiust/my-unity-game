@@ -27,11 +27,12 @@ namespace Combat {
         /// <summary>
         /// Radius of target find
         /// </summary>
-        [SerializeField] protected float searchRadius = 10;
+        [SerializeField] protected float searchRadius = 50;
 
         [SerializeField] protected float stateChangeInterval = 2;
 
         [field: SerializeField] public Faction Faction { get; private set; }
+
 
         /// <summary>
         /// Self-documenting
@@ -115,7 +116,7 @@ namespace Combat {
         void FollowTarget() {
             Vector3 scaledDelta = Vector3.Scale(Delta, new Vector3(1, 0, 1));
             MoveDirection = State switch {
-                MobState.Charge => (Delta.magnitude > (Owner.EquippedWeapon is not null? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange])/2f: 0))? scaledDelta: Vector3.zero,
+                MobState.Charge => (Delta.magnitude > AttackRange/2f)? scaledDelta: Vector3.zero,
                 MobState.Escape => -scaledDelta,
                 _ => Vector3.zero
             };
@@ -198,8 +199,18 @@ namespace Combat {
                 Owner.Rotatable.forward = Delta;
                 yield return null;
             }
+            Owner.Rotatable.forward = Vector3.Scale(Owner.Rotatable.forward, new Vector3(1, 0, 1));
             LiftAttack();
         }
+
+
+        // helpers
+        /// <summary>
+        /// Current attack range of the owner
+        /// </summary>
+        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
+
+        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Delta, new(1, 0, 1));
 
         /// <summary>
         /// Function for deciding which state to switch to

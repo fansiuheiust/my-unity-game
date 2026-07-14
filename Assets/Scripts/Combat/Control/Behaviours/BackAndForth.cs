@@ -2,10 +2,13 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Combat {
-    public class Aggressive : MobBehaviour {
+namespace Combat.Behaviours {
+    /// <summary>
+    /// Cycles between charging, attacking, and escaping
+    /// </summary>
+    public class BackAndForth : MobBehaviour {
         protected override void SwitchState() {
-            if (State == MobState.Charge && Delta.magnitude <= (Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0f)) {
+            if (State == MobState.Charge && Delta.magnitude <= AttackRange) {
                 State = MobState.Attack;
                 return;
             }

@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   findInterval: 2.5
-  searchRadius: 30
+  searchRadius: 50
   stateChangeInterval: 2
   <Faction>k__BackingField: 2
 --- !u!1 &7133706732328440102
