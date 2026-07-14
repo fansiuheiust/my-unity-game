@@ -131,9 +131,10 @@ namespace Combat {
         /// </summary>
         /// <param name="self">Useless</param>
         void AttackInterruptedByStun(Mob self) {
-            if (_attackAnimation != null) StopCoroutine(_attackAnimation);
-            CancelAttack();
-            _attackAnimation = null;
+            // script that interrupts attack when stunned
+            // if (_attackAnimation != null) StopCoroutine(_attackAnimation);
+            // CancelAttack();
+            // _attackAnimation = null;
         }
 
         void CourteousSwing(float time) {

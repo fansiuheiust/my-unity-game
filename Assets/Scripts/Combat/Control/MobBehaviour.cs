@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -26,7 +27,12 @@ namespace Combat {
         /// <summary>
         /// Radius of target find
         /// </summary>
-        [SerializeField] protected float searchRadius = 10;
+        [SerializeField] protected float searchRadius = 50;
+
+        [SerializeField] protected float stateChangeInterval = 2;
+
+        [field: SerializeField] public Faction Faction { get; private set; }
+
 
         /// <summary>
         /// Self-documenting
@@ -36,15 +42,21 @@ namespace Combat {
         /// <summary>
         /// The mob the AI should act on, setting it to null will resume target finding
         /// </summary>
-        protected virtual Mob Target {
+        protected Mob Target {
             get {
                 return _target;
             }
             set {
                 if (value == null) {
+                    if (_stateChanger != null)
+                        StopCoroutine(_stateChanger);
+                    _stateChanger = null;
                     TargetFinder = StartCoroutine(FindTarget());
                 } else {
-                    StopCoroutine(TargetFinder);
+                    if (TargetFinder != null)
+                        StopCoroutine(TargetFinder);
+                    TargetFinder = null;
+                    _stateChanger = StartCoroutine(StateChanger());
                 }
                 _target = value;
             }
@@ -58,17 +70,20 @@ namespace Combat {
         public virtual MobState State {
             get => _state;
             protected set {
+                switch (value) {
+                    case MobState.Attack:
+                        AttackTarget();
+                        break;
+                }
                 _state = value;
             }
         }
-
-        protected abstract Faction Faction { get; }
 
 
         /// <summary>
         /// Criteria of the mob to be treated as a target
         /// </summary>
-        protected abstract bool Predicate(Mob m);
+        protected virtual bool Predicate(Mob m) => Owner.CanAttack(m);
 
         protected virtual void Awake() {
             Owner = GetComponent<Mob>();
@@ -78,7 +93,37 @@ namespace Combat {
             Owner.OnAttackControlReset += OnAttackControlReset;
             Owner.OnBlockControlReset += OnBlockControlReset;
             TargetFinder = StartCoroutine(FindTarget());
+            Owner.OnAttackInterrupt.AddListener((m1, m2) => { m1.TakeStun(2, m2); });
         }
+
+        /// <summary>
+        /// vector from self to target, updated at the start of <c>Update</c>
+        /// </summary>
+        protected Vector3 Delta { get; private set; }
+
+        void Update() {
+            if (Target == null) {
+                MoveDirection = Vector3.zero;
+                return;
+            }
+            Delta = Target.transform.position - transform.position;
+            FollowTarget();
+        }
+
+        /// <summary>
+        /// Moves towards target every update
+        /// </summary>
+        void FollowTarget() {
+            Vector3 scaledDelta = Vector3.Scale(Delta, new Vector3(1, 0, 1));
+            MoveDirection = State switch {
+                MobState.Charge => (Delta.magnitude > AttackRange/2f)? scaledDelta: Vector3.zero,
+                MobState.Escape => -scaledDelta,
+                _ => Vector3.zero
+            };
+        }
+
+        
+
 
         IEnumerator FindTarget() {
             yield return new WaitForSeconds(0);
@@ -91,12 +136,93 @@ namespace Combat {
                 yield return new WaitForSeconds(findInterval);
             }
         }
+
+
+        Coroutine _stateChanger = null;
+
+        /// <summary>
+        /// Logic for alternating between different states
+        /// </summary>
+        IEnumerator StateChanger() {
+            yield return new WaitForSeconds(0);
+
+            while (true) {
+                MobState s = State;
+                yield return new WaitForSeconds(stateChangeInterval);
+
+                if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
+
+                SwitchState();
+
+                // target is too far away
+                if ((Target.transform.position - transform.position).magnitude >= 2 * searchRadius) {
+                    Target = null;
+                    State = MobState.Idle;
+                }
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// indicates whether attack 'control' is reset s.t. the player can attack
+        /// </summary>
+        bool _canAttack = true;
+
+        /// <summary>
+        /// Uses attack if the wepaon is not on cooldown
+        /// </summary>
+        void AttackTarget() {
+            if (_canAttack) {
+                _canAttack = false;
+                AttackAction();
+            }
+        }
+
+        protected virtual void AttackAction() {
+            switch (Owner.EquippedWeapon) {
+                case Melee:
+                    ClickAttack();
+                    LiftAttack();
+                    break;
+                case Ranged:
+                    StartCoroutine(RangedAttack());
+                    break;
+            }
+        }
+
+        IEnumerator RangedAttack() {
+            ClickAttack();
+            float afkTime = 1 / ((1 + Owner.Stats.AtkSpeed) * Owner.EquippedWeapon.BaseAttackSpeed);
+            for (float time = 0; time < afkTime; time += Time.deltaTime) {
+                Owner.Rotatable.forward = Delta;
+                yield return null;
+            }
+            Owner.Rotatable.forward = Vector3.Scale(Owner.Rotatable.forward, new Vector3(1, 0, 1));
+            LiftAttack();
+        }
+
+
+        // helpers
+        /// <summary>
+        /// Current attack range of the owner
+        /// </summary>
+        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
+
+        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Delta, new(1, 0, 1));
+
+        /// <summary>
+        /// Function for deciding which state to switch to
+        /// </summary>
+        protected abstract void SwitchState();
+
         // Events
         /// <summary>
         /// Called every time when attack resets
         /// </summary>
         protected virtual void OnAttackControlReset() {
-
+            _canAttack = true;
         }
         /// <summary>
         /// Called every time when block resets

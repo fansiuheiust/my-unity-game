@@ -64,7 +64,7 @@ namespace Combat {
         /// <summary>
         /// Parent of objects that store gameObject's that rotate about the mob
         /// </summary>
-        protected Transform _rotatable;
+        public Transform Rotatable { get; private set; }
 
         /// <summary>
         /// The weapon equipped by the mob
@@ -202,7 +202,7 @@ namespace Combat {
         protected virtual void Awake() {
             stats = new(initialStats);
             _movement = GetComponent<MobMovement>();
-            _rotatable = transform.Find("Rotatable");
+            Rotatable = transform.Find("Rotatable");
             stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
             stats.OnAttackRangeChange += ChangeAttackRange;
 
@@ -433,7 +433,7 @@ namespace Combat {
         void Equip(Weapon weapon) {
             if (EquippedWeapon is not null)
                 UnequipWeapon();
-            Instantiate(weapon.WeaponPrefab, _rotatable);
+            Instantiate(weapon.WeaponPrefab, Rotatable);
             EquippedWeapon = weapon;
             stats.GainStats(weapon.@base, weapon.scaling);
         }
