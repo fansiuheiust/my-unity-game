@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Combat.Behaviours {
     /// <summary>
-    /// Escapes most of the time, but suddenly charges at and attacks the player very fast
+    /// Escapes most of the time, but suddenly charges at and attacks the target very fast
     /// </summary>
     public class Ambusher : MobBehaviour {
         [SerializeField, Tooltip("Out of how many state switch should the mob switch to ambush a player")] int ambushRatio = 6;
