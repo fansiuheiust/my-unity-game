@@ -87,7 +87,7 @@ namespace Combat {
 
                 transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y + vel * Time.deltaTime, 0);
                 // _rb.AddTorque(new Vector3(0, 8 * Mathf.PI / (time * time), 0), ForceMode.Acceleration);
-                yield return new WaitForSeconds(Time.deltaTime);
+                yield return null;
             }
 
 
@@ -153,7 +153,7 @@ namespace Combat {
             float angularVelocity = 90f / courtesyDur;
             for (float raiseTime = 0; raiseTime < courtesyDur; raiseTime += Time.deltaTime) {
                 WeaponObject.Model.localEulerAngles += new Vector3(0, angularVelocity * Time.deltaTime, 0);
-                yield return new WaitForSeconds(Time.deltaTime);
+                yield return null;
             }
 
             _attackAnimation = StartCoroutine(SwingAnimation(2f * time / 3f));
