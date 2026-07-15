@@ -13,5 +13,16 @@ namespace Combat.Behaviours {
             }
             State = MobState.Charge;
         }
+        protected override void FollowTarget() {
+            base.FollowTarget();
+            if (State == MobState.Charge)
+                SwitchState();
+        }
+
+        protected override void OnAttackControlReset() {
+            base.OnAttackControlReset();
+            State = MobState.Charge;
+        }
+
     }
 }

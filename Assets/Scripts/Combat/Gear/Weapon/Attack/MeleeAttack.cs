@@ -69,7 +69,7 @@ namespace Combat {
 
             _blade.Stance = BladeStance.Attack;
 
-            WeaponObject.Model.localEulerAngles = new Vector3(0, 90, 90);
+            WeaponObject.Model.localEulerAngles = new Vector3(0, 90, -90);
             //  swing
             float vel = 0;
             float swingTime = time / 3;
@@ -148,7 +148,7 @@ namespace Combat {
         /// <param name="time">self-documenting</param>
         IEnumerator CourteousSwingAnimation(float time) {
             _blade.Stance = BladeStance.Idle;
-            WeaponObject.Model.localEulerAngles = new(0, 0, 90);
+            WeaponObject.Model.localEulerAngles = new(0, 0, -90);
             float courtesyDur = time / 2f;
             float angularVelocity = 90f / courtesyDur;
             for (float raiseTime = 0; raiseTime < courtesyDur; raiseTime += Time.deltaTime) {

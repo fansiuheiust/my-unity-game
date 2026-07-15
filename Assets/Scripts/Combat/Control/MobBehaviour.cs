@@ -113,10 +113,10 @@ namespace Combat {
         /// <summary>
         /// Moves towards target every update
         /// </summary>
-        void FollowTarget() {
+        protected virtual void FollowTarget() {
             Vector3 scaledDelta = Vector3.Scale(Delta, new Vector3(1, 0, 1));
             MoveDirection = State switch {
-                MobState.Charge => (Delta.magnitude > AttackRange/2f)? scaledDelta: Vector3.zero,
+                MobState.Charge => (scaledDelta.magnitude-0.5f > AttackRange/2f)? scaledDelta: Vector3.zero,
                 MobState.Escape => -scaledDelta,
                 _ => Vector3.zero
             };
@@ -149,16 +149,15 @@ namespace Combat {
             while (true) {
                 MobState s = State;
                 yield return new WaitForSeconds(stateChangeInterval);
-
+                // target is too far away
+                if (Target == null || (Target.transform.position - transform.position).magnitude >= 2 * searchRadius) {
+                    Target = null;
+                    State = MobState.Idle;
+                    yield break;
+                }
                 if (State != s) continue;  // State was changed during execution, keep it for 1 cycle
 
                 SwitchState();
-
-                // target is too far away
-                if ((Target.transform.position - transform.position).magnitude >= 2 * searchRadius) {
-                    Target = null;
-                    State = MobState.Idle;
-                }
 
             }
         }
