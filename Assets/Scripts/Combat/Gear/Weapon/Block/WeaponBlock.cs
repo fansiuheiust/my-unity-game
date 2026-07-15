@@ -14,7 +14,7 @@ namespace Combat {
         /// <summary>
         /// Change to the localPosition of model when started blocking
         /// </summary>
-        Vector3 _blockChange = new(0.4f, -0.4f, 0);
+        Vector3 _blockChange = new(0.25f, -0.4f, 0);
 
         [SerializeField, Min(0.1f), Tooltip("How long blocking should last")] float max_block_dur = 0.7f;
 

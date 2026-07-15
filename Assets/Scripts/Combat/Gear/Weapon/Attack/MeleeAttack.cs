@@ -149,14 +149,14 @@ namespace Combat {
         IEnumerator CourteousSwingAnimation(float time) {
             _blade.Stance = BladeStance.Idle;
             WeaponObject.Model.localEulerAngles = new(0, 0, 90);
-            float courtesyDur = time / 3f;
+            float courtesyDur = time / 2f;
             float angularVelocity = 90f / courtesyDur;
             for (float raiseTime = 0; raiseTime < courtesyDur; raiseTime += Time.deltaTime) {
                 WeaponObject.Model.localEulerAngles += new Vector3(0, angularVelocity * Time.deltaTime, 0);
                 yield return null;
             }
 
-            _attackAnimation = StartCoroutine(SwingAnimation(2f * time / 3f));
+            _attackAnimation = StartCoroutine(SwingAnimation(time / 2f));
 
             yield return null;
         }

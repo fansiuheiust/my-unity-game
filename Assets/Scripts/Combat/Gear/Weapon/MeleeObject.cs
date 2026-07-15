@@ -29,8 +29,9 @@ namespace Combat {
         }
 
         protected override void ChangeAttackRange(float newRange) {
-            _blade.transform.localScale = new(_blade.transform.localScale.x, _blade.transform.localScale.y, newRange);
-            _blade.transform.localPosition = new(_blade.transform.localPosition.x, _blade.transform.localPosition.y, newRange / 2);
+            // _blade.transform.localScale = new(_blade.transform.localScale.x, _blade.transform.localScale.y, newRange);
+            // _blade.transform.localPosition = new(_blade.transform.localPosition.x, _blade.transform.localPosition.y, newRange / 2);
+            Model.localScale = new(Model.localScale.x, Model.localScale.y, newRange);
         }
     }
 }
