@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 2724573195269945961}
   - component: {fileID: 5516807082123106583}
   - component: {fileID: 6983130159692096714}
-  - component: {fileID: 2843972811596671063}
+  - component: {fileID: 4726813838405811930}
   m_Layer: 0
   m_Name: Blue Lobster
   m_TagString: Untagged
@@ -437,8 +437,8 @@ MonoBehaviour:
       <MaxHp>k__BackingField: 0
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
-      <WalkSpeed>k__BackingField: 0.1
-      <AtkSpeed>k__BackingField: 0.3
+      <WalkSpeed>k__BackingField: -0.2
+      <AtkSpeed>k__BackingField: 0
       <CritRate>k__BackingField: 0
       <CritDmg>k__BackingField: 0
       <DmgReduction>k__BackingField: 0
@@ -480,7 +480,7 @@ MonoBehaviour:
   OnMovementChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2843972811596671063
+--- !u!114 &4726813838405811930
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -489,13 +489,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 5594697965900854007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48d5ef399363fc84bafead3aeec74de7, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e513d9ae4b2a3946adaa75243a67556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   findInterval: 1
   searchRadius: 50
   stateChangeInterval: 2
   <Faction>k__BackingField: 2
+  tpCourtesyPrefab: {fileID: 3511845584215344761, guid: 3c9f1d10ba1c65b4f8021b1167b082ac, type: 3}
+  rangedClawPrefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
+  abilityInterval: 10
+  tpAttackBoost: 0.5
+  tpAttackCourtesy: 0.8
+  clawAttackCourtesy: 1
+  clawTime: 0.6
 --- !u!1 &7133706732328440102
 GameObject:
   m_ObjectHideFlags: 0

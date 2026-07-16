@@ -162,6 +162,18 @@ namespace Combat {
             }
         }
 
+        protected void PauseStateSwitch() {
+            if (_stateChanger != null)
+                StopCoroutine(_stateChanger);
+            _stateChanger = null;
+        }
+
+        protected void ResumeStateSwitch() {
+            if (_stateChanger == null) {
+                _stateChanger = StartCoroutine(StateChanger());
+            }
+        }
+
 
 
         /// <summary>
@@ -175,6 +187,7 @@ namespace Combat {
         void AttackTarget() {
             if (_canAttack) {
                 _canAttack = false;
+                FaceTarget();
                 AttackAction();
             }
         }
@@ -209,7 +222,9 @@ namespace Combat {
         /// </summary>
         protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
 
-        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Delta, new(1, 0, 1));
+        protected float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
+
+        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Target.transform.position - transform.position, new(1, 0, 1));
 
         /// <summary>
         /// Function for deciding which state to switch to

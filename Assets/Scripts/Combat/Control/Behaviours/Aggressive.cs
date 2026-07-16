@@ -7,7 +7,6 @@ namespace Combat.Behaviours {
     public class Aggressive : MobBehaviour {
         protected override void SwitchState() {
             if (Delta.magnitude <= AttackRange) {
-                FaceTarget();
                 State = MobState.Attack;
                 return;
             }
