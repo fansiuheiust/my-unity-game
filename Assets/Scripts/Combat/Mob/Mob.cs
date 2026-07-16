@@ -538,6 +538,10 @@ namespace Combat {
         /// Handles mob "clicking" attack button
         /// </summary>
         public void AttackClick() {
+            if (EquippedWeapon == null) {
+                ResetAttackControl();
+                return;
+            }
             if (IsStunned) {
                 _clickedAttackDuringStun = true;
                 OnAttackControlReset?.Invoke();
@@ -566,7 +570,7 @@ namespace Combat {
         /// </summary>
         public void BlockClick() {
             if (EquippedWeapon == null) {
-                OnBlockControlReset?.Invoke();
+                ResetBlockControl();
                 return;
             }
             if (IsStunned) {
