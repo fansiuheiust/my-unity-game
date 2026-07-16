@@ -101,12 +101,14 @@ namespace Combat {
         protected virtual void Hit(GameObject target) {
             switch (Stance) {
                 case BladeStance.Block:
-                    OnBlockHit(target);
+                    // OnBlockHit(target);
                     break;
                 case BladeStance.Attack:
                     Mob m = Mob.FindParentingMob(target.transform);
                     // only hit when the target is not a weapon and it has a parenting mob
-                    if (target.GetComponent<WeaponBody>() == null && m != null && !attackedMobs.Contains(m)) {
+                    if (target.TryGetComponent(out WeaponBody body) && body.Stance == BladeStance.Block && IsBlockAvailable(body)) {
+                        InterruptAttack(body.Owner);
+                    } else if (target.GetComponent<WeaponBody>() == null && m != null && !attackedMobs.Contains(m)) {
                         Hit(m);
                         attackedMobs.Add(m);
                     }

@@ -9,7 +9,7 @@ using UnityEditor;
 namespace Loot {
 
     public enum Class {
-        Generic, Melee, Ranged
+        Generic, Melee, Ranged, MobExclusive, Miniboss
     }
     /// <summary>
     /// A temporary database for storing gears, just for testing
@@ -18,11 +18,17 @@ namespace Loot {
 
         static Dictionary<string, Gear> gears;
         static Dictionary<string, Gear> scaledGears;
+        static Dictionary<Class, Dictionary<string, Gear>> classExclusiveGears;
+        static Dictionary<Class, Dictionary<string, Gear>> scaledClassExclusiveGears;
         static GearDatabase() {
             gears = new();
+            classExclusiveGears = new();
+            scaledClassExclusiveGears = new();
             foreach (Class c in System.Enum.GetValues(typeof(Class))) {
                 GearData data = (GearData)Resources.Load($"Data/Gears/{c}/Default");
                 gears = gears.Concat(data.AllGears).ToDictionary(x=>x.Key, x=>x.Value);
+                classExclusiveGears.Add(c, data.AllGears);
+                scaledClassExclusiveGears.Add(c, classExclusiveGears[c].ToDictionary(x=>x.Key, x=>x.Value.Scaled(StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(StageController.PlayerLevel.Level))));
             }
             scaledGears = gears.ToDictionary(x => x.Key, x => x.Value.Scaled(StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(StageController.PlayerLevel.Level)));
             StageController.PlayerLevel.PlayerLevelChanged += OnPlayerLevelChange;
@@ -30,6 +36,9 @@ namespace Loot {
 
         static void OnPlayerLevelChange(uint level) {
             scaledGears = gears.ToDictionary(x => x.Key, x => x.Value.Scaled(StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(level)));
+            foreach (Class c in System.Enum.GetValues(typeof(Class))) {
+                scaledClassExclusiveGears[c] = classExclusiveGears[c].ToDictionary(x => x.Key, x => x.Value.Scaled(StageController.LevelingData.ItemBaseStatsMultiplier.Evaluate(StageController.PlayerLevel.Level)));
+            }
         }
 
         /// <summary>

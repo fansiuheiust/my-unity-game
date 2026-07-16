@@ -6,22 +6,21 @@ namespace Combat {
     /// Block attack physically with your weapon
     /// </summary>
     public class WeaponBlock : Block {
-        /// <summary>
-        /// blade of the melee weapon
-        /// </summary>
-        WeaponBody _blade;
+        [SerializeField, Tooltip("blade of the melee weapon")]
+        WeaponBody blade;
 
         /// <summary>
         /// Change to the localPosition of model when started blocking
         /// </summary>
-        Vector3 _blockChange = new(0.4f, -0.4f, 0);
+        static readonly Vector3 _blockChange = new(0.25f, -0.4f, 0);
+
+        static readonly Vector3 _blockScale = new(0, 1f, 0);
 
         [SerializeField, Min(0.1f), Tooltip("How long blocking should last")] float max_block_dur = 0.7f;
 
 
         protected override void Awake() {
             base.Awake();
-            _blade = transform.Find("Model").Find("Blade").GetComponent<WeaponBody>();
         }
 
         /// <summary>
@@ -39,8 +38,9 @@ namespace Combat {
 
             WeaponObject.isActing = true;
 
-            _blade.Stance = BladeStance.Block;
+            blade.Stance = BladeStance.Block;
             WeaponObject.Model.transform.localPosition += _blockChange;
+            blade.transform.localScale += _blockScale;
             BlockRotated(0);
 
             StartBlock();
@@ -56,13 +56,14 @@ namespace Combat {
         /// Note that this will be called if the mob is "tired" of blocking
         /// </summary>
         public override void BlockLifted() {
-            if (_blade.Stance != BladeStance.Block) return;
+            if (blade.Stance != BladeStance.Block) return;
             WeaponObject.Model.transform.localPosition -= _blockChange;
+            blade.transform.localScale -= _blockScale;
 
             transform.localEulerAngles = Vector3.zero;
             WeaponObject.Model.transform.localEulerAngles = Vector3.zero;
 
-            _blade.Stance = BladeStance.None;
+            blade.Stance = BladeStance.None;
             WeaponObject.isActing = false;
 
             Owner.InterruptStun();
