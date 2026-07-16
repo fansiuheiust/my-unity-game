@@ -3,11 +3,9 @@ using System.Collections;
 
 namespace Combat {
     public class MeleeAttack : Attack {
-        
-        /// <summary>
-        /// blade of the melee weapon
-        /// </summary>
-        WeaponBody _blade;
+
+        [SerializeField, Tooltip("contact point (hitbox) of the melee weapon")]
+        WeaponBody blade;
 
         /// <summary>
         /// The active attack animation
@@ -16,8 +14,7 @@ namespace Combat {
 
         protected override void Awake() {
             base.Awake();
-            _blade = transform.Find("Model").Find("Blade").GetComponent<WeaponBody>();
-            _blade.OnAttackInterrupted += AttackInterruptedByBlock;
+            blade.OnAttackInterrupted += AttackInterruptedByBlock;
         }
 
         /// <summary>
@@ -41,7 +38,7 @@ namespace Combat {
 
             Owner.OnStunStart.AddListener(AttackInterruptedByStun);
 
-            _blade.attackTime = attackTime;
+            blade.attackTime = attackTime;
             if (Owner is Player) { // hard-code
                 Swing(attackTime);
             } else {
@@ -67,7 +64,7 @@ namespace Combat {
         IEnumerator SwingAnimation(float time) {
             StartAttack();
 
-            _blade.Stance = BladeStance.Attack;
+            blade.Stance = BladeStance.Attack;
 
             WeaponObject.Model.localEulerAngles = new Vector3(0, 90, -90);
             //  swing
@@ -92,7 +89,7 @@ namespace Combat {
 
 
             // disable blade collision and stay
-            _blade.Stance = BladeStance.Idle;
+            blade.Stance = BladeStance.Idle;
             yield return new WaitForSeconds(2 * time / 3);
 
             CancelAttack();
@@ -107,7 +104,7 @@ namespace Combat {
         void CancelAttack() {
             transform.localEulerAngles = Vector3.zero;
             WeaponObject.Model.localEulerAngles = Vector3.zero;
-            _blade.Stance = BladeStance.None;
+            blade.Stance = BladeStance.None;
 
             Owner.OnStunStart.RemoveListener(AttackInterruptedByStun);
 
@@ -147,7 +144,7 @@ namespace Combat {
         /// </summary>
         /// <param name="time">self-documenting</param>
         IEnumerator CourteousSwingAnimation(float time) {
-            _blade.Stance = BladeStance.Idle;
+            blade.Stance = BladeStance.Idle;
             WeaponObject.Model.localEulerAngles = new(0, 0, -90);
             float courtesyDur = time / 2f;
             float angularVelocity = 90f / courtesyDur;
