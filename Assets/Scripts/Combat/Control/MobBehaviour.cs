@@ -224,7 +224,10 @@ namespace Combat {
 
         protected float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
 
-        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Target.transform.position - transform.position, new(1, 0, 1));
+        protected void Face(Transform t) => Owner.Rotatable.forward = Vector3.Scale(t.position - transform.position, new(1, 0, 1));
+        protected void FaceTarget() => Face(Target.transform);
+
+        protected bool ActiveStateSwitch => _stateChanger != null;
 
         /// <summary>
         /// Function for deciding which state to switch to

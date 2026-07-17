@@ -156,8 +156,11 @@ namespace Combat {
         /// </summary>
         /// <param name="amount">amount of damage taken</param>
         /// <param name="damageType">Type of damage, damage reduction won't apply if it is DamageType.True</param>
-        public void TakeDamage(float amount, DamageType damageType) {
+        /// <returns>amount of damage taken</returns>
+        public float TakeDamage(float amount, DamageType damageType) {
+            float amt = amount * (damageType == DamageType.True ? 1 : DmgTakenMultiplier);
             Hp -= amount * (damageType == DamageType.True ? 1 : DmgTakenMultiplier);
+            return amt;
         }
 
         /// <summary>
@@ -167,8 +170,9 @@ namespace Combat {
         /// <param name="source">Stats of the source mob</param>
         /// <param name="damageType">Type of damage, damage reduction won't apply if it is DamageType.True</param>
         /// <param name="weaponMultiplier">Multiplier of the calculated damage based on the weapon's action</param>
-        public void TakeDamage(MobStats source, DamageType damageType, float weaponMultiplier = 1f) {
-            TakeDamage(weaponMultiplier * damageType switch {
+        /// <returns>amount of damage taken</returns>
+        public float TakeDamage(MobStats source, DamageType damageType, float weaponMultiplier = 1f) {
+            return TakeDamage(weaponMultiplier * damageType switch {
                 DamageType.Melee => source.MeleeDmg,
                 DamageType.Projectile => source.ProjectileDmg,
                 DamageType.Magic => source.MagicDmg,

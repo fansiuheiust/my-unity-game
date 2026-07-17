@@ -1,10 +1,23 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Combat.Behaviours {
     public class BlueLobster : Aggressive {
-
-        bool activeAbility = false;
+        bool _activeAbility = false;
+        bool ActiveAbility {
+            get => _activeAbility;
+            set {
+                bool og = _activeAbility;
+                _activeAbility = value;
+                if (og != value) {
+                    if (value)
+                        onAbilityStart.Invoke();
+                    else
+                        onAbilityEnd.Invoke();
+                }
+            }
+        }
 
         [SerializeField]
         GameObject tpCourtesyPrefab;
@@ -12,16 +25,33 @@ namespace Combat.Behaviours {
         GameObject rangedClawPrefab;
 
         [SerializeField]
-        float abilityInterval = 10f;
+        float abilityIntervalMin = 4f, abilityIntervalMax = 20f;
 
         [SerializeField]
         float tpAttackBoost = 0.5f, tpAttackCourtesy = 0.8f;
 
         [SerializeField]
         float clawAttackCourtesy = 1f, clawTime = 1f;
+
+
+        [SerializeField, Min(1)]
+        int thrownClawsPerShellSmash = 10, centerOutClawsPerShellSmash = 8;
+
+        [SerializeField]
+        float clawThrowDuration = 3f, centerOutClawTime = 1f;
+        [SerializeField]
+        float clawThrowVelocity = 10f, clawCenterOutVelocity = 50f;
+        [SerializeField]
+        float shellSmashPause = 1.5f;
+        [SerializeField]
+        float shellSmashAtkScale = 0.75f, shellSmashDefScale = -0.5f, shellSmashSpeedScale = 0.5f;
+
+
+        public UnityEvent onAbilityStart, onAbilityEnd;
+
         IEnumerator TPAttack() {
             Mob t = Target;
-            activeAbility = true;
+            ActiveAbility = true;
             PauseStateSwitch();
             State = MobState.Idle;
 
@@ -40,13 +70,14 @@ namespace Combat.Behaviours {
 
             Owner.LoseStats(null, new(atk: tpAttackBoost));
             ResumeStateSwitch();
-            activeAbility = false;
+            ActiveAbility = false;
             yield break;
         }
 
         IEnumerator Clawler() {
             Mob t = Target;
-            activeAbility = true;
+            FaceTarget();
+            ActiveAbility = true;
             PauseStateSwitch();
             Weapon w = Owner.EquippedWeapon;
             Owner.UnequipWeapon();
@@ -65,22 +96,97 @@ namespace Combat.Behaviours {
                 claw2.Delete();
             Owner.Equip(w);
             ResumeStateSwitch();
-            activeAbility = false;
+            ActiveAbility = false;
             yield break;
         }
 
         protected override void Awake() {
             base.Awake();
-            StartCoroutine(Ability());
+            abilityUser = StartCoroutine(Ability());
+            Owner.OnDamageTake.AddListener(OnDamageTaken);
         }
 
+        Coroutine abilityUser = null;
         IEnumerator Ability() {
             while (true) {
-                yield return new WaitForSeconds(abilityInterval);
-                if (!activeAbility && !Owner.IsStunned && Target != null)
+                yield return new WaitForSeconds(Random.Range(abilityIntervalMin, abilityIntervalMax));
+                if (!ActiveAbility && !Owner.IsStunned && Target != null)
                     StartCoroutine(Clawler());
             }
         }
 
+
+        bool usedHalfHPAbility = false;
+        void OnDamageTaken(Mob source, float amount) {
+            if (Owner.HP < Owner.Stats.MaxHp/2 && !usedHalfHPAbility) {
+                usedHalfHPAbility = true;
+                if (ActiveAbility) {
+                    onAbilityEnd.AddListener(HalfHPAbilityStarter);
+                } else {
+                    HalfHPAbilityStarter();
+                }
+            }
+        }
+
+        void HalfHPAbilityStarter() {
+            onAbilityEnd.RemoveListener(HalfHPAbilityStarter);
+            StartCoroutine(ShellSmash());
+        }
+        IEnumerator ShellSmash() {
+            Debug.Log("Unleashing Shell Smash");
+            Mob t = Target;
+            ActiveAbility = true;
+            PauseStateSwitch();
+            State = MobState.Idle;
+
+            Owner.transform.position += 1 * Vector3.up;
+            Owner.GetComponent<Rigidbody>().useGravity = false;
+            Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + centerOutClawTime);
+            yield return new WaitForSeconds(shellSmashPause);
+
+            float intervalPerThrow = clawThrowDuration / thrownClawsPerShellSmash;
+            Projectile[] claws = new Projectile[thrownClawsPerShellSmash];
+            for (int i = 0; i < thrownClawsPerShellSmash; i++) {
+                Vector3 vel = (t.transform.position + (Random.Range(0, 2) == 0? t.GetComponent<Rigidbody>().linearVelocity: Vector3.zero) - transform.position).normalized * clawThrowVelocity;
+                Face(t.transform);
+                claws[i] = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
+                claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward*2;
+                claws[i].Set(Owner, 1, vel);
+                yield return new WaitForSeconds(intervalPerThrow);
+            }
+
+            yield return new WaitForSeconds(shellSmashPause);
+
+            foreach (Projectile c in claws)
+                if (c != null)
+                    c.Delete();
+            claws = new Projectile[centerOutClawsPerShellSmash];
+            intervalPerThrow = centerOutClawTime / centerOutClawsPerShellSmash;
+            for (int i = 0; i < centerOutClawsPerShellSmash; i++) {
+                Owner.Rotatable.localEulerAngles = new Vector3(0, 360f/centerOutClawsPerShellSmash*i, 0);
+                claws[i] = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
+                claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
+                claws[i].transform.forward = Owner.Rotatable.forward;
+                yield return new WaitForSeconds(intervalPerThrow);
+            }
+            foreach (Projectile c in claws)
+                c.Set(Owner, 1, c.transform.forward * clawThrowVelocity);
+            yield return new WaitForSeconds(shellSmashPause);
+
+            foreach (var c in claws)
+                if (c != null)
+                    c.Delete();
+
+
+            Owner.GainStats(null, new ScalingStats(atk: shellSmashAtkScale, def: shellSmashDefScale, walkSpeed: shellSmashSpeedScale));
+            Owner.GetComponent<Rigidbody>().useGravity = true;
+            ResumeStateSwitch();
+            ActiveAbility = false;
+            yield break;
+        }
+
+        private void OnDestroy() {
+            StopAllCoroutines();
+        }
     }
 }

@@ -450,6 +450,9 @@ MonoBehaviour:
   OnManaConsumption:
     m_PersistentCalls:
       m_Calls: []
+  OnDamageTake:
+    m_PersistentCalls:
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -498,11 +501,25 @@ MonoBehaviour:
   <Faction>k__BackingField: 2
   tpCourtesyPrefab: {fileID: 3511845584215344761, guid: 3c9f1d10ba1c65b4f8021b1167b082ac, type: 3}
   rangedClawPrefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
-  abilityInterval: 10
+  abilityIntervalMin: 4
+  abilityIntervalMax: 20
   tpAttackBoost: 0.5
   tpAttackCourtesy: 0.8
   clawAttackCourtesy: 1
   clawTime: 0.6
+  thrownClawsPerShellSmash: 10
+  centerOutClawsPerShellSmash: 16
+  clawThrowDuration: 3
+  centerOutClawTime: 1
+  clawThrowVelocity: 30
+  clawCenterOutVelocity: 50
+  shellSmashPause: 1.5
+  onAbilityStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onAbilityEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7133706732328440102
 GameObject:
   m_ObjectHideFlags: 0

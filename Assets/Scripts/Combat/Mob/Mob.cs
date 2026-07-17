@@ -37,6 +37,9 @@ namespace Combat {
         /// </summary>
         public ref readonly FinalStats Stats => ref stats.Final;
 
+        public float HP => stats.Hp;
+        public float Mana => stats.Mana;
+
         [SerializeField, Tooltip("Whether the mob's stats should scale to the floor's level")]
         bool scalesToFloor = true;
         [SerializeField]
@@ -124,6 +127,12 @@ namespace Combat {
         /// <c>float</c>: amount of mana consumed <br />
         /// </summary>
         public UnityEvent<Mob, float> OnManaConsumption;
+        /// <summary>
+        /// <para>Raised when mob takes damage</para>
+        /// <c>Mob</c>: mob who deals damage <br />
+        /// <c>float</c>: amount of damage <br />
+        /// </summary>
+        public UnityEvent<Mob, float> OnDamageTake;
 
         /// <summary>
         /// <para>Raised when a mob dies.</para>
@@ -247,7 +256,7 @@ namespace Combat {
         /// <param name="weaponMultiplier">The damage multiplier based on the weapon's action</param>
         void TakeDamage(Mob source, DamageType damageType, float weaponMultiplier = 1f) {
             if (_isImmune) return;
-            stats.TakeDamage(source.stats, damageType, weaponMultiplier);
+            OnDamageTake.Invoke(source, stats.TakeDamage(source.stats, damageType, weaponMultiplier));
             DeathCheck(source);
         }
 
@@ -260,7 +269,7 @@ namespace Combat {
         /// <param name="damageType">type of damage</param>
         public void TakeDamage(float amount, Mob source, DamageType damageType) {
             if (_isImmune) return;
-            stats.TakeDamage(amount, damageType);
+            OnDamageTake.Invoke(source, stats.TakeDamage(amount, damageType));
             DeathCheck(source);
         }
 
