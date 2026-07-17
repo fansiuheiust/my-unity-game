@@ -1,4 +1,6 @@
+using Combat.Miniboss;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,6 +25,8 @@ namespace Combat.Behaviours {
         GameObject tpCourtesyPrefab;
         [SerializeField]
         GameObject rangedClawPrefab;
+        [SerializeField]
+        GameObject spinClawPrefab;
 
         [SerializeField]
         float abilityIntervalMin = 4f, abilityIntervalMax = 20f;
@@ -33,6 +37,9 @@ namespace Combat.Behaviours {
         [SerializeField]
         float clawAttackCourtesy = 1f, clawTime = 1f;
 
+
+        [SerializeField]
+        float spinClawRadius = 3f, spinClawTime = 0.75f, spinClawRangeBoost = 1f;
 
         [SerializeField, Min(1)]
         int thrownClawsPerShellSmash = 10, centerOutClawsPerShellSmash = 8;
@@ -100,6 +107,42 @@ namespace Combat.Behaviours {
             yield break;
         }
 
+        IEnumerator ClawSpin() {
+            Mob t = Target;
+            ActiveAbility = true;
+            PauseStateSwitch();
+            State = MobState.Idle;
+            Weapon w = Owner.EquippedWeapon;
+            Owner.UnequipWeapon();
+
+            Vector3 targetFront = t.transform.position + t.Rotatable.forward * spinClawRadius;
+            Vector3 left = targetFront - spinClawRadius * t.Rotatable.right, right = targetFront + spinClawRadius * t.Rotatable.right;
+
+            SpinClaw leftClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>(), rightClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>();
+
+            leftClaw.transform.position = left;
+            leftClaw.Set(Owner, AttackTime,spinClawRadius);
+            rightClaw.transform.position = right;
+            rightClaw.Set(Owner, AttackTime, spinClawRadius);
+
+            yield return new WaitForSeconds(1);
+            leftClaw.Spin(spinClawTime);
+            rightClaw.Spin(spinClawTime);
+
+            yield return new WaitForSeconds(spinClawTime);
+
+            Owner.Equip(w);
+            Dictionary<HashedScalingStats, float> d = new() { { HashedScalingStats.AttackRange, spinClawRangeBoost} };
+            Owner.GainStats(null, new ScalingStats(otherScaling: d));
+            State = MobState.Attack;
+            yield return new WaitForSeconds(AttackTime);
+
+            Owner.LoseStats(null, new ScalingStats(otherScaling: d));
+            ResumeStateSwitch();
+            ActiveAbility = false;
+            yield break;
+        }
+
         protected override void Awake() {
             base.Awake();
             abilityUser = StartCoroutine(Ability());
@@ -111,7 +154,7 @@ namespace Combat.Behaviours {
             while (true) {
                 yield return new WaitForSeconds(Random.Range(abilityIntervalMin, abilityIntervalMax));
                 if (!ActiveAbility && !Owner.IsStunned && Target != null)
-                    StartCoroutine(Clawler());
+                    StartCoroutine(ClawSpin());
             }
         }
 
