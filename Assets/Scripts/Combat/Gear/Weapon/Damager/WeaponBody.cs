@@ -52,6 +52,8 @@ namespace Combat {
             }
         }
 
+        public void Set(Mob owner) { Owner = owner; }
+
         private void Awake() {
             Owner = Mob.FindParentingMob(transform);
             Collider = GetComponent<Collider>();
