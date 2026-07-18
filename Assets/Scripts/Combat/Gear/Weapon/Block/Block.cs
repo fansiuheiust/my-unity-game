@@ -19,15 +19,13 @@ namespace Combat {
             Owner.OnBlockClick += BlockClicked;
             Owner.OnBlockLift += BlockLifted;
             Owner.OnBlockRotate += BlockRotated;
-            Owner.OnWeaponUnequip += Delete;
         }
 
-        void Delete() {
-            if (Blocking) ResetBlockControl();
+        void OnDestroy() {
+            if (Blocking && Owner != null) ResetBlockControl();
             Owner.OnBlockClick -= BlockClicked;
             Owner.OnBlockLift -= BlockLifted;
             Owner.OnBlockRotate -= BlockRotated;
-            Owner.OnWeaponUnequip -= Delete;
 
         }
 

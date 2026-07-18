@@ -12,14 +12,12 @@ namespace Combat {
             WeaponObject = GetComponent<WeaponObject>();
             Owner.OnAttackClick += AttackClicked;
             Owner.OnAttackLift += AttackLifted;
-            Owner.OnWeaponUnequip += Delete;
         }
 
-        void Delete() {
-            if (Attacking) ResetAttackControl();
+        void OnDestroy() {
+            if (Attacking && Owner != null) ResetAttackControl();
             Owner.OnAttackClick -= AttackClicked;
             Owner.OnAttackLift -= AttackLifted;
-            Owner.OnWeaponUnequip -= Delete;
             Owner = null;
         }
 

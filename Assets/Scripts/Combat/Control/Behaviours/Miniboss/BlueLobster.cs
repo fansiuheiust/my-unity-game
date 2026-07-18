@@ -220,7 +220,7 @@ namespace Combat.Behaviours {
                 yield return new WaitForSeconds(intervalPerThrow);
             }
             foreach (Projectile c in claws)
-                c.Set(Owner, 1, c.transform.forward * clawThrowVelocity);
+                c.Set(Owner, 1, c.transform.forward * clawCenterOutVelocity);
             yield return new WaitForSeconds(shellSmashPause);
 
             foreach (var c in claws)

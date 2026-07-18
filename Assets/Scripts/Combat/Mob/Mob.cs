@@ -462,7 +462,7 @@ namespace Combat {
         /// </summary>
         public void UnequipWeapon() {
 
-            OnWeaponUnequip();
+            OnWeaponUnequip?.Invoke();
 
             stats.LoseStats(EquippedWeapon.@base, EquippedWeapon.scaling);
             LoseAbility(EquippedWeapon.ability);
