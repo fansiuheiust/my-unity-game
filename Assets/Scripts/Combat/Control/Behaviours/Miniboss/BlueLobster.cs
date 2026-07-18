@@ -56,6 +56,10 @@ namespace Combat.Behaviours {
 
         public UnityEvent onAbilityStart, onAbilityEnd;
 
+        AbilityChooser abilityChooser;
+
+        
+
         IEnumerator TPAttack() {
             Mob t = Target;
             ActiveAbility = true;
@@ -147,14 +151,17 @@ namespace Combat.Behaviours {
             base.Awake();
             abilityUser = StartCoroutine(Ability());
             Owner.OnDamageTake.AddListener(OnDamageTaken);
+            abilityChooser = new((TPAttack, ()=>!Owner.IsStunned), (Clawler, ()=>true), (ClawSpin, ()=>true));
+            
         }
 
         Coroutine abilityUser = null;
         IEnumerator Ability() {
             while (true) {
                 yield return new WaitForSeconds(Random.Range(abilityIntervalMin, abilityIntervalMax));
-                if (!ActiveAbility && !Owner.IsStunned && Target != null)
-                    StartCoroutine(ClawSpin());
+                if (!ActiveAbility && Target != null && abilityChooser.Next(out var f)) {
+                    StartCoroutine(f());
+                }
             }
         }
 
