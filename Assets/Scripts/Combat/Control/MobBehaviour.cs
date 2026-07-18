@@ -167,9 +167,10 @@ namespace Combat {
                 StopCoroutine(_stateChanger);
             _stateChanger = null;
         }
-
-        protected void ResumeStateSwitch() {
+        protected void ResumeStateSwitch(bool immediateSwitch = true) {
             if (_stateChanger == null) {
+                if (immediateSwitch)
+                    SwitchState();
                 _stateChanger = StartCoroutine(StateChanger());
             }
         }

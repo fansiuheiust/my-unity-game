@@ -62,7 +62,7 @@ namespace Combat {
             _attackAnimation = StartCoroutine(SwingAnimation(time));
         }
         IEnumerator SwingAnimation(float time) {
-            StartAttack();
+            if (!Attacking) StartAttack();
 
             blade.Stance = BladeStance.Attack;
 
@@ -145,6 +145,7 @@ namespace Combat {
         /// <param name="time">self-documenting</param>
         IEnumerator CourteousSwingAnimation(float time) {
             blade.Stance = BladeStance.Idle;
+            StartAttack();
             WeaponObject.Model.localEulerAngles = new(0, 0, -90);
             float courtesyDur = time / 2f;
             float angularVelocity = 90f / courtesyDur;

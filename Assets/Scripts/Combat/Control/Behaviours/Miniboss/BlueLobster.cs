@@ -32,10 +32,10 @@ namespace Combat.Behaviours {
         float abilityIntervalMin = 4f, abilityIntervalMax = 20f;
 
         [SerializeField]
-        float tpAttackBoost = 0.5f, tpAttackCourtesy = 0.8f;
+        float tpAttackBoost = 0.5f, tpAttackCourtesy = 0.8f, tpDistanceThreshold = 10f;
 
         [SerializeField]
-        float clawAttackCourtesy = 1f, clawTime = 1f;
+        float clawAttackCourtesy = 1f, clawTime = 1f, clawlerDistanceThreshold = 7f;
 
 
         [SerializeField]
@@ -117,6 +117,7 @@ namespace Combat.Behaviours {
             PauseStateSwitch();
             State = MobState.Idle;
             Weapon w = Owner.EquippedWeapon;
+            float atkTime = AttackTime;
             Owner.UnequipWeapon();
 
             Vector3 targetFront = t.transform.position + t.Rotatable.forward * spinClawRadius;
@@ -125,9 +126,9 @@ namespace Combat.Behaviours {
             SpinClaw leftClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>(), rightClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>();
 
             leftClaw.transform.position = left;
-            leftClaw.Set(Owner, AttackTime,spinClawRadius);
+            leftClaw.Set(Owner, atkTime, spinClawRadius);
             rightClaw.transform.position = right;
-            rightClaw.Set(Owner, AttackTime, spinClawRadius);
+            rightClaw.Set(Owner, atkTime, spinClawRadius);
 
             yield return new WaitForSeconds(1);
             leftClaw.Spin(spinClawTime);
@@ -151,7 +152,7 @@ namespace Combat.Behaviours {
             base.Awake();
             abilityUser = StartCoroutine(Ability());
             Owner.OnDamageTake.AddListener(OnDamageTaken);
-            abilityChooser = new((TPAttack, ()=>!Owner.IsStunned), (Clawler, ()=>true), (ClawSpin, ()=>true));
+            abilityChooser = new((TPAttack, ()=>!Owner.IsStunned && Delta.magnitude >= tpDistanceThreshold), (Clawler, ()=>Delta.magnitude >= clawlerDistanceThreshold), (ClawSpin, ()=>true));
             
         }
 
