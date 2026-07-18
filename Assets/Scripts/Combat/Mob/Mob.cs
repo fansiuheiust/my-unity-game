@@ -547,7 +547,7 @@ namespace Combat {
         /// Handles mob "clicking" attack button
         /// </summary>
         public void AttackClick() {
-            if (EquippedWeapon == null) {
+            if (EquippedWeapon is null) {
                 ResetAttackControl();
                 return;
             }
@@ -578,7 +578,7 @@ namespace Combat {
         /// Handles mob "clicking" block button
         /// </summary>
         public void BlockClick() {
-            if (EquippedWeapon == null) {
+            if (EquippedWeapon is null) {
                 ResetBlockControl();
                 return;
             }

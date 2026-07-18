@@ -4,6 +4,8 @@ namespace Combat {
     public abstract class Attack : MonoBehaviour {
         protected Mob Owner { get; private set; } = null;
         protected WeaponObject WeaponObject { get; private set; } = null;
+        bool _attacking = false;
+        protected bool Attacking => _attacking;
 
         protected virtual void Awake() {
             Owner = Mob.FindParentingMob(transform);
@@ -14,6 +16,7 @@ namespace Combat {
         }
 
         void Delete() {
+            if (Attacking) ResetAttackControl();
             Owner.OnAttackClick -= AttackClicked;
             Owner.OnAttackLift -= AttackLifted;
             Owner.OnWeaponUnequip -= Delete;
@@ -43,12 +46,14 @@ namespace Combat {
         /// </summary>
         protected void StartAttack() {
             Owner.OnAttackStart.Invoke(Owner);
+            _attacking = true;
         }
         /// <summary>
         /// Must be called after an attack to invoke event
         /// </summary>
         protected void EndAttack() {
             Owner.OnAttackEnd.Invoke(Owner);
+            _attacking = false;
         }
         /// <summary>
         /// Raises OnAttackControlReset
