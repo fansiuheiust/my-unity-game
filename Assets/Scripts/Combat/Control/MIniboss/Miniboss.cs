@@ -14,7 +14,7 @@ namespace Combat.Miniboss {
         protected Mob Owner { get; private set; }
         protected Mob Target => Behaviour.Target;
 
-        private void Awake() {
+        protected virtual void Awake() {
             abilityChooser = new(Abilities);
             Owner = GetComponent<Mob>();
             Behaviour = GetComponent<MobBehaviour>();
@@ -22,7 +22,7 @@ namespace Combat.Miniboss {
             StartCoroutine(AbilityUnleasher());
         }
 
-        private void OnDestroy() {
+        protected virtual void OnDestroy() {
             InterruptAbility();
             StopAllCoroutines();
         }
@@ -49,11 +49,12 @@ namespace Combat.Miniboss {
                         onAbilityStart.Invoke();
                     else {
                         onAbilityEnd.Invoke();
+
+                        ability = null;
+
                         // start an ability on queue if that exists
                         if (queuedAbilities.Count > 0)
                             StartNewAbility(queuedAbilities.Dequeue());
-
-                        ability = null;
                     }
                 }
             }
@@ -68,7 +69,7 @@ namespace Combat.Miniboss {
             }
         }
 
-        void InterruptAbility() {
+        protected virtual void InterruptAbility() {
             if (!ActiveAbility) return;
             StopCoroutine(ability);
             EndAbility();

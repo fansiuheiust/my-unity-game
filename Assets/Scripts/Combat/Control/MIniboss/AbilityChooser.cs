@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 
 
-namespace Combat {
+namespace Combat.Miniboss {
     public class AbilityChooser {
         (System.Func<IEnumerator> ability, System.Func<bool> predicate)[] abilities;
         int curr = 0;

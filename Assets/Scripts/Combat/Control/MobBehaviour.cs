@@ -79,7 +79,7 @@ namespace Combat {
         MobState _state = MobState.Idle;
         public virtual MobState State {
             get => _state;
-            protected set {
+            set {
                 switch (value) {
                     case MobState.Attack:
                         AttackTarget();
@@ -109,7 +109,7 @@ namespace Combat {
         /// <summary>
         /// vector from self to target, updated at the start of <c>Update</c>
         /// </summary>
-        protected Vector3 Delta { get; private set; }
+        public Vector3 Delta { get; private set; }
 
         void OnTargetDead() {
             Target = null;
@@ -176,12 +176,12 @@ namespace Combat {
             }
         }
 
-        protected void PauseStateSwitch() {
+        public void PauseStateSwitch() {
             if (_stateChanger != null)
                 StopCoroutine(_stateChanger);
             _stateChanger = null;
         }
-        protected void ResumeStateSwitch(bool immediateSwitch = true) {
+        public void ResumeStateSwitch(bool immediateSwitch = true) {
             if (_stateChanger == null) {
                 if (immediateSwitch)
                     SwitchState();
@@ -237,10 +237,10 @@ namespace Combat {
         /// </summary>
         protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
 
-        protected float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
+        public float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
 
-        protected void Face(Transform t) => Owner.Rotatable.forward = Vector3.Scale(t.position - transform.position, new(1, 0, 1));
-        protected void FaceTarget() => Face(Target.transform);
+        public void Face(Transform t) => Owner.Rotatable.forward = Vector3.Scale(t.position - transform.position, new(1, 0, 1));
+        public void FaceTarget() => Face(Target.transform);
 
         protected bool ActiveStateSwitch => _stateChanger != null;
 
