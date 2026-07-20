@@ -68,8 +68,12 @@ namespace Combat {
         }
 
         public virtual void Delete() {
-            Owner.OnWeaponUnequip -= Delete;
             Destroy(gameObject);
+        }
+
+        private void OnDestroy() {
+            Owner.OnWeaponUnequip -= Delete;
+            Owner = null;
         }
     }
 }
