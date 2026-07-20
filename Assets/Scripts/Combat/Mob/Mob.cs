@@ -376,7 +376,7 @@ namespace Combat {
         /// <returns>
         /// Default dead checker: Hp < 1
         /// </returns>
-        protected virtual bool IsDead => stats.IsDead;
+        public virtual bool IsDead => stats.IsDead;
 
         /// <summary>
         /// Called to check and act if the mob is dead
