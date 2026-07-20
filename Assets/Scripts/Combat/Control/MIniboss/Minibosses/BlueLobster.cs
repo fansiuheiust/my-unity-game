@@ -52,11 +52,11 @@ namespace Combat.Miniboss {
             yield return new WaitForSeconds(tpAttackCourtesy / 2f);
 
             Vector3 targetPos = Target.transform.position + Target.GetComponent<Rigidbody>().linearVelocity * tpAttackCourtesy / 2f;
-            GameObject tpCourtesy = Instantiate(tpCourtesyPrefab);
+            GameObject tpCourtesy = InstantiateProp(tpCourtesyPrefab);
             tpCourtesy.transform.position = targetPos;
             yield return new WaitForSeconds(tpAttackCourtesy / 2f);
 
-            Destroy(tpCourtesy);
+            DestroyProp(tpCourtesy);
             transform.position = targetPos;
             Owner.GainStats(null, new(atk: tpAttackBoost));
             interruptedAction =  ()=>Owner.LoseStats(null, new(atk: tpAttackBoost));
@@ -78,7 +78,7 @@ namespace Combat.Miniboss {
             interruptedAction = () => { if (Owner.EquippedWeapon is null) Owner.Equip(w); };
 
             Behaviour.State = MobState.Idle;
-            Projectile claw1 = Instantiate(rangedClawPrefab).GetComponent<Projectile>(), claw2 = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
+            Projectile claw1 = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>(), claw2 = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>();
             claw1.transform.position = claw2.transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
             yield return new WaitForSeconds(clawAttackCourtesy);
 
@@ -87,9 +87,9 @@ namespace Combat.Miniboss {
             yield return new WaitForSeconds(clawTime * 2);
 
             if (claw1 != null)
-                claw1.Delete();
+                DestroyProp(claw1.gameObject);
             if (claw2 != null)
-                claw2.Delete();
+                DestroyProp(claw2.gameObject);
             Owner.Equip(w);
             Behaviour.ResumeStateSwitch();
             EndAbility();
@@ -108,7 +108,7 @@ namespace Combat.Miniboss {
             Vector3 targetFront = t.transform.position + t.Rotatable.forward * spinClawRadius;
             Vector3 left = targetFront - spinClawRadius * t.Rotatable.right, right = targetFront + spinClawRadius * t.Rotatable.right;
 
-            SpinClaw leftClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>(), rightClaw = Instantiate(spinClawPrefab).GetComponent<SpinClaw>();
+            SpinClaw leftClaw = InstantiateProp(spinClawPrefab).GetComponent<SpinClaw>(), rightClaw = InstantiateProp(spinClawPrefab).GetComponent<SpinClaw>();
 
             leftClaw.transform.position = left;
             leftClaw.Set(Owner, atkTime, spinClawRadius);
@@ -159,7 +159,7 @@ namespace Combat.Miniboss {
             for (int i = 0; i < thrownClawsPerShellSmash; i++) {
                 Vector3 vel = (t.transform.position + (Random.Range(0, 2) == 0 ? t.GetComponent<Rigidbody>().linearVelocity : Vector3.zero) - transform.position).normalized * clawThrowVelocity;
                 Behaviour.Face(t.transform);
-                claws[i] = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
+                claws[i] = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>();
                 claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
                 claws[i].Set(Owner, 1, vel);
                 yield return new WaitForSeconds(intervalPerThrow);
@@ -169,12 +169,12 @@ namespace Combat.Miniboss {
 
             foreach (Projectile c in claws)
                 if (c != null)
-                    c.Delete();
+                    DestroyProp(c.gameObject);
             claws = new Projectile[centerOutClawsPerShellSmash];
             intervalPerThrow = centerOutClawTime / centerOutClawsPerShellSmash;
             for (int i = 0; i < centerOutClawsPerShellSmash; i++) {
                 Owner.Rotatable.localEulerAngles = new Vector3(0, 360f / centerOutClawsPerShellSmash * i, 0);
-                claws[i] = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
+                claws[i] = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>();
                 claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
                 claws[i].transform.forward = Owner.Rotatable.forward;
                 yield return new WaitForSeconds(intervalPerThrow);
@@ -185,7 +185,7 @@ namespace Combat.Miniboss {
 
             foreach (var c in claws)
                 if (c != null)
-                    c.Delete();
+                    DestroyProp(c.gameObject);
 
 
             Owner.GainStats(null, new ScalingStats(atk: shellSmashAtkScale, def: shellSmashDefScale, walkSpeed: shellSmashSpeedScale));

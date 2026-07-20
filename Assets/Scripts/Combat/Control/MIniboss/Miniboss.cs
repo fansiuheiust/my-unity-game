@@ -54,7 +54,7 @@ namespace Combat.Miniboss {
                         ability = null;
 
                         // start an ability on queue if that exists
-                        if (queuedAbilities.Count > 0)
+                        if (queuedAbilities.Count > 0 && Owner != null && !Owner.IsDead)
                             StartNewAbility(queuedAbilities.Dequeue());
                     }
                 }
@@ -76,7 +76,8 @@ namespace Combat.Miniboss {
             interruptedAction?.Invoke();
             EndAbility();
             foreach (GameObject go in props)
-                Destroy(go);
+                if (go != null)
+                    Destroy(go);
             props.Clear();
         }
 
