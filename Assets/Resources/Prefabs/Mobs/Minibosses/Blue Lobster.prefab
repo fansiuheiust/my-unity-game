@@ -217,7 +217,8 @@ GameObject:
   - component: {fileID: 2724573195269945961}
   - component: {fileID: 5516807082123106583}
   - component: {fileID: 6983130159692096714}
-  - component: {fileID: 2843972811596671063}
+  - component: {fileID: 3222003745292893817}
+  - component: {fileID: 5384901221436305359}
   m_Layer: 0
   m_Name: Blue Lobster
   m_TagString: Untagged
@@ -427,7 +428,7 @@ MonoBehaviour:
   initialStats:
     base:
       <Atk>k__BackingField: 8
-      <Def>k__BackingField: 50
+      <Def>k__BackingField: 6
       <MaxHp>k__BackingField: 100
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
@@ -437,8 +438,8 @@ MonoBehaviour:
       <MaxHp>k__BackingField: 0
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
-      <WalkSpeed>k__BackingField: 0.1
-      <AtkSpeed>k__BackingField: 0.3
+      <WalkSpeed>k__BackingField: -0.2
+      <AtkSpeed>k__BackingField: 0
       <CritRate>k__BackingField: 0
       <CritDmg>k__BackingField: 0
       <DmgReduction>k__BackingField: 0
@@ -448,6 +449,9 @@ MonoBehaviour:
   initialGears:
   - lobster_claw
   OnManaConsumption:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamageTake:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
@@ -480,7 +484,7 @@ MonoBehaviour:
   OnMovementChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2843972811596671063
+--- !u!114 &3222003745292893817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -496,6 +500,51 @@ MonoBehaviour:
   searchRadius: 50
   stateChangeInterval: 2
   <Faction>k__BackingField: 2
+  onTargetSwitch:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5384901221436305359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594697965900854007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 829c65b9df40852448ce36b8725d93ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityIntervalMin: 4
+  abilityIntervalMax: 20
+  onAbilityStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onAbilityEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  tpCourtesyPrefab: {fileID: 3511845584215344761, guid: 3c9f1d10ba1c65b4f8021b1167b082ac, type: 3}
+  rangedClawPrefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
+  spinClawPrefab: {fileID: 2457247707522440129, guid: e0a4e8972b04d9d4f88fd3bf3d66fc84, type: 3}
+  tpAttackBoost: 0.5
+  tpAttackCourtesy: 0.8
+  tpDistanceThreshold: 10
+  clawAttackCourtesy: 1
+  clawTime: 0.6
+  clawlerDistanceThreshold: 7
+  spinClawRadius: 3
+  spinClawTime: 0.75
+  spinClawRangeBoost: 1
+  thrownClawsPerShellSmash: 10
+  centerOutClawsPerShellSmash: 16
+  clawThrowDuration: 3
+  centerOutClawTime: 1
+  clawThrowVelocity: 30
+  clawCenterOutVelocity: 80
+  shellSmashPause: 3
+  shellSmashAtkScale: 0.75
+  shellSmashDefScale: -0.5
+  shellSmashSpeedScale: 0.5
 --- !u!1 &7133706732328440102
 GameObject:
   m_ObjectHideFlags: 0

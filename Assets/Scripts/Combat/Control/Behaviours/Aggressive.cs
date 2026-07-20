@@ -7,7 +7,6 @@ namespace Combat.Behaviours {
     public class Aggressive : MobBehaviour {
         protected override void SwitchState() {
             if (Delta.magnitude <= AttackRange) {
-                FaceTarget();
                 State = MobState.Attack;
                 return;
             }
@@ -15,13 +14,14 @@ namespace Combat.Behaviours {
         }
         protected override void FollowTarget() {
             base.FollowTarget();
-            if (State == MobState.Charge)
+            if (ActiveStateSwitch && State == MobState.Charge)
                 SwitchState();
         }
 
         protected override void OnAttackControlReset() {
             base.OnAttackControlReset();
-            State = MobState.Charge;
+            if (ActiveStateSwitch)
+                State = MobState.Charge;
         }
 
     }

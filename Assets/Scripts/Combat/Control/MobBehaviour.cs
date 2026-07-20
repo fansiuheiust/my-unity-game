@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Rendering;
 
 
@@ -33,6 +34,11 @@ namespace Combat {
 
         [field: SerializeField] public Faction Faction { get; private set; }
 
+        /// <summary>
+        /// <para>called when the target is switched</para>
+        /// </summary>
+        public UnityEvent onTargetSwitch;
+
 
         /// <summary>
         /// Self-documenting
@@ -42,22 +48,26 @@ namespace Combat {
         /// <summary>
         /// The mob the AI should act on, setting it to null will resume target finding
         /// </summary>
-        protected Mob Target {
+        public Mob Target {
             get {
                 return _target;
             }
-            set {
+            protected set {
                 if (value == null) {
                     if (_stateChanger != null)
                         StopCoroutine(_stateChanger);
                     _stateChanger = null;
+                    State = MobState.Idle;
                     TargetFinder = StartCoroutine(FindTarget());
                 } else {
                     if (TargetFinder != null)
                         StopCoroutine(TargetFinder);
                     TargetFinder = null;
                     _stateChanger = StartCoroutine(StateChanger());
+                    value.OnDeath.AddListener((_, __) => OnTargetDead());
                 }
+                if (_target != value)
+                    onTargetSwitch.Invoke();
                 _target = value;
             }
         }
@@ -69,7 +79,7 @@ namespace Combat {
         MobState _state = MobState.Idle;
         public virtual MobState State {
             get => _state;
-            protected set {
+            set {
                 switch (value) {
                     case MobState.Attack:
                         AttackTarget();
@@ -99,7 +109,11 @@ namespace Combat {
         /// <summary>
         /// vector from self to target, updated at the start of <c>Update</c>
         /// </summary>
-        protected Vector3 Delta { get; private set; }
+        public Vector3 Delta { get; private set; }
+
+        void OnTargetDead() {
+            Target = null;
+        }
 
         void Update() {
             if (Target == null) {
@@ -162,6 +176,19 @@ namespace Combat {
             }
         }
 
+        public void PauseStateSwitch() {
+            if (_stateChanger != null)
+                StopCoroutine(_stateChanger);
+            _stateChanger = null;
+        }
+        public void ResumeStateSwitch(bool immediateSwitch = true) {
+            if (_stateChanger == null) {
+                if (immediateSwitch)
+                    SwitchState();
+                _stateChanger = StartCoroutine(StateChanger());
+            }
+        }
+
 
 
         /// <summary>
@@ -175,6 +202,7 @@ namespace Combat {
         void AttackTarget() {
             if (_canAttack) {
                 _canAttack = false;
+                FaceTarget();
                 AttackAction();
             }
         }
@@ -209,7 +237,12 @@ namespace Combat {
         /// </summary>
         protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
 
-        protected void FaceTarget() => Owner.Rotatable.forward = Vector3.Scale(Delta, new(1, 0, 1));
+        public float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
+
+        public void Face(Transform t) => Owner.Rotatable.forward = Vector3.Scale(t.position - transform.position, new(1, 0, 1));
+        public void FaceTarget() => Face(Target.transform);
+
+        protected bool ActiveStateSwitch => _stateChanger != null;
 
         /// <summary>
         /// Function for deciding which state to switch to

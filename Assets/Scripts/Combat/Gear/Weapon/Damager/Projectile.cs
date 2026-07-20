@@ -25,7 +25,7 @@ namespace Combat {
             Owner.OnWeaponUnequip += Delete;
             hitMobs.Add(owner);
             Physics.IgnoreCollision(Owner.GetComponent<Collider>(), Collider);
-            pierceLeft = ((Ranged)Owner.EquippedWeapon).pierce;
+            pierceLeft = (Owner.EquippedWeapon != null && Owner.EquippedWeapon is Ranged r? r.pierce: 1);
             this.multiplier = multiplier;
             RB.AddForce(velocity, ForceMode.VelocityChange);
         }
@@ -42,6 +42,10 @@ namespace Combat {
                 if (hitMobs.Add(m)) {
                     Hit(m);
                 }
+            } else if (gameObject.TryGetComponent(out Projectile p)) {
+                // hitting a fellow projectile
+                if (Owner != p.Owner)
+                    Delete();
             } else {
                 // hitting a non-mob
                 Delete();
@@ -63,9 +67,13 @@ namespace Combat {
             return false;
         }
 
-        protected virtual void Delete() {
-            Owner.OnWeaponUnequip -= Delete;
+        public virtual void Delete() {
             Destroy(gameObject);
+        }
+
+        private void OnDestroy() {
+            Owner.OnWeaponUnequip -= Delete;
+            Owner = null;
         }
     }
 }
