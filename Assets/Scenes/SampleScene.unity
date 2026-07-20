@@ -1435,6 +1435,9 @@ MonoBehaviour:
   searchRadius: 50
   stateChangeInterval: 2
   <Faction>k__BackingField: 2
+  onTargetSwitch:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &942157787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2583,6 +2586,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4726813838405811930, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
+      propertyPath: <Faction>k__BackingField
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5594697965900854007, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}

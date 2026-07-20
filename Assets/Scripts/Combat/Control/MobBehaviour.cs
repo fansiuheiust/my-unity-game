@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Rendering;
 
 
@@ -33,6 +34,11 @@ namespace Combat {
 
         [field: SerializeField] public Faction Faction { get; private set; }
 
+        /// <summary>
+        /// <para>called when the target is switched</para>
+        /// </summary>
+        public UnityEvent onTargetSwitch;
+
 
         /// <summary>
         /// Self-documenting
@@ -42,22 +48,26 @@ namespace Combat {
         /// <summary>
         /// The mob the AI should act on, setting it to null will resume target finding
         /// </summary>
-        protected Mob Target {
+        public Mob Target {
             get {
                 return _target;
             }
-            set {
+            protected set {
                 if (value == null) {
                     if (_stateChanger != null)
                         StopCoroutine(_stateChanger);
                     _stateChanger = null;
+                    State = MobState.Idle;
                     TargetFinder = StartCoroutine(FindTarget());
                 } else {
                     if (TargetFinder != null)
                         StopCoroutine(TargetFinder);
                     TargetFinder = null;
                     _stateChanger = StartCoroutine(StateChanger());
+                    value.OnDeath.AddListener((_, __) => OnTargetDead());
                 }
+                if (_target != value)
+                    onTargetSwitch.Invoke();
                 _target = value;
             }
         }
@@ -100,6 +110,10 @@ namespace Combat {
         /// vector from self to target, updated at the start of <c>Update</c>
         /// </summary>
         protected Vector3 Delta { get; private set; }
+
+        void OnTargetDead() {
+            Target = null;
+        }
 
         void Update() {
             if (Target == null) {
