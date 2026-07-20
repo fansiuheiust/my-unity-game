@@ -10,6 +10,7 @@ namespace Combat.Miniboss {
         /// </summary>
         protected abstract (System.Func<IEnumerator> ability, System.Func<bool> predicate)[] Abilities { get; }
         AbilityChooser abilityChooser;
+        protected System.Action interruptedAction = null;
         protected MobBehaviour Behaviour { get; private set; }
         protected Mob Owner { get; private set; }
         protected Mob Target => Behaviour.Target;
@@ -69,9 +70,10 @@ namespace Combat.Miniboss {
             }
         }
 
-        protected virtual void InterruptAbility() {
+        void InterruptAbility() {
             if (!ActiveAbility) return;
             StopCoroutine(ability);
+            interruptedAction?.Invoke();
             EndAbility();
             foreach (GameObject go in props)
                 Destroy(go);
@@ -105,6 +107,7 @@ namespace Combat.Miniboss {
         /// Called every time when an ability ends, used at the end of all coroutines
         /// </summary>
         protected void EndAbility() {
+            interruptedAction = null;
             ActiveAbility = false;
         }
     }

@@ -428,7 +428,7 @@ MonoBehaviour:
   initialStats:
     base:
       <Atk>k__BackingField: 8
-      <Def>k__BackingField: 50
+      <Def>k__BackingField: 6
       <MaxHp>k__BackingField: 100
       <MaxMana>k__BackingField: 0
       <ManaRegen>k__BackingField: 0
@@ -541,11 +541,10 @@ MonoBehaviour:
   centerOutClawTime: 1
   clawThrowVelocity: 30
   clawCenterOutVelocity: 80
-  shellSmashPause: 1.5
+  shellSmashPause: 3
   shellSmashAtkScale: 0.75
   shellSmashDefScale: -0.5
   shellSmashSpeedScale: 0.5
-  lobsterClawGearID: lobster_claw
 --- !u!1 &7133706732328440102
 GameObject:
   m_ObjectHideFlags: 0

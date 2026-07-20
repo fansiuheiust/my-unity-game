@@ -35,9 +35,6 @@ namespace Combat.Miniboss {
         [SerializeField]
         float shellSmashAtkScale = 0.75f, shellSmashDefScale = -0.5f, shellSmashSpeedScale = 0.5f;
 
-        [SerializeField]
-        string lobsterClawGearID = "lobster_claw";
-
 
         protected override void Awake() {
             base.Awake();
@@ -62,6 +59,7 @@ namespace Combat.Miniboss {
             Destroy(tpCourtesy);
             transform.position = targetPos;
             Owner.GainStats(null, new(atk: tpAttackBoost));
+            interruptedAction =  ()=>Owner.LoseStats(null, new(atk: tpAttackBoost));
             Behaviour.State = MobState.Attack;
             yield return new WaitForSeconds(Behaviour.AttackTime);
 
@@ -76,6 +74,9 @@ namespace Combat.Miniboss {
             Behaviour.PauseStateSwitch();
             Weapon w = Owner.EquippedWeapon;
             Owner.UnequipWeapon();
+
+            interruptedAction = () => { if (Owner.EquippedWeapon is null) Owner.Equip(w); };
+
             Behaviour.State = MobState.Idle;
             Projectile claw1 = Instantiate(rangedClawPrefab).GetComponent<Projectile>(), claw2 = Instantiate(rangedClawPrefab).GetComponent<Projectile>();
             claw1.transform.position = claw2.transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
@@ -102,6 +103,7 @@ namespace Combat.Miniboss {
             Weapon w = Owner.EquippedWeapon;
             float atkTime = Behaviour.AttackTime;
             Owner.UnequipWeapon();
+            interruptedAction = () => { if (Owner.EquippedWeapon is null) Owner.Equip(w); };
 
             Vector3 targetFront = t.transform.position + t.Rotatable.forward * spinClawRadius;
             Vector3 left = targetFront - spinClawRadius * t.Rotatable.right, right = targetFront + spinClawRadius * t.Rotatable.right;
@@ -122,6 +124,7 @@ namespace Combat.Miniboss {
             Owner.Equip(w);
             Dictionary<HashedScalingStats, float> d = new() { { HashedScalingStats.AttackRange, spinClawRangeBoost } };
             Owner.GainStats(null, new ScalingStats(otherScaling: d));
+            interruptedAction = () => Owner.LoseStats(null, new ScalingStats(otherScaling: d));
             Behaviour.State = MobState.Attack;
             yield return new WaitForSeconds(Behaviour.AttackTime);
 
@@ -146,6 +149,8 @@ namespace Combat.Miniboss {
 
             Owner.transform.position += 1 * Vector3.up;
             Owner.GetComponent<Rigidbody>().useGravity = false;
+            interruptedAction = () => Owner.GetComponent<Rigidbody>().useGravity = true;
+
             Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + centerOutClawTime);
             yield return new WaitForSeconds(shellSmashPause);
 
@@ -193,12 +198,6 @@ namespace Combat.Miniboss {
         protected override void OnDestroy() {
             base.OnDestroy();
             Owner.OnDamageTake.RemoveListener(OnDamageTaken);
-        }
-
-        protected override void InterruptAbility() {
-            base.InterruptAbility();
-            if (Owner.EquippedWeapon is null)
-                Owner.Equip(GearDatabase.Get(lobsterClawGearID));
         }
     }
 }
