@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bossID: 
+  minibossPrefabsPath: Prefabs/Mobs/Minibosses
 --- !u!1 &725570041778134266
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,6 +557,8 @@ MonoBehaviour:
   - bosses: []
   - bosses:
     - BlueLobster
+  minibossChooser: {fileID: 5958692402013283518}
+  wallBlockerPrefab: {fileID: 3495721447088613988, guid: 10252cadf8cf4264c82567b69c06496c, type: 3}
 --- !u!1 &7830712020534792927
 GameObject:
   m_ObjectHideFlags: 0
