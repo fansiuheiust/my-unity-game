@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 3222003745292893817}
   - component: {fileID: 5384901221436305359}
   m_Layer: 0
-  m_Name: Blue Lobster
+  m_Name: BlueLobster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
