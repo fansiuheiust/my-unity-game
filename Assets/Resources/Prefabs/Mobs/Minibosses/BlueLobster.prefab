@@ -515,6 +515,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829c65b9df40852448ce36b8725d93ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  droppedGears:
+  - detached_shell
+  - battle_damaged_claw
+  - blue_lobsters_shell
+  - battle_claw
   abilityIntervalMin: 4
   abilityIntervalMax: 20
   onAbilityStart:
