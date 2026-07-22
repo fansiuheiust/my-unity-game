@@ -27,7 +27,7 @@ namespace Combat.Miniboss {
             Behaviour = GetComponent<MobBehaviour>();
             Behaviour.onTargetSwitch.AddListener(InterruptAbility);
             StartCoroutine(AbilityUnleasher());
-            droppedGears = droppedGears.Select(x => GearDatabase.Get(x)).Where(x => x.tier <= StageController.DungeonData.CoinTier.Evaluate(StageController.Floor)).Select(x => x.id).ToArray();
+            droppedGears = droppedGears.Select(x => GearDatabase.Get(x)).Where(x => x.tier <= Mathf.CeilToInt(StageController.DungeonData.CoinTier.Evaluate(StageController.Floor))).Select(x => x.id).ToArray();
             Owner.OnDeath.AddListener(OnMobDied);
         }
 
