@@ -63,7 +63,7 @@ MonoBehaviour:
         <Knockback>k__BackingField: 0
         <KnockbackResistance>k__BackingField: 0
       hashedScaling: []
-    abilityID: 
+    abilityID: ShellSmash
     type: 1
   melees:
   - id: battle_damaged_claw

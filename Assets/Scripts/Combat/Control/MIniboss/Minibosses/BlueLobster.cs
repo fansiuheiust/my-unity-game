@@ -149,6 +149,7 @@ namespace Combat.Miniboss {
 
             Owner.transform.position += 1 * Vector3.up;
             Owner.GetComponent<Rigidbody>().useGravity = false;
+            Owner.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
             interruptedAction = () => Owner.GetComponent<Rigidbody>().useGravity = true;
 
             Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + centerOutClawTime);

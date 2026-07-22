@@ -26,6 +26,31 @@ MonoBehaviour:
     - name: Duration
       type: 1
       value: 4
+  - id: ShellSmash
+    name: Shell Smash
+    rawDescription: When your HP falls below {HP Threshold}, increases your atk by
+      {Attack Increase}, walk speed by {Walk Speed Increase}, attack speed by {Attack
+      Speed Increase}, but reduces your defence by {Defence Reduction}. Can only
+      be triggered once.
+    cooldown: 0
+    manaCost: 0
+    triggerKey: 5
+    attributes:
+    - name: HP Threshold
+      type: 2
+      value: 50
+    - name: Attack Increase
+      type: 2
+      value: 50
+    - name: Walk Speed Increase
+      type: 2
+      value: 15
+    - name: Attack Speed Increase
+      type: 2
+      value: 10
+    - name: Defence Reduction
+      type: 2
+      value: 67
   perkAbilities:
   - perkID: SampleClassAbility
     triggerKey: 3
