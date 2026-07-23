@@ -82,8 +82,8 @@ namespace Combat.Miniboss {
             claw1.transform.position = claw2.transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
             yield return new WaitForSeconds(clawAttackCourtesy);
 
-            claw1.Set(Owner, 1f, (Target.transform.position - claw1.transform.position) * 2 / clawTime);
-            claw2.Set(Owner, 1f, (Target.transform.position + Target.GetComponent<Rigidbody>().linearVelocity * clawTime - claw2.transform.position) / clawTime);
+            claw1.Set(Owner, 1f, (Target.transform.position - claw1.transform.position) * 2 / clawTime, 1);
+            claw2.Set(Owner, 1f, (Target.transform.position + Target.GetComponent<Rigidbody>().linearVelocity * clawTime - claw2.transform.position) / clawTime, 1);
             yield return new WaitForSeconds(clawTime * 2);
 
             if (claw1 != null)
@@ -162,7 +162,7 @@ namespace Combat.Miniboss {
                 Behaviour.Face(t.transform);
                 claws[i] = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>();
                 claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
-                claws[i].Set(Owner, 1, vel);
+                claws[i].Set(Owner, 1, vel, 1);
                 yield return new WaitForSeconds(intervalPerThrow);
             }
 
@@ -181,7 +181,7 @@ namespace Combat.Miniboss {
                 yield return new WaitForSeconds(intervalPerThrow);
             }
             foreach (Projectile c in claws)
-                c.Set(Owner, 1, c.transform.forward * clawCenterOutVelocity);
+                c.Set(Owner, 1, c.transform.forward * clawCenterOutVelocity, 1);
             yield return new WaitForSeconds(shellSmashPause);
 
             foreach (var c in claws)

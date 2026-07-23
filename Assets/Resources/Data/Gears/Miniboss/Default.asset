@@ -118,7 +118,7 @@ MonoBehaviour:
         <Knockback>k__BackingField: 0
         <KnockbackResistance>k__BackingField: 0
       hashedScaling: []
-    abilityID: 
+    abilityID: ClawFling
     weaponSpeed: 1
     weaponRange: 2
     prefabName: Claw

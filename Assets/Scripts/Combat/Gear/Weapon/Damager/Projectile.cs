@@ -20,12 +20,16 @@ namespace Combat {
             RB = GetComponent<Rigidbody>();
         }
 
-        public void Set(Mob owner, float multiplier, Vector3 velocity) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pierces">number of pierces, zero means infer from the equipped weapon</param>
+        public void Set(Mob owner, float multiplier, Vector3 velocity, uint pierces = 0) {
             Owner = owner;
             Owner.OnWeaponUnequip += Delete;
             hitMobs.Add(owner);
             Physics.IgnoreCollision(Owner.GetComponent<Collider>(), Collider);
-            pierceLeft = (Owner.EquippedWeapon != null && Owner.EquippedWeapon is Ranged r? r.pierce: 1);
+            pierceLeft = pierces != 0? pierces: (Owner.EquippedWeapon != null && Owner.EquippedWeapon is Ranged r? r.pierce: 1);
             this.multiplier = multiplier;
             RB.AddForce(velocity, ForceMode.VelocityChange);
         }

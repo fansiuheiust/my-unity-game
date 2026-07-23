@@ -51,6 +51,23 @@ MonoBehaviour:
     - name: Defence Reduction
       type: 2
       value: 67
+  - id: ClawFling
+    name: Claw Fling
+    rawDescription: Surrounds yourself with {Num Claws} claws in 360 degrees, then
+      flings them away from you, each dealing {Claw Damage} of your attack.
+    cooldown: 5
+    manaCost: 20
+    triggerKey: 4
+    attributes:
+    - name: Num Claws
+      type: 0
+      value: 24
+    - name: Claw Damage
+      type: 2
+      value: 200
+    - name: Claw Speed
+      type: 1
+      value: 60
   perkAbilities:
   - perkID: SampleClassAbility
     triggerKey: 3
