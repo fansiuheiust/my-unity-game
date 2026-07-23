@@ -7,7 +7,6 @@ namespace Combat.Abilities {
         float clawSpeed;
         int numClaws;
 
-        static readonly string clawPath = "Prefabs/Weapon/Projectile/Claw";
         GameObject clawPrefab;
 
         Projectile[] spawnedClaws;
@@ -15,7 +14,7 @@ namespace Combat.Abilities {
             numClaws = (int)ability["Num Claws"];
             clawDmg = ability["Claw Damage"];
             clawSpeed = ability["Claw Speed"];
-            clawPrefab = (GameObject)Resources.Load(clawPath);
+            clawPrefab = ability.Prefab("Claw");
         }
 
         protected override void SubscribeToOwner() { }

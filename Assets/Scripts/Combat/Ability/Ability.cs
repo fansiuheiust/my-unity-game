@@ -1,4 +1,6 @@
 using Progression;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -22,12 +24,14 @@ namespace Combat {
         public readonly AbilityTriggerKey triggerKey;
         readonly Stats stats;
         public readonly System.Type abilityObject;
+
+        readonly Dictionary<string, GameObject> prefabs = new();
         
         /// <summary>
         /// Note that <c>stats</c> will be reference-copied
         /// </summary>
         /// <param name="stats">will be reference-copied</param>
-        public Ability(string id, string name, string rawDescription, float cooldown, float manaCost, AbilityTriggerKey triggerKey, Stats stats, System.Type abilityObject) {
+        public Ability(string id, string name, string rawDescription, float cooldown, float manaCost, AbilityTriggerKey triggerKey, Stats stats, System.Type abilityObject, Dictionary<string, GameObject> prefabs) {
             this.id = id;
             this.name = name;
             this.rawDescription = rawDescription;
@@ -36,7 +40,11 @@ namespace Combat {
             this.triggerKey = triggerKey;
             this.stats = stats;
             this.abilityObject = abilityObject;
+            if (prefabs is not null)
+                this.prefabs.AddRange(prefabs);
         }
+
+        public GameObject Prefab(string name) => prefabs[name];
 
         public virtual float Cooldown => cooldown;
         public virtual float ManaCost => manaCost;
@@ -54,7 +62,7 @@ namespace Combat {
 
     public class PerkAbility: Ability {
         public readonly Perk perk;
-        public PerkAbility(Perk perk, AbilityTriggerKey triggerKey, System.Type ability): base(perk.id, perk.name, perk.rawDescription, -1, -1, triggerKey, null, ability) {
+        public PerkAbility(Perk perk, AbilityTriggerKey triggerKey, System.Type ability, Dictionary<string, GameObject> prefabs): base(perk.id, perk.name, perk.rawDescription, -1, -1, triggerKey, null, ability, prefabs) {
             this.perk = perk;
         }
         public override float Attribute(string name) => perk[name];

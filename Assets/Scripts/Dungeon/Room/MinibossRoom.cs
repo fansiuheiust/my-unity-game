@@ -32,6 +32,7 @@ namespace Dungeon {
         }
 
         void OnMinibossDied(Mob _, Mob __) {
+            if (Cleared) return;
             foreach (var w in wallBlockers)
                 Destroy(w);
             wallBlockers = null;

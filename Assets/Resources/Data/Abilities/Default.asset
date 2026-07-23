@@ -26,6 +26,7 @@ MonoBehaviour:
     - name: Duration
       type: 1
       value: 4
+    prefabs: []
   - id: ShellSmash
     name: Shell Smash
     rawDescription: When your HP falls below {HP Threshold}, increases your atk by
@@ -51,6 +52,7 @@ MonoBehaviour:
     - name: Defence Reduction
       type: 2
       value: 67
+    prefabs: []
   - id: ClawFling
     name: Claw Fling
     rawDescription: Surrounds yourself with {Num Claws} claws in 360 degrees, then
@@ -68,6 +70,9 @@ MonoBehaviour:
     - name: Claw Speed
       type: 1
       value: 60
+    prefabs:
+    - name: Claw
+      prefab: {fileID: 0}
   perkAbilities:
   - perkID: SampleClassAbility
     triggerKey: 3
