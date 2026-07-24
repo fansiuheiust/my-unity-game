@@ -72,7 +72,36 @@ MonoBehaviour:
       value: 60
     prefabs:
     - name: Claw
-      prefab: {fileID: 0}
+      prefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
+  - id: Clawler
+    name: Clawler
+    rawDescription: Summons a claw that moves towards the closest target in {Initial
+      Search Radius} units, dealing {Claw Damage} damage. If a hit lands, the claw
+      moves towards another target that is within {Search Radius} units, up to {Redirect
+      Count} times. Using this ability while a claw is active deletes the said claw.
+    cooldown: 5
+    manaCost: 20
+    triggerKey: 4
+    attributes:
+    - name: Claw Damage
+      type: 2
+      value: 180
+    - name: Search Radius
+      type: 1
+      value: 10
+    - name: Redirect Count
+      type: 0
+      value: 5
+    - name: Claw Speed
+      type: 1
+      value: 40
+    - name: Initial Search Radius
+      type: 1
+      value: 30
+    prefabs:
+    - name: Claw
+      prefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
   perkAbilities:
   - perkID: SampleClassAbility
     triggerKey: 3
+    prefabs: []

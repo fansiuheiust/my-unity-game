@@ -122,4 +122,32 @@ MonoBehaviour:
     weaponSpeed: 1
     weaponRange: 2
     prefabName: Claw
+  - id: heat_seeking_claw
+    name: Heat-seeking Claw
+    tier: 4
+    stats:
+      base:
+        <Atk>k__BackingField: 8
+        <Def>k__BackingField: 0
+        <MaxHp>k__BackingField: 0
+        <MaxMana>k__BackingField: 0
+        <ManaRegen>k__BackingField: 0
+      scaling:
+        <Atk>k__BackingField: 0.4
+        <Def>k__BackingField: 0
+        <MaxHp>k__BackingField: 0
+        <MaxMana>k__BackingField: 0
+        <ManaRegen>k__BackingField: 0
+        <WalkSpeed>k__BackingField: 0.15
+        <AtkSpeed>k__BackingField: 0
+        <CritRate>k__BackingField: 0.3
+        <CritDmg>k__BackingField: 0.5
+        <DmgReduction>k__BackingField: 0
+        <Knockback>k__BackingField: 0
+        <KnockbackResistance>k__BackingField: 0
+      hashedScaling: []
+    abilityID: Clawler
+    weaponSpeed: 1
+    weaponRange: 3
+    prefabName: Claw
   rangeds: []

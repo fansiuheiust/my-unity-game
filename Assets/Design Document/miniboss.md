@@ -49,8 +49,8 @@ Gears:
 * Battle-Damaged Claw (Common): melee weapon that increases the player's attack and movement speed.
 * Detached Shell (Common): chestplate that provides decent defence, increases crit rate.
 * Blue Lobster's Shell (Epic): upgrade of Detached Shell, with an ability to increase the player's attack, movement speed, and reduces defence when below 50% HP
-* Battleclaw (Epic): upgrade of Battle-Damaged Claw, with an ability to launch 2 claws forward and hit up to 5 enemy mobs on its way.
-* Heat-seeking Claw (Mythical): upgrade fo Battleclaw, where the ability is upgraded s.t. the 2 claws home towards the closest enemy mob.
+* Battle Claw (Epic): upgrade of Battle-Damaged Claw, with an ability to launch 2 claws forward and hit up to 5 enemy mobs on its way.
+* Heat-seeking Claw (Mythical): upgrade to Battle Claw, where the ability is upgraded s.t. the 2 claws home towards the closest enemy mob.
 
 
 

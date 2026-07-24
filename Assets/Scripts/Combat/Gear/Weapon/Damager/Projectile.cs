@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Combat {
     public class Projectile : MonoBehaviour {
@@ -9,11 +10,26 @@ namespace Combat {
 
         protected virtual DamageType DamageType => DamageType.Projectile;
 
-        uint pierceLeft;
+        public uint PierceLeft { get; private set; }
         float multiplier;
 
+        /// <summary>
+        /// <para>Called when the projectile hit a target</para>
+        /// <c>Mob</c>: The mob it hit <br />
+        /// </summary>
+        public UnityEvent<Mob> onHit;
+        /// <summary>
+        /// Called when the projectile is about to be destroyed
+        /// </summary>
+        public UnityEvent onDelete;
 
         HashSet<Mob> hitMobs = new();
+
+
+        public virtual Vector3 velocity {
+            get => RB.linearVelocity;
+            set => RB.linearVelocity = value;
+        }
 
         private void Awake() {
             Collider = GetComponent<Collider>();
@@ -29,7 +45,7 @@ namespace Combat {
             Owner.OnWeaponUnequip += Delete;
             hitMobs.Add(owner);
             Physics.IgnoreCollision(Owner.GetComponent<Collider>(), Collider);
-            pierceLeft = pierces != 0? pierces: (Owner.EquippedWeapon != null && Owner.EquippedWeapon is Ranged r? r.pierce: 1);
+            PierceLeft = pierces != 0? pierces: (Owner.EquippedWeapon != null && Owner.EquippedWeapon is Ranged r? r.pierce: 1);
             this.multiplier = multiplier;
             RB.AddForce(velocity, ForceMode.VelocityChange);
         }
@@ -60,11 +76,11 @@ namespace Combat {
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
                 Owner.DealKnockback(m, m.transform.position - RB.linearVelocity, 0.5f);
-                if (pierceLeft == 0) {
+                PierceLeft--;
+                onHit.Invoke(m);
+                if (PierceLeft == 0) {
                     // ran out of pierces
                     Delete();
-                } else {
-                    pierceLeft--;
                 }
                 return true;
             }
@@ -72,6 +88,7 @@ namespace Combat {
         }
 
         public virtual void Delete() {
+            onDelete.Invoke();
             Destroy(gameObject);
         }
 
