@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 3222003745292893817}
   - component: {fileID: 5384901221436305359}
   m_Layer: 0
-  m_Name: Blue Lobster
+  m_Name: BlueLobster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -515,6 +515,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829c65b9df40852448ce36b8725d93ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  droppedGears:
+  - detached_shell
+  - battle_damaged_claw
+  - blue_lobsters_shell
+  - battle_claw
   abilityIntervalMin: 4
   abilityIntervalMax: 20
   onAbilityStart:

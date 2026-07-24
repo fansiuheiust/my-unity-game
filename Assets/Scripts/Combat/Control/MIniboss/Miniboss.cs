@@ -1,10 +1,16 @@
+using Loot;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Combat.Miniboss {
     public abstract class Miniboss : MonoBehaviour {
+
+        [SerializeField]
+        string[] droppedGears;
+
         /// <summary>
         /// Used for assigning abilities to the ability chooser
         /// </summary>
@@ -21,6 +27,8 @@ namespace Combat.Miniboss {
             Behaviour = GetComponent<MobBehaviour>();
             Behaviour.onTargetSwitch.AddListener(InterruptAbility);
             StartCoroutine(AbilityUnleasher());
+            droppedGears = droppedGears.Select(x => GearDatabase.Get(x)).Where(x => x.tier <= Mathf.CeilToInt(StageController.DungeonData.CoinTier.Evaluate(StageController.Floor))).Select(x => x.id).ToArray();
+            Owner.OnDeath.AddListener(OnMobDied);
         }
 
         protected virtual void OnDestroy() {
@@ -28,6 +36,13 @@ namespace Combat.Miniboss {
             StopAllCoroutines();
         }
 
+
+        void OnMobDied(Mob _, Mob __) {
+            if (droppedGears.Length == 0) return;
+            string chosenGear = droppedGears[Random.Range(0, droppedGears.Length)];
+            GearItem item = new(chosenGear);
+            item.Spawn(transform.position);
+        }
 
         // ability stuff
 

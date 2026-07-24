@@ -26,6 +26,82 @@ MonoBehaviour:
     - name: Duration
       type: 1
       value: 4
+    prefabs: []
+  - id: ShellSmash
+    name: Shell Smash
+    rawDescription: When your HP falls below {HP Threshold}, increases your atk by
+      {Attack Increase}, walk speed by {Walk Speed Increase}, attack speed by {Attack
+      Speed Increase}, but reduces your defence by {Defence Reduction}. Can only
+      be triggered once.
+    cooldown: 0
+    manaCost: 0
+    triggerKey: 5
+    attributes:
+    - name: HP Threshold
+      type: 2
+      value: 50
+    - name: Attack Increase
+      type: 2
+      value: 50
+    - name: Walk Speed Increase
+      type: 2
+      value: 15
+    - name: Attack Speed Increase
+      type: 2
+      value: 10
+    - name: Defence Reduction
+      type: 2
+      value: 67
+    prefabs: []
+  - id: ClawFling
+    name: Claw Fling
+    rawDescription: Surrounds yourself with {Num Claws} claws in 360 degrees, then
+      flings them away from you, each dealing {Claw Damage} of your attack.
+    cooldown: 5
+    manaCost: 20
+    triggerKey: 4
+    attributes:
+    - name: Num Claws
+      type: 0
+      value: 24
+    - name: Claw Damage
+      type: 2
+      value: 200
+    - name: Claw Speed
+      type: 1
+      value: 60
+    prefabs:
+    - name: Claw
+      prefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
+  - id: Clawler
+    name: Clawler
+    rawDescription: Summons a claw that moves towards the closest target in {Initial
+      Search Radius} units, dealing {Claw Damage} damage. If a hit lands, the claw
+      moves towards another target that is within {Search Radius} units, up to {Redirect
+      Count} times. Using this ability while a claw is active deletes the said claw.
+    cooldown: 5
+    manaCost: 20
+    triggerKey: 4
+    attributes:
+    - name: Claw Damage
+      type: 2
+      value: 180
+    - name: Search Radius
+      type: 1
+      value: 10
+    - name: Redirect Count
+      type: 0
+      value: 5
+    - name: Claw Speed
+      type: 1
+      value: 40
+    - name: Initial Search Radius
+      type: 1
+      value: 30
+    prefabs:
+    - name: Claw
+      prefab: {fileID: 5685350970119927826, guid: e357f9f2fba1cf643aae5cd49901a512, type: 3}
   perkAbilities:
   - perkID: SampleClassAbility
     triggerKey: 3
+    prefabs: []

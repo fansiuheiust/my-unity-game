@@ -31,6 +31,9 @@ namespace Progression.Balance {
         [SerializeField]
         SingleValuedAttribute[] attributes;
 
+        [SerializeField]
+        StringPrefab[] prefabs;
+
         internal Ability Ability { 
             get {
                 Attribute[] attributes = new Attribute[this.attributes.Length];
@@ -41,7 +44,7 @@ namespace Progression.Balance {
                         _ => new PercentageAttribute(this.attributes[i].name, new float[] { this.attributes[i].value/100f })
                     };
                 }
-                return new(id, name, rawDescription, cooldown, manaCost, triggerKey, new(attributes), AbilityDatabase.GetAbilityObject(id));
+                return new(id, name, rawDescription, cooldown, manaCost, triggerKey, new(attributes), AbilityDatabase.GetAbilityObject(id), prefabs.ToDictionary(x=>x.name, x=>x.prefab));
             } 
         }
     }
@@ -49,7 +52,8 @@ namespace Progression.Balance {
     class SerializedPerkAbility {
         [SerializeField] string perkID;
         [SerializeField] AbilityTriggerKey triggerKey;
-        internal PerkAbility Ability => new(StageController.PlayerPerk.ClassPerks[perkID], triggerKey, AbilityDatabase.GetAbilityObject(perkID));
+        [SerializeField] StringPrefab[] prefabs;
+        internal PerkAbility Ability => new(StageController.PlayerPerk.ClassPerks[perkID], triggerKey, AbilityDatabase.GetAbilityObject(perkID), prefabs.ToDictionary(x=>x.name, x=>x.prefab));
     }
 
     [System.Serializable]
@@ -58,6 +62,12 @@ namespace Progression.Balance {
         public PerkAttributeType type;
         [Tooltip("Make sure the value matches the attribute type")]
         public float value;
+    }
+
+    [System.Serializable]
+    class StringPrefab {
+        public string name;
+        public GameObject prefab;
     }
     
 }
