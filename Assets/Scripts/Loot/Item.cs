@@ -33,24 +33,21 @@ namespace Loot {
         [field: SerializeField]
         public SerializedMobStats Stats { get; private set; }
 
-        bool _isStatsInitialized = false;
+        BaseStats @base = null;
+        ScalingStats scaling = null;
 
         public Buff(BaseStats @base, ScalingStats scaling) {
-            Stats = new() {
-                Base = @base,
-                Scaling = scaling,
-            };
-            _isStatsInitialized = true;
+            this.@base = @base;
+            this.scaling = scaling;
         }
 
         Buff() {  }
         protected override void Init(GameObject go) {
             BuffObject obj = go.AddComponent<BuffObject>();
-            if (!_isStatsInitialized) {
-                Stats.InsertHasedStats();
-                _isStatsInitialized = true;
-            }
-            obj.Init((Stats.Base.Clone(), Stats.Scaling.Clone()));
+            if (@base is not null)
+                obj.Init((@base.Clone(), scaling.Clone()));
+            else
+                obj.Init((Stats.Base.Clone(), Stats.Scaling.Clone()));
         }
     }
     [System.Serializable]

@@ -346,7 +346,7 @@ namespace Combat {
         /// <param name="duration">How long should this mob not act (because of knockback) for</param>
         void TakeKnockback(Mob source, Vector3 origin, float duration) {
             if (_isImmune) return;
-            duration *= (1 + source.stats.Final.Knockback) * (1 - stats.Final.KnockbackResistance);
+            duration *= (1 + source.Stats[ScalingAttribute.Knockback]) * (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;
             TakeStun(duration, source);
             _movement.TakeKnockback(origin, duration);
@@ -362,7 +362,7 @@ namespace Combat {
         public void TakeKnockback(Vector3 origin, float duration, bool isInternal = false, float magnitudeMultiplier = 1f) {
             if (_isImmune && !isInternal) return;
             if (!isInternal)
-                duration *= (1 - stats.Final.KnockbackResistance);
+                duration *= (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;
             TakeStun(duration, null, isInternal);
             _movement.TakeKnockback(origin, duration, magnitudeMultiplier);
@@ -417,6 +417,14 @@ namespace Combat {
         public void LoseStats(BaseStats @base, ScalingStats scaling) {
             stats.LoseStats(@base, scaling);
         }
+
+        public void GainBaseStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
+        public void GainScalingStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
+        public void GainScalingStats(params (ScalingAttribute, float)[] scalings) => stats.GainScalingStats(scalings);
+        public void LoseBaseStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
+        public void LoseScalingStats(params (BaseAttribute, float)[] bases) => stats.LoseBaseStats(bases);
+        public void LoseScalingStats(params (ScalingAttribute, float)[] scalings) => stats.LoseScalingStats(scalings);
+
         /// <summary>
         /// Equips the mob with a Gear, and updates the Mob's stats. Unequips the mob's original gear if any.
         /// </summary>
@@ -556,7 +564,7 @@ namespace Combat {
                 OnAttackControlReset?.Invoke();
                 return;
             }
-            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats[ScalingAttribute.AtkSpeed])));
         }
         /// <summary>
         /// Handles mob "lifting" attack button
@@ -567,7 +575,7 @@ namespace Combat {
                 _clickedAttackDuringStun = false;
                 return;
             }
-            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats[ScalingAttribute.AtkSpeed])));
         }
 
         /// <summary>

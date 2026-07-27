@@ -7,6 +7,8 @@ using System;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.ComponentModel;
 using Unity.Collections;
+using System.Linq;
+
 namespace Combat {
     public enum DamageType {
         Melee, Projectile, Magic, True
@@ -117,11 +119,33 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void GainStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                _base += @base;
+                _base.Gain(@base);
             if (scaling is not null)
-                _scaling += scaling;
+                _scaling.Gain(scaling);
             ComputeFinalStats();
         }
+        public void GainBaseStats(params (BaseAttribute, float)[] bases) {
+            if (bases is not null)
+                foreach (var (stat, value) in bases)
+                    _base.Gain(stat, value);
+        }
+
+        public void LoseBaseStats(params (BaseAttribute, float)[] bases) => GainBaseStats(bases.Select(x => (x.Item1, -x.Item2)).ToArray());
+
+        public void GainScalingStats(params (BaseAttribute, float)[] bases) {
+            if (bases is not null)
+                foreach (var (stat, value) in bases)
+                    _scaling.Gain(stat, value);
+        }
+        public void LoseScalingStats(params (BaseAttribute, float)[] bases) => GainScalingStats(bases.Select(x=>(x.Item1, -x.Item2)).ToArray());
+        public void GainScalingStats(params (ScalingAttribute, float)[] scalings) {
+            if (scalings is not null)
+                foreach (var (stat, value) in scalings)
+                    _scaling.Gain(stat, value);
+        }
+        public void LoseScalingStats(params (ScalingAttribute, float)[] scalings) => GainScalingStats(scalings.Select(x=>(x.Item1, -x.Item2)).ToArray());
+
+
         /// <summary>
         /// Unequips the player with a gear, including weapon
         /// </summary>
@@ -129,9 +153,9 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void LoseStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                _base -= @base;
+                _base.Lose(@base);
             if (scaling is not null)
-                _scaling -= scaling;
+                _scaling.Lose(scaling);
             ComputeFinalStats();
         }
 

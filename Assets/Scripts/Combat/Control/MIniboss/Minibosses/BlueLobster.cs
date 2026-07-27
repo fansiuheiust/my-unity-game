@@ -58,12 +58,12 @@ namespace Combat.Miniboss {
 
             DestroyProp(tpCourtesy);
             transform.position = targetPos;
-            Owner.GainStats(null, new(atk: tpAttackBoost));
-            interruptedAction =  ()=>Owner.LoseStats(null, new(atk: tpAttackBoost));
+            Owner.GainScalingStats((BaseAttribute.Atk, tpAttackBoost));
+            interruptedAction =  ()=>Owner.LoseScalingStats((BaseAttribute.Atk, tpAttackBoost));
             Behaviour.State = MobState.Attack;
             yield return new WaitForSeconds(Behaviour.AttackTime);
 
-            Owner.LoseStats(null, new(atk: tpAttackBoost));
+            Owner.LoseScalingStats((BaseAttribute.Atk, tpAttackBoost));
             Behaviour.ResumeStateSwitch();
             EndAbility();
             yield break;
@@ -136,7 +136,7 @@ namespace Combat.Miniboss {
 
         bool usedHalfHPAbility = false;
         void OnDamageTaken(Mob source, float amount) {
-            if (Owner.HP < Owner.Stats.MaxHp / 2 && !usedHalfHPAbility) {
+            if (Owner.HP < Owner.Stats[BaseAttribute.MaxHp] / 2 && !usedHalfHPAbility) {
                 usedHalfHPAbility = true;
                 StartNewAbility(ShellSmash);
             }
@@ -188,8 +188,8 @@ namespace Combat.Miniboss {
                 if (c != null)
                     DestroyProp(c.gameObject);
 
-
-            Owner.GainStats(null, new ScalingStats(atk: shellSmashAtkScale, def: shellSmashDefScale, walkSpeed: shellSmashSpeedScale));
+            Owner.GainScalingStats((BaseAttribute.Atk, shellSmashAtkScale), (BaseAttribute.Def, shellSmashDefScale));
+            Owner.GainScalingStats((ScalingAttribute.WalkSpeed, shellSmashSpeedScale));
             Owner.GetComponent<Rigidbody>().useGravity = true;
             Behaviour.ResumeStateSwitch();
             EndAbility();

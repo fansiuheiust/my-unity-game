@@ -10,7 +10,7 @@ namespace Combat {
     [System.Serializable]
     public class SerializedMobStats {
         public BaseStats Base => new BaseStats(baseStats.ToDictionary(x=>x.stats, x=>x.@base));
-        public ScalingStats Scaling => new ScalingStats(baseStats.ToDictionary(x => x.stats, x => x.scale), hashedScaling.ToDictionary(x => x.stats, x => x.data);
+        public ScalingStats Scaling => new ScalingStats(baseStats.ToDictionary(x => x.stats, x => x.scale), hashedScaling.ToDictionary(x => x.stats, x => x.data));
         public InitialHashedBase[] baseStats;
         public InitialHashedScaling[] hashedScaling;
 

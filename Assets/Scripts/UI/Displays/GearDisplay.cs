@@ -20,9 +20,9 @@ namespace UI {
             return $"<color={STATTEXT}>{name}</color><line-height=0em>\n<align=right>{(b > 0? $"<color={GOODSTAT}>+{b:F0}</color>": b < 0? $"<color={BADSTAT}>{b:F0}</color>" : "")}{(s > 0? $" <color={GOODSTAT}>+{s*100:F0}%</color>": s < 0? $" <color={BADSTAT}>{s * 100:F0}%</color>" : "")}</align></line-height>\n";
         }
         public static string Stats(BaseStats b, ScalingStats s) {
-            string ri = $"{Stat("Attack", b.Atk, s.Atk)}{Stat("Defence", b.Def, s.Def)}{Stat("Max HP", b.MaxHp, s.MaxHp)}{Stat("Max Mana", b.MaxMana, s.MaxMana)}{Stat("Mana Regen", b.ManaRegen, s.ManaRegen)}";
-            // hashed base stat goes here
-            ri += $"\n{Stat("Walk Speed", 0, s.WalkSpeed)}{Stat("Attack Speed", 0, s.AtkSpeed)}{Stat("Crit Rate", 0, s.CritRate)}{Stat("Crit Damage", 0, s.CritDmg)}{Stat("Damage Reduction", 0, s.DmgReduction)}{Stat("Knockback", 0, s.Knockback)}{Stat("Knockback Resistance", 0, s.KnockbackResistance)}";
+            string ri = "";
+            foreach (BaseAttribute h in Enum.GetValues(typeof(BaseAttribute)))
+                ri += Stat(Global.HashedBaseStat(h), b[h], s[h]);
             foreach (ScalingAttribute h in Enum.GetValues(typeof(ScalingAttribute)))
                 ri += $"{Stat(Global.HashedScalingStat(h), 0, s[h])}";
 

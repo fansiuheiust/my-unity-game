@@ -88,6 +88,7 @@ namespace Combat {
             }
         }
 
+        /*
         public static BaseStats operator +(BaseStats a, BaseStats b) {
             BaseStats ri = a.Clone();
             ri.Gain(b);
@@ -98,6 +99,7 @@ namespace Combat {
             ri.Lose(b);
             return ri;
         }
+        */
         public static BaseStats operator *(float a, BaseStats b) {
             Dictionary<BaseAttribute, float> other = new();
             foreach (BaseAttribute stat in typeof(BaseAttribute).GetEnumValues()) {
@@ -171,7 +173,7 @@ namespace Combat {
         }
 
 
-
+        /*
         public static ScalingStats operator +(ScalingStats a, ScalingStats b) {
             ScalingStats ri = a.Clone();
             ri.Gain(b);
@@ -182,6 +184,7 @@ namespace Combat {
             ri.Gain(b);
             return ri;
         }
+        */
         public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
 
 
