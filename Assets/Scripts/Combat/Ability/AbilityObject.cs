@@ -31,7 +31,6 @@ namespace Combat {
             if (ManaCost > 0 && !Owner.ConsumeMana(ManaCost)) { // i.e. insufficient mana
                 return;
             }
-
             AbilityBehaviour();
 
             StartCoroutine(PerformCooldown());

@@ -67,10 +67,6 @@ namespace Combat {
         public MobStats(SerializedMobStats serializedMobStats) {
             _base = serializedMobStats.Base;
             _scaling = serializedMobStats.Scaling;
-            Dictionary<ScalingAttribute, float> d = new();
-            foreach (var s in serializedMobStats.hashedScaling) {
-                d.Add(s.stats, s.data);
-            }
             ComputeFinalStats();
             Hp = _final[BaseAttribute.MaxHp];
             Mana = _final[BaseAttribute.MaxMana];
@@ -104,7 +100,7 @@ namespace Combat {
         /// <returns>Whether mana is consumed, and the mana consumed</returns>
         public (bool consumed, float amount) ConsumeMana(float mana) {
             mana *= (1 - _final[ScalingAttribute.ManaCostReduction]);
-            if (mana < Mana)
+            if (mana > Mana)
                 return (false, 0);
             Mana -= mana;
             return (true, mana);

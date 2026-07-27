@@ -217,7 +217,7 @@ namespace Combat {
                     baseStats.Add(baseStat, result);
             }
             foreach (ScalingAttribute scalingStat in typeof(ScalingAttribute).GetEnumValues()) {
-                float result = scalingStats[scalingStat];
+                float result = scale[scalingStat];
                 result = (!ScalingMins.ContainsKey(scalingStat) || result > ScalingMins[scalingStat])?
                     (!ScalingMaxs.ContainsKey(scalingStat) || result < ScalingMaxs[scalingStat])?
                         result:

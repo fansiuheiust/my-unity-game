@@ -17,52 +17,32 @@ MonoBehaviour:
     name: Detached Shell
     tier: 0
     stats:
-      base:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 25
-        <MaxHp>k__BackingField: 10
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 0.1
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0.1
-        <CritDmg>k__BackingField: 0
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
-      hashedScaling: []
+      baseStats:
+      - stats: 2
+        base: 5
+        scale: 0
+      - stats: 1
+        base: 20
+        scale: 0.2
+      hashedScaling:
+      - stats: 2
+        data: 0.2
     abilityID: 
     type: 1
   - id: blue_lobsters_shell
     name: Blue Lobster's Shell
     tier: 2
     stats:
-      base:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 33
-        <MaxHp>k__BackingField: 10
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 0.12
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0.1
-        <CritDmg>k__BackingField: 0
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
-      hashedScaling: []
+      baseStats:
+      - stats: 2
+        base: 6
+        scale: 0
+      - stats: 1
+        base: 25
+        scale: 0.25
+      hashedScaling:
+      - stats: 2
+        data: 0.2
     abilityID: ShellSmash
     type: 1
   melees:
@@ -70,26 +50,13 @@ MonoBehaviour:
     name: Battle-Damaged Claw
     tier: 0
     stats:
-      base:
-        <Atk>k__BackingField: 5
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0.3
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0.1
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0.1
-        <CritDmg>k__BackingField: 0.2
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
-      hashedScaling: []
+      baseStats:
+      - stats: 0
+        base: 4
+        scale: 0.3
+      hashedScaling:
+      - stats: 0
+        data: 0.1
     abilityID: 
     weaponSpeed: 1
     weaponRange: 2
@@ -98,26 +65,13 @@ MonoBehaviour:
     name: Battle Claw
     tier: 2
     stats:
-      base:
-        <Atk>k__BackingField: 6
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0.3
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0.1
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0.2
-        <CritDmg>k__BackingField: 0.4
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
-      hashedScaling: []
+      baseStats:
+      - stats: 0
+        base: 6
+        scale: 0.3
+      hashedScaling:
+      - stats: 0
+        data: 0.1
     abilityID: ClawFling
     weaponSpeed: 1
     weaponRange: 2
@@ -126,26 +80,13 @@ MonoBehaviour:
     name: Heat-seeking Claw
     tier: 4
     stats:
-      base:
-        <Atk>k__BackingField: 8
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0.4
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0.15
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0.3
-        <CritDmg>k__BackingField: 0.5
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
-      hashedScaling: []
+      baseStats:
+      - stats: 0
+        base: 7
+        scale: 0.5
+      hashedScaling:
+      - stats: 0
+        data: 0.2
     abilityID: Clawler
     weaponSpeed: 1
     weaponRange: 3

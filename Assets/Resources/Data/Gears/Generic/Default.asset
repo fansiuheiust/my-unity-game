@@ -17,7 +17,22 @@ MonoBehaviour:
     name: Generalist
     tier: 3
     stats:
-      baseStats: []
+      baseStats:
+      - stats: 0
+        base: 100
+        scale: 0.1
+      - stats: 1
+        base: 100
+        scale: 0.1
+      - stats: 2
+        base: 100
+        scale: 0.1
+      - stats: 3
+        base: 100
+        scale: 0.1
+      - stats: 4
+        base: 100
+        scale: 0.1
       hashedScaling:
       - stats: 0
         data: 0.1
