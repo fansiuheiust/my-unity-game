@@ -28,12 +28,12 @@ public static class Global {
     /// </summary>
     /// <param name="h">hashed scaling stat to query</param>
     /// <exception cref="System.NotImplementedException"> if the string of the hashed scaling stat is still not added</exception>
-    public static string HashedScalingStat(HashedScalingStats h) => h switch {
-        HashedScalingStats.PhysicalDmg => "Physical Damage",
-        HashedScalingStats.ProjectileDmg => "Projectile Damage",
-        HashedScalingStats.MagicDmg => "Magic Damage",
-        HashedScalingStats.AttackRange => "Attack Range",
-        HashedScalingStats.ManaCostReduction => "Mana Cost Reduction",
+    public static string HashedScalingStat(ScalingAttribute h) => h switch {
+        ScalingAttribute.PhysicalDmg => "Physical Damage",
+        ScalingAttribute.ProjectileDmg => "Projectile Damage",
+        ScalingAttribute.MagicDmg => "Magic Damage",
+        ScalingAttribute.AttackRange => "Attack Range",
+        ScalingAttribute.ManaCostReduction => "Mana Cost Reduction",
         _ => throw new System.NotImplementedException($"Please add string of {h} to GlobalDataStructures.cs")
     };
 

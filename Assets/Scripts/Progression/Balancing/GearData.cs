@@ -57,7 +57,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Armor(id, name, tier, stats.@base, stats.scaling, type, Ability);
+                return new Combat.Armor(id, name, tier, stats.Base, stats.Scaling, type, Ability);
             }
         }
     }
@@ -67,7 +67,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Melee(id, name, tier, stats.@base, stats.scaling, weaponSpeed, weaponRange, prefabName, Ability);
+                return new Combat.Melee(id, name, tier, stats.Base, stats.Scaling, weaponSpeed, weaponRange, prefabName, Ability);
             }
         }
     }
@@ -78,7 +78,7 @@ namespace Progression.Balance {
         internal override Gear Gear {
             get {
                 Gear _ = base.Gear;
-                return new Combat.Ranged(id, name, tier, stats.@base, stats.scaling, weaponSpeed, weaponRange, pierce, prefabName, Ability);
+                return new Combat.Ranged(id, name, tier, stats.Base, stats.Scaling, weaponSpeed, weaponRange, pierce, prefabName, Ability);
             }
         }
     }

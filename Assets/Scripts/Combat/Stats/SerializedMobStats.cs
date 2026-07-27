@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -8,26 +9,23 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class SerializedMobStats {
-        [field: SerializeField]
-        public BaseStats @base;
-        [field: SerializeField]
-        public ScalingStats scaling;
-        [field: SerializeField]
+        public BaseStats Base => new BaseStats(baseStats.ToDictionary(x=>x.stats, x=>x.@base));
+        public ScalingStats Scaling => new ScalingStats(baseStats.ToDictionary(x => x.stats, x => x.scale), hashedScaling.ToDictionary(x => x.stats, x => x.data);
+        public InitialHashedBase[] baseStats;
         public InitialHashedScaling[] hashedScaling;
-
-        public void InsertHasedStats() {
-            Dictionary<HashedScalingStats, float> keyValuePairs = new();
-            foreach (var hash in hashedScaling)
-                keyValuePairs.Add(hash.stats, hash.data);
-            scaling.InitializeHash(keyValuePairs);
-        }
 
         [System.Serializable]
         public struct InitialHashedScaling {
             [field: SerializeField]
-            public HashedScalingStats stats;
+            public ScalingAttribute stats;
             [field: SerializeField]
             public float data;
+        }
+
+        [System.Serializable]
+        public struct InitialHashedBase {
+            public BaseAttribute stats;
+            public float @base, scale;
         }
 
 

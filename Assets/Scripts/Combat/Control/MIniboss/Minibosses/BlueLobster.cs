@@ -122,7 +122,7 @@ namespace Combat.Miniboss {
             yield return new WaitForSeconds(spinClawTime);
 
             Owner.Equip(w);
-            Dictionary<HashedScalingStats, float> d = new() { { HashedScalingStats.AttackRange, spinClawRangeBoost } };
+            Dictionary<ScalingAttribute, float> d = new() { { ScalingAttribute.AttackRange, spinClawRangeBoost } };
             Owner.GainStats(null, new ScalingStats(otherScaling: d));
             interruptedAction = () => Owner.LoseStats(null, new ScalingStats(otherScaling: d));
             Behaviour.State = MobState.Attack;

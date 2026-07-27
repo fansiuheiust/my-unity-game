@@ -235,7 +235,7 @@ namespace Combat {
         /// <summary>
         /// Current attack range of the owner
         /// </summary>
-        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
+        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[ScalingAttribute.AttackRange]) : 0;
 
         public float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
 

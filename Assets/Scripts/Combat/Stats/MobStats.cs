@@ -54,8 +54,8 @@ namespace Combat {
             _base = @base.Clone();
             _scaling = scaling.Clone();
             ComputeFinalStats();
-            Hp = _final.MaxHp;
-            Mana = _final.MaxMana;
+            Hp = _final[BaseAttribute.MaxHp];
+            Mana = _final[BaseAttribute.MaxMana];
         }
 
         /// <summary>
@@ -63,25 +63,23 @@ namespace Combat {
         /// </summary>
         /// <param name="serializedMobStats">The mob stats as set in the inspector, hashed stats array must NOT contain double entry</param>
         public MobStats(SerializedMobStats serializedMobStats) {
-            _base = serializedMobStats.@base;
-            _scaling = serializedMobStats.scaling;
-            Dictionary<HashedScalingStats, float> d = new();
+            _base = serializedMobStats.Base;
+            _scaling = serializedMobStats.Scaling;
+            Dictionary<ScalingAttribute, float> d = new();
             foreach (var s in serializedMobStats.hashedScaling) {
                 d.Add(s.stats, s.data);
             }
-            _scaling.InitializeHash(d);
-
             ComputeFinalStats();
-            Hp = _final.MaxHp;
-            Mana = _final.MaxMana;
+            Hp = _final[BaseAttribute.MaxHp];
+            Mana = _final[BaseAttribute.MaxMana];
         }
-        public void ResetHp() => Hp = _final.MaxHp;
+        public void ResetHp() => Hp = _final[BaseAttribute.MaxHp];
 
         // damage calculation
-        public float UnclassifiedDmg => _final.Atk * (1 + _final.Crit);
-        public float MeleeDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.PhysicalDmg]);
-        public float ProjectileDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.ProjectileDmg]);
-        public float MagicDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.MagicDmg]);
+        public float UnclassifiedDmg => _final[BaseAttribute.Atk] * (1 + _final.Crit);
+        public float MeleeDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.PhysicalDmg]);
+        public float ProjectileDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.ProjectileDmg]);
+        public float MagicDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.MagicDmg]);
 
         /// <returns>
         /// Default definition of dead: hp < 1
@@ -94,7 +92,7 @@ namespace Combat {
         /// <example>
         /// If <c>DmgTakenMultiplier</c> = 0.6, final damage taken = original damage * 0.6
         /// </example>
-        public float DmgTakenMultiplier => (1 - _final.Def / (100 + _final.Def)) * (1 - _final.DmgReduction);
+        public float DmgTakenMultiplier => (1 - _final[BaseAttribute.Def] / (100 + _final[BaseAttribute.Def])) * (1 - _final[ScalingAttribute.DmgReduction]);
 
         // mana change
         /// <summary>
@@ -103,7 +101,7 @@ namespace Combat {
         /// <param name="mana">Amount of mana to be consumed</param>
         /// <returns>Whether mana is consumed, and the mana consumed</returns>
         public (bool consumed, float amount) ConsumeMana(float mana) {
-            mana *= (1 - _final[HashedScalingStats.ManaCostReduction]);
+            mana *= (1 - _final[ScalingAttribute.ManaCostReduction]);
             if (mana < Mana)
                 return (false, 0);
             Mana -= mana;
@@ -144,8 +142,8 @@ namespace Combat {
         public void ComputeFinalStats() {
             _final = _base * Scaling;
             if (OnMovementSpeedChange is not null)
-                OnMovementSpeedChange(_final.WalkSpeed);
-            OnAttackRangeChange?.Invoke(_final[HashedScalingStats.AttackRange]);
+                OnMovementSpeedChange(_final[ScalingAttribute.WalkSpeed]);
+            OnAttackRangeChange?.Invoke(_final[ScalingAttribute.AttackRange]);
         }
 
         // Damage taking

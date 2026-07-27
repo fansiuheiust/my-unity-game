@@ -23,7 +23,7 @@ namespace UI {
             string ri = $"{Stat("Attack", b.Atk, s.Atk)}{Stat("Defence", b.Def, s.Def)}{Stat("Max HP", b.MaxHp, s.MaxHp)}{Stat("Max Mana", b.MaxMana, s.MaxMana)}{Stat("Mana Regen", b.ManaRegen, s.ManaRegen)}";
             // hashed base stat goes here
             ri += $"\n{Stat("Walk Speed", 0, s.WalkSpeed)}{Stat("Attack Speed", 0, s.AtkSpeed)}{Stat("Crit Rate", 0, s.CritRate)}{Stat("Crit Damage", 0, s.CritDmg)}{Stat("Damage Reduction", 0, s.DmgReduction)}{Stat("Knockback", 0, s.Knockback)}{Stat("Knockback Resistance", 0, s.KnockbackResistance)}";
-            foreach (HashedScalingStats h in Enum.GetValues(typeof(HashedScalingStats)))
+            foreach (ScalingAttribute h in Enum.GetValues(typeof(ScalingAttribute)))
                 ri += $"{Stat(Global.HashedScalingStat(h), 0, s[h])}";
 
             return ri;

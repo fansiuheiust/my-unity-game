@@ -37,8 +37,8 @@ namespace Loot {
 
         public Buff(BaseStats @base, ScalingStats scaling) {
             Stats = new() {
-                @base = @base,
-                scaling = scaling,
+                Base = @base,
+                Scaling = scaling,
             };
             _isStatsInitialized = true;
         }
@@ -50,7 +50,7 @@ namespace Loot {
                 Stats.InsertHasedStats();
                 _isStatsInitialized = true;
             }
-            obj.Init((Stats.@base.Clone(), Stats.scaling.Clone()));
+            obj.Init((Stats.Base.Clone(), Stats.Scaling.Clone()));
         }
     }
     [System.Serializable]
