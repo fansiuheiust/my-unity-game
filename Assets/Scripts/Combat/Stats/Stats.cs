@@ -40,25 +40,9 @@ namespace Combat {
 
         public static readonly float BaseEpsilon = 0.0625f;
 
-        [field: SerializeField]
-        public float Atk { get; protected set; }
-        [field: SerializeField]
-        public float Def { get; protected set; }
-        [field: SerializeField]
-        public float MaxHp { get; protected set; }
-        [field: SerializeField]
-        public float MaxMana { get; protected set; }
-        [field: SerializeField]
-        public float ManaRegen { get; protected set; }
-
         protected readonly Dictionary<HashedBaseStats, float> baseStats = new();
 
-        public BaseStats(float atk = 0, float def = 0, float maxHp = 0, float maxMana = 0, float manaRegen = 0, Dictionary<HashedBaseStats, float> baseStats = null) {
-            Atk = atk;
-            Def = def;
-            MaxHp = maxHp;
-            MaxMana = maxMana;
-            ManaRegen = manaRegen;
+        public BaseStats(Dictionary<HashedBaseStats, float> baseStats = null) {
             if (baseStats != null)
                 this.baseStats = baseStats.ToDictionary(d=>d.Key, d=>d.Value);
         }
@@ -86,7 +70,7 @@ namespace Combat {
                 if (Mathf.Abs(result) > BaseEpsilon)
                     other.Add(stat, result);
             }
-            return new(a.Atk + b.Atk, a.Def + b.Def, a.MaxHp + b.MaxHp, a.MaxMana + b.MaxMana, a.ManaRegen + b.ManaRegen, other);
+            return new(other);
         }
         public static BaseStats operator -(BaseStats a, BaseStats b) {
             Dictionary<HashedBaseStats, float> other = new();
@@ -95,7 +79,7 @@ namespace Combat {
                 if (Mathf.Abs(result) > BaseEpsilon)
                     other.Add(stat, result);
             }
-            return new(a.Atk - b.Atk, a.Def - b.Def, a.MaxHp - b.MaxHp, a.MaxMana - b.MaxMana, a.ManaRegen - b.ManaRegen);
+            return new(other);
         }
         public static BaseStats operator *(float a, BaseStats b) {
             Dictionary<HashedBaseStats, float> other = new();
@@ -104,7 +88,7 @@ namespace Combat {
                 if (Mathf.Abs(result) > BaseEpsilon)
                     other.Add(stat, result);
             }
-            return new(a * b.Atk, a * b.Def, a * b.MaxHp, a * b.MaxMana, a * b.ManaRegen);
+            return new(other);
         }
     }
 
@@ -113,21 +97,9 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class ScalingStats : BaseStats {
-        [field: SerializeField]
-        public float WalkSpeed { get; protected set; }
-        [field: SerializeField]
-        public float AtkSpeed { get; protected set; }
-        [field: SerializeField]
-        public float CritRate { get; protected set; }
-        [field: SerializeField]
-        public float CritDmg { get; protected set; }
-        [field: SerializeField]
-        public float DmgReduction { get; protected set; }
-        [field: SerializeField]
-        public float Knockback { get; protected set; }
-        [field: SerializeField]
-        public float KnockbackResistance { get; protected set; }
-        public Dictionary<HashedScalingStats, float> OtherScaling { get; protected set; } = new();
+
+        public static readonly float ScalingEpsilon = 0.00006103515625f;
+        readonly Dictionary<HashedScalingStats, float> scalingStats = new();
 
         /// <summary>
         /// 
@@ -145,25 +117,16 @@ namespace Combat {
         /// <param name="knockback">Self-documenting</param>
         /// <param name="knockbackResistance">Self-documenting</param>
         /// <param name="otherScaling">Hashed scaling stats. If not given an argument, an new one will be allocated.</param>
-        public ScalingStats(float atk = 0, float def = 0, float maxHp = 0, float maxMana = 0, float manaRegen = 0, float walkSpeed = 0, float atkSpeed = 0, float critRate = 0, float critDmg = 0, float dmgReduction = 0, float knockback = 0, float knockbackResistance = 0, Dictionary<HashedBaseStats, float> baseStats = null, Dictionary<HashedScalingStats, float> otherScaling = null) : base(atk, def, maxHp, maxMana, manaRegen, baseStats) {
-            WalkSpeed = walkSpeed;
-            AtkSpeed = atkSpeed;
-            CritRate = critRate;
-            CritDmg = critDmg;
-            DmgReduction = dmgReduction;
-            Knockback = knockback;
-            KnockbackResistance = knockbackResistance;
+        public ScalingStats(Dictionary<HashedBaseStats, float> baseStats = null, Dictionary<HashedScalingStats, float> otherScaling = null) : base(baseStats) {
             if (otherScaling is not null)
-                OtherScaling = otherScaling.ToDictionary(x=>x.Key, x=>x.Value);
+                scalingStats = otherScaling.ToDictionary(x=>x.Key, x=>x.Value);
         }
 
         public new ScalingStats Clone() {
-            return new ScalingStats(Atk, Def, MaxHp, MaxMana, ManaRegen, WalkSpeed, AtkSpeed, CritRate, CritDmg, DmgReduction, Knockback, KnockbackResistance, baseStats, OtherScaling);
+            return new ScalingStats(baseStats, scalingStats);
         }
 
-        public static readonly float ScalingEpsilon = 0.00006103515625f;
-
-        public float Crit { get => Random.value < CritRate ? CritDmg : 0; }
+        public float Crit { get => Random.value < this[HashedScalingStats.CritRate] ? this[HashedScalingStats.CritDmg] : 0; }
         public static ScalingStats operator +(ScalingStats a, ScalingStats b) {
             Dictionary<HashedBaseStats, float> otherBase = new();
             foreach (HashedBaseStats stat in typeof(HashedBaseStats).GetEnumValues()) {
@@ -171,13 +134,13 @@ namespace Combat {
                 if (Mathf.Abs(result) > ScalingEpsilon)
                     otherBase.Add(stat, result);
             }
-            Dictionary<HashedScalingStats, float> other = new();
+            Dictionary<HashedScalingStats, float> otherScaling = new();
             foreach (HashedScalingStats stat in typeof(HashedScalingStats).GetEnumValues()) {
                 float result = a[stat] + b[stat];
                 if (Mathf.Abs(result) > ScalingEpsilon)
-                    other.Add(stat, result);
+                    otherScaling.Add(stat, result);
             }
-            return new(a.Atk + b.Atk, a.Def + b.Def, a.MaxHp + b.MaxHp, a.MaxMana + b.MaxMana, a.ManaRegen + b.ManaRegen, a.WalkSpeed + b.WalkSpeed, a.AtkSpeed + b.AtkSpeed, a.CritRate + b.CritRate, a.CritDmg + b.CritDmg, a.DmgReduction + b.DmgReduction, a.Knockback + b.Knockback, a.KnockbackResistance + b.KnockbackResistance, otherBase, other);
+            return new(otherBase, otherScaling);
         }
         public static ScalingStats operator -(ScalingStats a, ScalingStats b) {
             Dictionary<HashedBaseStats, float> otherBase = new();
@@ -186,74 +149,87 @@ namespace Combat {
                 if (Mathf.Abs(result) > ScalingEpsilon)
                     otherBase.Add(stat, result);
             }
-            Dictionary<HashedScalingStats, float> other = new();
+            Dictionary<HashedScalingStats, float> otherScaling = new();
             foreach (HashedScalingStats stat in typeof(HashedScalingStats).GetEnumValues()) {
                 float result = a[stat] - b[stat];
                 if (Mathf.Abs(result) > ScalingEpsilon)
-                    other.Add(stat, result);
+                    otherScaling.Add(stat, result);
             }
-            return new(a.Atk - b.Atk, a.Def - b.Def, a.MaxHp - b.MaxHp, a.MaxMana - b.MaxMana, a.ManaRegen - b.ManaRegen, a.WalkSpeed - b.WalkSpeed, a.AtkSpeed - b.AtkSpeed, a.CritRate - b.CritRate, a.CritDmg - b.CritDmg, a.DmgReduction - b.DmgReduction, a.Knockback - b.Knockback, a.KnockbackResistance - b.KnockbackResistance, otherBase, other);
+            return new(otherBase, otherScaling);
         }
         public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
 
 
         public float this[HashedScalingStats stat] {
-            get => OtherScaling.ContainsKey(stat) ? OtherScaling[stat] : 0;
+            get => scalingStats.ContainsKey(stat) ? scalingStats[stat] : 0;
             protected set {
-                if (OtherScaling.ContainsKey(stat)) OtherScaling[stat] = value;
-                else OtherScaling.Add(stat, value);
+                if (scalingStats.ContainsKey(stat)) scalingStats[stat] = value;
+                else scalingStats.Add(stat, value);
             }
         }
-        public void InitializeHash(Dictionary<HashedScalingStats, float> d) { if (d is not null) OtherScaling = d; }
-
-
     }
 
     /// <summary>
     /// The stats obtained by scaling the BaseStats by the (1+percentage), and keeping the percentage stats the same
     /// </summary>
     [System.Serializable]
-    public class FinalStats : ScalingStats {
-        public FinalStats(BaseStats @base, ScalingStats scale) : base(@base.Atk * (1 + scale.Atk), @base.Def * (1 + scale.Def), @base.MaxHp * (1 + scale.MaxHp), @base.MaxMana * (1 + scale.MaxMana), @base.ManaRegen * (1 + scale.ManaRegen), scale.WalkSpeed, scale.AtkSpeed, scale.CritRate, scale.CritDmg, scale.DmgReduction, scale.Knockback, scale.KnockbackResistance) {
-            Normalize();
-            NormalizeHashedScale(scale);
-        }
-        public static readonly Dictionary<HashedScalingStats, float> OtherScalingMins = new() {
-        { HashedScalingStats.PhysicalDmg, -1 },
-        { HashedScalingStats.ProjectileDmg, -1 },
-        { HashedScalingStats.MagicDmg, -1 },
-        { HashedScalingStats.AttackRange, -0.75f },
-    }, OtherScalingMaxs = new() {
-        { HashedScalingStats.AttackRange, 1.5f },
-        { HashedScalingStats.ManaCostReduction, 0.95f }
-    };
-        void Normalize() {
-            Atk = Atk > 0 ? Atk : 0;
-            Def = Def > 0 ? Def : 0;
-            MaxHp = MaxHp > 1 ? MaxHp : 1;
-            MaxMana = MaxMana > 1 ? MaxMana : 1;
-            WalkSpeed = WalkSpeed > -1 ? WalkSpeed < 10 ? WalkSpeed : 10 : -1;
-            AtkSpeed = AtkSpeed > -0.5f ? AtkSpeed < 1 ? AtkSpeed : 1 : -0.5f;
-            CritRate = CritRate > 0 ? CritRate : 0;
-            CritDmg = CritDmg > -1 ? CritDmg : -1;
-            DmgReduction = DmgReduction < 0.96875f ? DmgReduction : 0.96875f;
-            Knockback = Knockback > -1 ? Knockback < 10 ? Knockback : 10 : -1;
-            KnockbackResistance = KnockbackResistance > -10 ? KnockbackResistance < 1 ? KnockbackResistance : 1 : -10;
-        }
+    public class FinalStats {
 
-        void NormalizeHashedScale(ScalingStats scale) {
-            foreach (var x in new List<HashedScalingStats>(scale.OtherScaling.Keys)) {
-                float value = scale.OtherScaling[x];
-                OtherScaling.Add(x,
-                    (!OtherScalingMins.ContainsKey(x) || value > OtherScalingMins[x]) ?
-                        (!OtherScalingMaxs.ContainsKey(x) || value < OtherScalingMaxs[x]) ?
-                            value :
-                        OtherScalingMaxs[x] :
-                    OtherScalingMins[x]
-                );
+        readonly Dictionary<HashedBaseStats, float> baseStats = new();
+        readonly Dictionary<HashedScalingStats, float> scalingStats = new();
+        public FinalStats(BaseStats @base, ScalingStats scale) {
+            foreach (HashedBaseStats baseStat in typeof(HashedBaseStats).GetEnumValues()) {
+                float result = @base[baseStat] > 0 ? @base[baseStat] * Mathf.Max(0, 1 + scale[baseStat]) : @base[baseStat] * Mathf.Max(0f, 1 - scale[baseStat]);
+                result = (!BaseMins.ContainsKey(baseStat) || result > BaseMins[baseStat]) ?
+                    (!BaseMaxs.ContainsKey(baseStat) || result < BaseMaxs[baseStat]) ?
+                        result :
+                    BaseMaxs[baseStat] :
+                BaseMins[baseStat];
+                if (Mathf.Abs(result) > BaseStats.BaseEpsilon)
+                    baseStats.Add(baseStat, result);
+            }
+            foreach (HashedScalingStats scalingStat in typeof(HashedScalingStats).GetEnumValues()) {
+                float result = scalingStats[scalingStat];
+                result = (!ScalingMins.ContainsKey(scalingStat) || result > ScalingMins[scalingStat])?
+                    (!ScalingMaxs.ContainsKey(scalingStat) || result < ScalingMaxs[scalingStat])?
+                        result:
+                    ScalingMaxs[scalingStat]:
+                ScalingMins[scalingStat];
+                if (Mathf.Abs(result) > ScalingStats.ScalingEpsilon)
+                    scalingStats.Add(scalingStat, result);
             }
         }
-        public new float this[HashedScalingStats scale] => OtherScaling.ContainsKey(scale)? OtherScaling[scale]: 0;
+
+        public static readonly Dictionary<HashedBaseStats, float> BaseMins = new() {
+            { HashedBaseStats.Atk, 0 },
+            { HashedBaseStats.Def, 0 },
+            { HashedBaseStats.MaxHp, 1 },
+            { HashedBaseStats.MaxMana, 1 }
+        }, BaseMaxs = new() {
+
+        };
+
+        public static readonly Dictionary<HashedScalingStats, float> ScalingMins = new() {
+            { HashedScalingStats.WalkSpeed, -1 },
+            { HashedScalingStats.AtkSpeed, -0.5f },
+            { HashedScalingStats.CritRate, 0 },
+            { HashedScalingStats.CritDmg, -1 },
+            { HashedScalingStats.Knockback, -1 },
+            {HashedScalingStats.KnockbackResistance, -10 },
+            { HashedScalingStats.PhysicalDmg, -1 },
+            { HashedScalingStats.ProjectileDmg, -1 },
+            { HashedScalingStats.MagicDmg, -1 },
+            { HashedScalingStats.AttackRange, -0.75f },
+        }, ScalingMaxs = new() {
+            { HashedScalingStats.WalkSpeed, 10 },
+            { HashedScalingStats.AtkSpeed, 1 },
+            { HashedScalingStats.DmgReduction, 0.96875f },
+            { HashedScalingStats.Knockback, 10 },
+            { HashedScalingStats.KnockbackResistance, 1 },
+            { HashedScalingStats.AttackRange, 1.5f },
+            { HashedScalingStats.ManaCostReduction, 0.95f }
+        };
+        public float this[HashedScalingStats scale] => scalingStats.ContainsKey(scale)? scalingStats[scale]: 0;
     }
 }
 
