@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -37,7 +38,7 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class BaseStats {
-        public event System.Action<BaseAttribute> OnBaseStatChanged;
+        public event System.Action<BaseAttribute> OnBaseStatChange;
 
         public static readonly float BaseEpsilon = 0.0625f;
         protected virtual float Epsilon => BaseEpsilon;
@@ -62,16 +63,17 @@ namespace Combat {
             protected set {
                 if (baseStats.ContainsKey(stat)) baseStats[stat] = value;
                 else baseStats.Add(stat, value);
+
+                if (Mathf.Abs(this[stat]) < Epsilon && baseStats.ContainsKey(stat))
+                    baseStats.Remove(stat);
             }
         }
 
         public void Gain(BaseAttribute stat, float value) {
             if (Mathf.Abs(value) > Epsilon) {
                 this[stat] += value;
-                if (Mathf.Abs(this[stat]) < Epsilon) {
-                    baseStats.Remove(stat);
-                }
-                OnBaseStatChanged?.Invoke(stat);
+
+                OnBaseStatChange?.Invoke(stat);
             }
         }
 
@@ -116,7 +118,7 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class ScalingStats : BaseStats {
-        public event System.Action<ScalingAttribute> OnScalingStatChanged;
+        public event System.Action<ScalingAttribute> OnScalingStatChange;
 
         public static readonly float ScalingEpsilon = 0.00006103515625f;
 
@@ -152,10 +154,7 @@ namespace Combat {
         public void Gain(ScalingAttribute stat, float value) {
             if (Mathf.Abs(value) > Epsilon) {
                 this[stat] += value;
-                if (Mathf.Abs(this[stat]) < Epsilon) {
-                    scalingStats.Remove(stat);
-                }
-                OnScalingStatChanged?.Invoke(stat);
+                OnScalingStatChange?.Invoke(stat);
             }
         }
         public void Lose(ScalingAttribute stat, float value) => Gain(stat, -value);
@@ -193,6 +192,9 @@ namespace Combat {
             protected set {
                 if (scalingStats.ContainsKey(stat)) scalingStats[stat] = value;
                 else scalingStats.Add(stat, value);
+
+                if (Mathf.Abs(this[stat]) < Epsilon && scalingStats.ContainsKey(stat))
+                    scalingStats.Remove(stat);
             }
         }
     }
@@ -202,30 +204,60 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class FinalStats {
-
+        readonly BaseStats @base;
+        readonly ScalingStats scaling;
         readonly Dictionary<BaseAttribute, float> baseStats = new();
         readonly Dictionary<ScalingAttribute, float> scalingStats = new();
         public FinalStats(BaseStats @base, ScalingStats scale) {
+            this.@base = @base;
+            scaling = scale;
             foreach (BaseAttribute baseStat in typeof(BaseAttribute).GetEnumValues()) {
-                float result = @base[baseStat] > 0 ? @base[baseStat] * Mathf.Max(0, 1 + scale[baseStat]) : @base[baseStat] * Mathf.Max(0f, 1 - scale[baseStat]);
-                result = (!BaseMins.ContainsKey(baseStat) || result > BaseMins[baseStat]) ?
-                    (!BaseMaxs.ContainsKey(baseStat) || result < BaseMaxs[baseStat]) ?
-                        result :
-                    BaseMaxs[baseStat] :
-                BaseMins[baseStat];
-                if (Mathf.Abs(result) > BaseStats.BaseEpsilon)
-                    baseStats.Add(baseStat, result);
+                Compute(baseStat);
             }
             foreach (ScalingAttribute scalingStat in typeof(ScalingAttribute).GetEnumValues()) {
-                float result = scale[scalingStat];
-                result = (!ScalingMins.ContainsKey(scalingStat) || result > ScalingMins[scalingStat])?
-                    (!ScalingMaxs.ContainsKey(scalingStat) || result < ScalingMaxs[scalingStat])?
-                        result:
-                    ScalingMaxs[scalingStat]:
-                ScalingMins[scalingStat];
-                if (Mathf.Abs(result) > ScalingStats.ScalingEpsilon)
-                    scalingStats.Add(scalingStat, result);
+                Compute(scalingStat);
             }
+
+            @base.OnBaseStatChange += Compute;
+            scaling.OnBaseStatChange += Compute;
+            scaling.OnScalingStatChange += Compute;
+        }
+
+        /// <summary>
+        /// Recomputes for a signle attribute
+        /// </summary>
+        /// <param name="att">attribute to recompute</param>
+        public void Compute(BaseAttribute att) {
+            float result = @base[att] > 0 ? @base[att] * Mathf.Max(0, 1 + scaling[att]) : @base[att] * Mathf.Max(0f, 1 - scaling[att]);
+            result = (!BaseMins.ContainsKey(att) || result > BaseMins[att]) ?
+                (!BaseMaxs.ContainsKey(att) || result < BaseMaxs[att]) ?
+                    result :
+                BaseMaxs[att] :
+            BaseMins[att];
+            // cases with action: larger than epsilon and not in dict, larger than epsilon and in dict, smaller than epsilon and in dict
+            if (Mathf.Abs(result) > BaseStats.BaseEpsilon) {
+                if (baseStats.ContainsKey(att))
+                    baseStats[att] = result;
+                else
+                    baseStats.Add(att, result);
+            } else if (baseStats.ContainsKey(att))
+                baseStats.Remove(att);
+        }
+
+        public void Compute(ScalingAttribute att) {
+            float result = scaling[att];
+            result = (!ScalingMins.ContainsKey(att) || result > ScalingMins[att]) ?
+                (!ScalingMaxs.ContainsKey(att) || result < ScalingMaxs[att]) ?
+                    result :
+                ScalingMaxs[att] :
+            ScalingMins[att];
+            if (Mathf.Abs(result) > ScalingStats.ScalingEpsilon) {
+                if (scalingStats.ContainsKey(att))
+                    scalingStats[att] = result;
+                else
+                    scalingStats.Add(att, result);
+            } else if (scalingStats.ContainsKey(att))
+                scalingStats.Remove(att);
         }
 
         public static readonly Dictionary<BaseAttribute, float> BaseMins = new() {

@@ -216,7 +216,7 @@ namespace Combat {
             stats.OnAttackRangeChange += ChangeAttackRange;
 
             // raises all stats change events
-            stats.ComputeFinalStats();
+            stats.RaiseStatChangeEvents();
 
             // GC
             initialStats = null;
@@ -419,10 +419,10 @@ namespace Combat {
         }
 
         public void GainBaseStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
-        public void GainScalingStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
+        public void GainScalingStats(params (BaseAttribute, float)[] bases) => stats.GainScalingStats(bases);
         public void GainScalingStats(params (ScalingAttribute, float)[] scalings) => stats.GainScalingStats(scalings);
         public void LoseBaseStats(params (BaseAttribute, float)[] bases) => stats.GainBaseStats(bases);
-        public void LoseScalingStats(params (BaseAttribute, float)[] bases) => stats.LoseBaseStats(bases);
+        public void LoseScalingStats(params (BaseAttribute, float)[] bases) => stats.LoseScalingStats(bases);
         public void LoseScalingStats(params (ScalingAttribute, float)[] scalings) => stats.LoseScalingStats(scalings);
 
         /// <summary>
