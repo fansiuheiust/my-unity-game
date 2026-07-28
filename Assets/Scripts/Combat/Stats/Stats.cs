@@ -24,11 +24,11 @@ namespace Combat {
 
     [System.Serializable]
 
-    public enum BaseAttribute {
+    public enum BaseAttribute { // do NOT change the value of any of these enums
         Atk, Def, MaxHp, MaxMana, ManaRegen
     }
 
-    public enum ScalingAttribute {
+    public enum ScalingAttribute { // do NOT change the value of any of these enums
         WalkSpeed, AtkSpeed, CritRate, CritDmg, DmgReduction, Knockback, KnockbackResistance, PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange, ManaCostReduction
     }
 
@@ -43,11 +43,16 @@ namespace Combat {
         public static readonly float BaseEpsilon = 0.0625f;
         protected virtual float Epsilon => BaseEpsilon;
 
-        protected readonly Dictionary<BaseAttribute, float> baseStats = new();
+        protected readonly float[] baseStats = new float[typeof(BaseAttribute).GetEnumValues().Length];
 
         public BaseStats(Dictionary<BaseAttribute, float> baseStats = null) {
             if (baseStats != null)
-                this.baseStats = baseStats.ToDictionary(d=>d.Key, d=>d.Value);
+                foreach (var b in baseStats)
+                    this[b.Key] = b.Value;
+        }
+
+        protected BaseStats(float[] baseStats) {
+            this.baseStats = baseStats.ToArray();
         }
 
         /// <summary>
@@ -59,34 +64,29 @@ namespace Combat {
         }
 
         public float this[BaseAttribute stat] {
-            get => baseStats.ContainsKey(stat) ? baseStats[stat] : 0;
+            get => baseStats[(int)stat];
             protected set {
-                if (baseStats.ContainsKey(stat)) baseStats[stat] = value;
-                else baseStats.Add(stat, value);
-
-                if (Mathf.Abs(this[stat]) < Epsilon && baseStats.ContainsKey(stat))
-                    baseStats.Remove(stat);
+                float og = baseStats[(int)stat];
+                baseStats[(int)stat] = value;
+                if (Mathf.Abs(og - value) > BaseEpsilon)
+                    OnBaseStatChange?.Invoke(stat);
             }
         }
 
         public void Gain(BaseAttribute stat, float value) {
-            if (Mathf.Abs(value) > Epsilon) {
-                this[stat] += value;
-
-                OnBaseStatChange?.Invoke(stat);
-            }
+            this[stat] += value;
         }
 
         public void Lose(BaseAttribute stat, float value) => Gain(stat, -value);
 
         public void Gain(BaseStats other) {
-            foreach (var x in other.baseStats) {
-                Gain(x.Key, x.Value);
+            for (int i = 0; i < other.baseStats.Length; i++) {
+                Gain((BaseAttribute)i, other.baseStats[i]);
             }
         }
         public void Lose(BaseStats other) {
-            foreach (var x in other.baseStats) {
-                Lose(x.Key, x.Value);
+            for (int i = 0; i < other.baseStats.Length; i++) {
+                Lose((BaseAttribute)i, other.baseStats[i]);
             }
         }
 
@@ -124,7 +124,7 @@ namespace Combat {
 
         protected override float Epsilon => ScalingEpsilon;
 
-        readonly Dictionary<ScalingAttribute, float> scalingStats = new();
+        readonly float[] scalingStats = new float[typeof(ScalingAttribute).GetEnumValues().Length];
 
         /// <summary>
         /// 
@@ -144,7 +144,12 @@ namespace Combat {
         /// <param name="otherScaling">Hashed scaling stats. If not given an argument, an new one will be allocated.</param>
         public ScalingStats(Dictionary<BaseAttribute, float> baseStats = null, Dictionary<ScalingAttribute, float> otherScaling = null) : base(baseStats) {
             if (otherScaling is not null)
-                scalingStats = otherScaling.ToDictionary(x=>x.Key, x=>x.Value);
+                foreach (var x in otherScaling)
+                    this[x.Key] = x.Value;
+        }
+
+        ScalingStats(float[] baseStats, float[] scalingStats): base(baseStats) {
+            this.scalingStats = scalingStats.ToArray();
         }
 
         public new ScalingStats Clone() {
@@ -152,22 +157,19 @@ namespace Combat {
         }
 
         public void Gain(ScalingAttribute stat, float value) {
-            if (Mathf.Abs(value) > Epsilon) {
-                this[stat] += value;
-                OnScalingStatChange?.Invoke(stat);
-            }
+            this[stat] += value;
         }
         public void Lose(ScalingAttribute stat, float value) => Gain(stat, -value);
         public void Gain(ScalingStats other) {
             Gain((BaseStats)other);
-            foreach (var x in other.scalingStats) {
-                Gain(x.Key, x.Value);
+            for (int i = 0; i < other.scalingStats.Length; i++) {
+                Gain((ScalingAttribute)i, other.scalingStats[i]);
             }
         }
         public void Lose(ScalingStats other) {
             Lose((BaseStats)other);
-            foreach (var x in other.scalingStats) {
-                Lose(x.Key, x.Value);
+            for (int i = 0; i < other.scalingStats.Length; i++) {
+                Lose((ScalingAttribute)i, other.scalingStats[i]);
             }
         }
 
@@ -188,13 +190,12 @@ namespace Combat {
 
 
         public float this[ScalingAttribute stat] {
-            get => scalingStats.ContainsKey(stat) ? scalingStats[stat] : 0;
+            get => scalingStats[(int)stat];
             protected set {
-                if (scalingStats.ContainsKey(stat)) scalingStats[stat] = value;
-                else scalingStats.Add(stat, value);
-
-                if (Mathf.Abs(this[stat]) < Epsilon && scalingStats.ContainsKey(stat))
-                    scalingStats.Remove(stat);
+                float og = scalingStats[(int)stat];
+                scalingStats[(int)stat] = value;
+                if (Mathf.Abs(og - value) > Epsilon)
+                    OnScalingStatChange?.Invoke(stat);
             }
         }
     }
@@ -206,8 +207,8 @@ namespace Combat {
     public class FinalStats {
         readonly BaseStats @base;
         readonly ScalingStats scaling;
-        readonly Dictionary<BaseAttribute, float> baseStats = new();
-        readonly Dictionary<ScalingAttribute, float> scalingStats = new();
+        readonly float[] baseStats = new float[typeof(BaseAttribute).GetEnumValues().Length];
+        readonly float[] scalingStats = new float[typeof(ScalingAttribute).GetEnumValues().Length];
         public FinalStats(BaseStats @base, ScalingStats scale) {
             this.@base = @base;
             scaling = scale;
@@ -235,13 +236,7 @@ namespace Combat {
                 BaseMaxs[att] :
             BaseMins[att];
             // cases with action: larger than epsilon and not in dict, larger than epsilon and in dict, smaller than epsilon and in dict
-            if (Mathf.Abs(result) > BaseStats.BaseEpsilon) {
-                if (baseStats.ContainsKey(att))
-                    baseStats[att] = result;
-                else
-                    baseStats.Add(att, result);
-            } else if (baseStats.ContainsKey(att))
-                baseStats.Remove(att);
+            baseStats[(int)att] = result;
         }
 
         public void Compute(ScalingAttribute att) {
@@ -251,13 +246,7 @@ namespace Combat {
                     result :
                 ScalingMaxs[att] :
             ScalingMins[att];
-            if (Mathf.Abs(result) > ScalingStats.ScalingEpsilon) {
-                if (scalingStats.ContainsKey(att))
-                    scalingStats[att] = result;
-                else
-                    scalingStats.Add(att, result);
-            } else if (scalingStats.ContainsKey(att))
-                scalingStats.Remove(att);
+            scalingStats[(int)att] = result; 
         }
 
         public static readonly Dictionary<BaseAttribute, float> BaseMins = new() {
@@ -290,8 +279,8 @@ namespace Combat {
             { ScalingAttribute.ManaCostReduction, 0.95f }
         };
 
-        public float this[BaseAttribute stat] => baseStats.ContainsKey(stat) ? baseStats[stat] : 0;
-        public float this[ScalingAttribute stat] => scalingStats.ContainsKey(stat)? scalingStats[stat]: 0;
+        public float this[BaseAttribute stat] => baseStats[(int)stat];
+        public float this[ScalingAttribute stat] => scalingStats[(int)stat];
 
         public float Crit { get => Random.value < this[ScalingAttribute.CritRate] ? this[ScalingAttribute.CritDmg] : 0; }
     }

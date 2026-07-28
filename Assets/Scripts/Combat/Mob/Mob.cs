@@ -215,9 +215,6 @@ namespace Combat {
             stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
             stats.OnAttackRangeChange += ChangeAttackRange;
 
-            // raises all stats change events
-            stats.RaiseStatChangeEvents();
-
             // GC
             initialStats = null;
         }
@@ -236,6 +233,9 @@ namespace Combat {
                 GainStats(( StageController.DungeonData.MobBaseStatsMultiplier.Evaluate(StageController.Floor)-1) * BaseStats, null);
             }
             ResetHp();
+
+            // raises all stats change events 
+            stats.RaiseStatChangeEvents();
         }
 
         // damage-related
