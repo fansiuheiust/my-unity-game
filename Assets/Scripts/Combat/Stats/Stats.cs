@@ -79,16 +79,42 @@ namespace Combat {
 
         public void Lose(BaseAttribute stat, float value) => Gain(stat, -value);
 
+        /// <summary>
+        /// Increases stats
+        /// </summary>
+        /// <param name="other">Stats to increase by</param>
         public void Gain(BaseStats other) {
+            if (other is null) return;
             for (int i = 0; i < other.baseStats.Length; i++) {
                 Gain((BaseAttribute)i, other.baseStats[i]);
             }
         }
+        /// <summary>
+        /// Decreases stats
+        /// </summary>
+        /// <param name="other">Stats to decrease by</param>
         public void Lose(BaseStats other) {
+            if (other is null) return;
             for (int i = 0; i < other.baseStats.Length; i++) {
                 Lose((BaseAttribute)i, other.baseStats[i]);
             }
         }
+
+        /// <summary>
+        /// Gains the listed stats
+        /// </summary>
+        /// <param name="bases">A list of stats</param>
+        public void Gain(params (BaseAttribute, float)[] bases) {
+            if (bases is not null)
+                foreach (var (stat, value) in bases)
+                    Gain(stat, value);
+        }
+
+        /// <summary>
+        /// Loses the listed stats
+        /// </summary>
+        /// <param name="bases">A list of stats</param>
+        public void Lose(params (BaseAttribute, float)[] bases) => Gain(bases?.Select(x => (x.Item1, -x.Item2)).ToArray());
 
         /*
         public static BaseStats operator +(BaseStats a, BaseStats b) {
@@ -156,23 +182,60 @@ namespace Combat {
             return new ScalingStats(baseStats, scalingStats);
         }
 
+        /// <summary>
+        /// Gain a single stat
+        /// </summary>
+        /// <param name="stat">The stat</param>
+        /// <param name="value">Gain</param>
         public void Gain(ScalingAttribute stat, float value) {
             this[stat] += value;
         }
+        /// <summary>
+        /// Loses a single stat
+        /// </summary>
+        /// <param name="stat">The stat</param>
+        /// <param name="value">Loss</param>
         public void Lose(ScalingAttribute stat, float value) => Gain(stat, -value);
+
+        /// <summary>
+        /// Gains stats
+        /// </summary>
+        /// <param name="other">Stats to gain</param>
         public void Gain(ScalingStats other) {
+            if (other is null) return;
             Gain((BaseStats)other);
             for (int i = 0; i < other.scalingStats.Length; i++) {
                 Gain((ScalingAttribute)i, other.scalingStats[i]);
             }
         }
+
+        /// <summary>
+        /// Loses stats
+        /// </summary>
+        /// <param name="other">Stats to lose</param>
         public void Lose(ScalingStats other) {
+            if (other is null) return;
             Lose((BaseStats)other);
             for (int i = 0; i < other.scalingStats.Length; i++) {
                 Lose((ScalingAttribute)i, other.scalingStats[i]);
             }
         }
 
+        /// <summary>
+        /// Gains a list of stats
+        /// </summary>
+        /// <param name="scalings">stats to gain</param>
+        public void Gain(params (ScalingAttribute, float)[] scalings) {
+            if (scalings is not null)
+                foreach (var (stat, value) in scalings)
+                    Gain(stat, value);
+        }
+
+        /// <summary>
+        /// Loses a list of stats
+        /// </summary>
+        /// <param name="scalings">stats to lose</param>
+        public void Lose(params (ScalingAttribute, float)[] scalings) => Gain(scalings?.Select(x => (x.Item1, -x.Item2)).ToArray());
 
         /*
         public static ScalingStats operator +(ScalingStats a, ScalingStats b) {
@@ -186,7 +249,7 @@ namespace Combat {
             return ri;
         }
         */
-        public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
+        // public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
 
 
         public float this[ScalingAttribute stat] {

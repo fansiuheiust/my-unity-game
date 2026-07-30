@@ -147,26 +147,6 @@ namespace Combat {
             if (scaling is not null)
                 _scaling.Gain(scaling);
         }
-        public void GainBaseStats(params (BaseAttribute, float)[] bases) {
-            if (bases is not null)
-                foreach (var (stat, value) in bases)
-                    _base.Gain(stat, value);
-        }
-
-        public void LoseBaseStats(params (BaseAttribute, float)[] bases) => GainBaseStats(bases.Select(x => (x.Item1, -x.Item2)).ToArray());
-
-        public void GainScalingStats(params (BaseAttribute, float)[] bases) {
-            if (bases is not null)
-                foreach (var (stat, value) in bases)
-                    _scaling.Gain(stat, value);
-        }
-        public void LoseScalingStats(params (BaseAttribute, float)[] bases) => GainScalingStats(bases.Select(x=>(x.Item1, -x.Item2)).ToArray());
-        public void GainScalingStats(params (ScalingAttribute, float)[] scalings) {
-            if (scalings is not null)
-                foreach (var (stat, value) in scalings)
-                    _scaling.Gain(stat, value);
-        }
-        public void LoseScalingStats(params (ScalingAttribute, float)[] scalings) => GainScalingStats(scalings.Select(x=>(x.Item1, -x.Item2)).ToArray());
 
 
         /// <summary>

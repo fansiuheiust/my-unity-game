@@ -17,24 +17,24 @@ namespace Combat {
 
             Debug.Log($"Attack: {ogBase} {ogScale}");
 
-            StageController.Player.GainBaseStats((BaseAttribute.Atk, 67));
+            StageController.Player.BaseStats.Gain((BaseAttribute.Atk, 67));
             Debug.Assert(Mathf.Abs(final[BaseAttribute.Atk] - (ogBase + 67) * (1+ogScale)) < 1e-4f, $"Incorrect final stats upon reassingment with base change; expected {(ogBase + 67) * (1 + ogScale)}, got {final[BaseAttribute.Atk]} instead");
 
             Debug.Log($"Attack: {ogBase} {ogScale}");
 
-            StageController.Player.GainScalingStats((BaseAttribute.Atk, 0.2f));
+            StageController.Player.ScalingStats.Gain((BaseAttribute.Atk, 0.2f));
             Debug.Log(StageController.Player.ScalingStats[BaseAttribute.Atk]);
             Debug.Assert(Mathf.Abs(final[BaseAttribute.Atk] - (ogBase + 67) * (1+ogScale+.2f)) < 1E-4f, $"Incorrect final stats upon reassignment with scaling change expected {(ogBase + 67) * (1 + ogScale + .2f)}, got {final[BaseAttribute.Atk]}");
 
-            StageController.Player.GainBaseStats((BaseAttribute.Atk, -7));
-            StageController.Player.GainScalingStats((BaseAttribute.Atk, 0.1f));
+            StageController.Player.BaseStats.Gain((BaseAttribute.Atk, -7));
+            StageController.Player.ScalingStats.Gain((BaseAttribute.Atk, 0.1f));
             Debug.Assert(Mathf.Abs(final[BaseAttribute.Atk] - (ogBase + 60) * (1+ogScale+.3f)) < 1E-4f, "Incorrect final stats upon reassignment with both base stats and scaling stats change");
 
-            StageController.Player.GainScalingStats((ScalingAttribute.DmgReduction, 0.3f));
+            StageController.Player.ScalingStats.Gain((ScalingAttribute.DmgReduction, 0.3f));
             Debug.Assert(Mathf.Abs(final[ScalingAttribute.DmgReduction] - (ogDmgRed + 0.3f)) < 1E-4f, "Incorrect final stats upon reassignment of a scaling stat");
 
-            StageController.Player.GainBaseStats((BaseAttribute.Def, 50));
-            StageController.Player.LoseScalingStats((BaseAttribute.Def, 0.2f));
+            StageController.Player.BaseStats.Gain((BaseAttribute.Def, 50));
+            StageController.Player.ScalingStats.Lose((BaseAttribute.Def, 0.2f));
             Debug.Assert(Mathf.Abs(final[BaseAttribute.Def] - (ogDef + 50) * (1+ogDefScale-0.2f)) < 1E-4F, "");
         }
     }
