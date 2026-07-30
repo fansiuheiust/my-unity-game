@@ -16,8 +16,8 @@ namespace Combat {
     // 5. modify ScalingStats' +/-/* operator overload
     // 6. modify FinalStats ctor
     // 7. modify FinalStats Normalize()
-    // NO! The stats implemented here are the most primitive stats
-    // TODO: implement the same thing for BaseStats when it is needed
+    // No longer needed.
+    // 
     // from now on, you just need:
     // 1: create new element in enum
     // 2: set the lower and upper bound of the value in FinalStats
@@ -66,10 +66,10 @@ namespace Combat {
         public float this[BaseAttribute stat] {
             get => baseStats[(int)stat];
             protected set {
-                float og = baseStats[(int)stat];
-                baseStats[(int)stat] = value;
-                if (Mathf.Abs(og - value) > BaseEpsilon)
+                if (Mathf.Abs(value - baseStats[(int)stat]) > Epsilon) {
+                    baseStats[(int)stat] = value;
                     OnBaseStatChange?.Invoke(stat);
+                }
             }
         }
 
@@ -192,10 +192,10 @@ namespace Combat {
         public float this[ScalingAttribute stat] {
             get => scalingStats[(int)stat];
             protected set {
-                float og = scalingStats[(int)stat];
-                scalingStats[(int)stat] = value;
-                if (Mathf.Abs(og - value) > Epsilon)
+                if (Mathf.Abs(value - scalingStats[(int)stat]) > Epsilon) {
+                    scalingStats[(int)stat] = value;
                     OnScalingStatChange?.Invoke(stat);
+                }
             }
         }
     }

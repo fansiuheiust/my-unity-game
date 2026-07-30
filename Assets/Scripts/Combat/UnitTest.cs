@@ -6,7 +6,7 @@ namespace Combat {
         /// Pass
         /// </summary>
         public static void TestUpdateFinal() {
-            ref readonly FinalStats final = ref StageController.Player.Stats;
+            FinalStats final = StageController.Player.Stats;
             float ogBase = StageController.Player.BaseStats[BaseAttribute.Atk];
             float ogScale = StageController.Player.ScalingStats[BaseAttribute.Atk];
             float ogDmgRed = StageController.Player.ScalingStats[ScalingAttribute.DmgReduction];

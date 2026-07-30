@@ -27,15 +27,15 @@ namespace Combat {
         /// <summary>
         /// Base stats of the mob
         /// </summary>
-        public ref readonly BaseStats BaseStats => ref stats.Base;
+        public BaseStats BaseStats => stats.Base;
         /// <summary>
         /// Scaling stats of the mob
         /// </summary>
-        public ref readonly ScalingStats ScalingStats => ref stats.Scaling;
+        public ScalingStats ScalingStats => stats.Scaling;
         /// <summary>
         /// Stats after multiplying base stats with 1+scale and normalization
         /// </summary>
-        public ref readonly FinalStats Stats => ref stats.Final;
+        public FinalStats Stats => stats.Final;
 
         public float HP => stats.Hp;
         public float Mana => stats.Mana;

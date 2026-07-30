@@ -28,9 +28,9 @@ namespace Combat {
         [field: Unity.Collections.ReadOnly]
         readonly FinalStats _final;
 
-        public ref readonly BaseStats Base => ref _base;
-        public ref readonly ScalingStats Scaling => ref _scaling;
-        public ref readonly FinalStats Final => ref _final;
+        public BaseStats Base => _base;
+        public ScalingStats Scaling => _scaling;
+        public FinalStats Final => _final;
 
 
         [field: SerializeField]
