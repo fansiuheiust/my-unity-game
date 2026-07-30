@@ -221,7 +221,7 @@ namespace Combat {
 
         IEnumerator RangedAttack() {
             ClickAttack();
-            float afkTime = 1 / ((1 + Owner.Stats.AtkSpeed) * Owner.EquippedWeapon.BaseAttackSpeed);
+            float afkTime = 1 / ((1 + Owner.Stats[ScalingAttribute.AtkSpeed]) * Owner.EquippedWeapon.BaseAttackSpeed);
             for (float time = 0; time < afkTime; time += Time.deltaTime) {
                 Owner.Rotatable.forward = Delta;
                 yield return null;
@@ -235,9 +235,9 @@ namespace Combat {
         /// <summary>
         /// Current attack range of the owner
         /// </summary>
-        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[HashedScalingStats.AttackRange]) : 0;
+        protected float AttackRange => Owner.EquippedWeapon is not null ? Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[ScalingAttribute.AttackRange]) : 0;
 
-        public float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats.AtkSpeed)): 0;
+        public float AttackTime => Owner.EquippedWeapon is not null ? 1/(Owner.EquippedWeapon.BaseAttackSpeed * (1 + Owner.Stats[ScalingAttribute.AtkSpeed])): 0;
 
         public void Face(Transform t) => Owner.Rotatable.forward = Vector3.Scale(t.position - transform.position, new(1, 0, 1));
         public void FaceTarget() => Face(Target.transform);

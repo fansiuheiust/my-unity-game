@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -15,20 +16,20 @@ namespace Combat {
     // 5. modify ScalingStats' +/-/* operator overload
     // 6. modify FinalStats ctor
     // 7. modify FinalStats Normalize()
-    // NO! The stats implemented here are the most primitive stats
-    // TODO: implement the same thing for BaseStats when it is needed
+    // No longer needed.
+    // 
     // from now on, you just need:
     // 1: create new element in enum
     // 2: set the lower and upper bound of the value in FinalStats
 
     [System.Serializable]
 
-    public enum HashedBaseStats {
-
+    public enum BaseAttribute { // do NOT change the value of any of these enums
+        Atk, Def, MaxHp, MaxMana, ManaRegen
     }
 
-    public enum HashedScalingStats {
-        PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange, ManaCostReduction
+    public enum ScalingAttribute { // do NOT change the value of any of these enums
+        WalkSpeed, AtkSpeed, CritRate, CritDmg, DmgReduction, Knockback, KnockbackResistance, PhysicalDmg, ProjectileDmg, MagicDmg, AttackRange, ManaCostReduction
     }
 
 
@@ -37,22 +38,21 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class BaseStats {
-        [field: SerializeField]
-        public float Atk { get; protected set; }
-        [field: SerializeField]
-        public float Def { get; protected set; }
-        [field: SerializeField]
-        public float MaxHp { get; protected set; }
-        [field: SerializeField]
-        public float MaxMana { get; protected set; }
-        [field: SerializeField]
-        public float ManaRegen { get; protected set; }
-        public BaseStats(float atk = 0, float def = 0, float maxHp = 0, float maxMana = 0, float manaRegen = 0) {
-            Atk = atk;
-            Def = def;
-            MaxHp = maxHp;
-            MaxMana = maxMana;
-            ManaRegen = manaRegen;
+        public event System.Action<BaseAttribute> OnBaseStatChange;
+
+        public static readonly float BaseEpsilon = 0.0625f;
+        protected virtual float Epsilon => BaseEpsilon;
+
+        protected readonly float[] baseStats = new float[typeof(BaseAttribute).GetEnumValues().Length];
+
+        public BaseStats(Dictionary<BaseAttribute, float> baseStats = null) {
+            if (baseStats != null)
+                foreach (var b in baseStats)
+                    this[b.Key] = b.Value;
+        }
+
+        protected BaseStats(float[] baseStats) {
+            this.baseStats = baseStats.ToArray();
         }
 
         /// <summary>
@@ -60,17 +60,83 @@ namespace Combat {
         /// </summary>
         /// <returns></returns>
         public BaseStats Clone() {
-            // TODO: also deep copy the dict after implementing hashed base stats
-            return (BaseStats)MemberwiseClone();
+            return new BaseStats(baseStats);
         }
 
+        public float this[BaseAttribute stat] {
+            get => baseStats[(int)stat];
+            protected set {
+                if (Mathf.Abs(value - baseStats[(int)stat]) > Epsilon) {
+                    baseStats[(int)stat] = value;
+                    OnBaseStatChange?.Invoke(stat);
+                }
+            }
+        }
+
+        public void Gain(BaseAttribute stat, float value) {
+            this[stat] += value;
+        }
+
+        public void Lose(BaseAttribute stat, float value) => Gain(stat, -value);
+
+        /// <summary>
+        /// Increases stats
+        /// </summary>
+        /// <param name="other">Stats to increase by</param>
+        public void Gain(BaseStats other) {
+            if (other is null) return;
+            for (int i = 0; i < other.baseStats.Length; i++) {
+                Gain((BaseAttribute)i, other.baseStats[i]);
+            }
+        }
+        /// <summary>
+        /// Decreases stats
+        /// </summary>
+        /// <param name="other">Stats to decrease by</param>
+        public void Lose(BaseStats other) {
+            if (other is null) return;
+            for (int i = 0; i < other.baseStats.Length; i++) {
+                Lose((BaseAttribute)i, other.baseStats[i]);
+            }
+        }
+
+        /// <summary>
+        /// Gains the listed stats
+        /// </summary>
+        /// <param name="bases">A list of stats</param>
+        public void Gain(params (BaseAttribute, float)[] bases) {
+            if (bases is not null)
+                foreach (var (stat, value) in bases)
+                    Gain(stat, value);
+        }
+
+        /// <summary>
+        /// Loses the listed stats
+        /// </summary>
+        /// <param name="bases">A list of stats</param>
+        public void Lose(params (BaseAttribute, float)[] bases) => Gain(bases?.Select(x => (x.Item1, -x.Item2)).ToArray());
+
+        /*
         public static BaseStats operator +(BaseStats a, BaseStats b) {
-            return new(a.Atk + b.Atk, a.Def + b.Def, a.MaxHp + b.MaxHp, a.MaxMana + b.MaxMana, a.ManaRegen + b.ManaRegen);
+            BaseStats ri = a.Clone();
+            ri.Gain(b);
+            return ri;
         }
         public static BaseStats operator -(BaseStats a, BaseStats b) {
-            return new(a.Atk - b.Atk, a.Def - b.Def, a.MaxHp - b.MaxHp, a.MaxMana - b.MaxMana, a.ManaRegen - b.ManaRegen);
+            BaseStats ri = a.Clone();
+            ri.Lose(b);
+            return ri;
         }
-        public static BaseStats operator *(float a, BaseStats b) => new(a * b.Atk, a * b.Def, a * b.MaxHp, a * b.MaxMana, a * b.ManaRegen);
+        */
+        public static BaseStats operator *(float a, BaseStats b) {
+            Dictionary<BaseAttribute, float> other = new();
+            foreach (BaseAttribute stat in typeof(BaseAttribute).GetEnumValues()) {
+                float result = a * b[stat];
+                if (Mathf.Abs(result) > BaseEpsilon)
+                    other.Add(stat, result);
+            }
+            return new(other);
+        }
     }
 
     /// <summary>
@@ -78,21 +144,13 @@ namespace Combat {
     /// </summary>
     [System.Serializable]
     public class ScalingStats : BaseStats {
-        [field: SerializeField]
-        public float WalkSpeed { get; protected set; }
-        [field: SerializeField]
-        public float AtkSpeed { get; protected set; }
-        [field: SerializeField]
-        public float CritRate { get; protected set; }
-        [field: SerializeField]
-        public float CritDmg { get; protected set; }
-        [field: SerializeField]
-        public float DmgReduction { get; protected set; }
-        [field: SerializeField]
-        public float Knockback { get; protected set; }
-        [field: SerializeField]
-        public float KnockbackResistance { get; protected set; }
-        public Dictionary<HashedScalingStats, float> OtherScaling { get; protected set; } = new();
+        public event System.Action<ScalingAttribute> OnScalingStatChange;
+
+        public static readonly float ScalingEpsilon = 0.00006103515625f;
+
+        protected override float Epsilon => ScalingEpsilon;
+
+        readonly float[] scalingStats = new float[typeof(ScalingAttribute).GetEnumValues().Length];
 
         /// <summary>
         /// 
@@ -110,106 +168,184 @@ namespace Combat {
         /// <param name="knockback">Self-documenting</param>
         /// <param name="knockbackResistance">Self-documenting</param>
         /// <param name="otherScaling">Hashed scaling stats. If not given an argument, an new one will be allocated.</param>
-        public ScalingStats(float atk = 0, float def = 0, float maxHp = 0, float maxMana = 0, float manaRegen = 0, float walkSpeed = 0, float atkSpeed = 0, float critRate = 0, float critDmg = 0, float dmgReduction = 0, float knockback = 0, float knockbackResistance = 0, Dictionary<HashedScalingStats, float> otherScaling = null) : base(atk, def, maxHp, maxMana, manaRegen) {
-            WalkSpeed = walkSpeed;
-            AtkSpeed = atkSpeed;
-            CritRate = critRate;
-            CritDmg = critDmg;
-            DmgReduction = dmgReduction;
-            Knockback = knockback;
-            KnockbackResistance = knockbackResistance;
+        public ScalingStats(Dictionary<BaseAttribute, float> baseStats = null, Dictionary<ScalingAttribute, float> otherScaling = null) : base(baseStats) {
             if (otherScaling is not null)
-                OtherScaling = otherScaling.ToDictionary(x=>x.Key, x=>x.Value);
+                foreach (var x in otherScaling)
+                    this[x.Key] = x.Value;
+        }
+
+        ScalingStats(float[] baseStats, float[] scalingStats): base(baseStats) {
+            this.scalingStats = scalingStats.ToArray();
         }
 
         public new ScalingStats Clone() {
-            ScalingStats s = (ScalingStats)MemberwiseClone();
-            s.OtherScaling = OtherScaling.ToDictionary(d => d.Key, d => d.Value);
-            return s;
+            return new ScalingStats(baseStats, scalingStats);
         }
 
-        public static readonly float ScalingEpsilon = 0.00006103515625f;
+        /// <summary>
+        /// Gain a single stat
+        /// </summary>
+        /// <param name="stat">The stat</param>
+        /// <param name="value">Gain</param>
+        public void Gain(ScalingAttribute stat, float value) {
+            this[stat] += value;
+        }
+        /// <summary>
+        /// Loses a single stat
+        /// </summary>
+        /// <param name="stat">The stat</param>
+        /// <param name="value">Loss</param>
+        public void Lose(ScalingAttribute stat, float value) => Gain(stat, -value);
 
-        public float Crit { get => Random.value < CritRate ? CritDmg : 0; }
-        public static ScalingStats operator +(ScalingStats a, ScalingStats b) {
-            Dictionary<HashedScalingStats, float> other = new();
-            foreach (HashedScalingStats stat in typeof(HashedScalingStats).GetEnumValues()) {
-                float result = a[stat] + b[stat];
-                if (Mathf.Abs(result) > ScalingEpsilon)
-                    other.Add(stat, result);
+        /// <summary>
+        /// Gains stats
+        /// </summary>
+        /// <param name="other">Stats to gain</param>
+        public void Gain(ScalingStats other) {
+            if (other is null) return;
+            Gain((BaseStats)other);
+            for (int i = 0; i < other.scalingStats.Length; i++) {
+                Gain((ScalingAttribute)i, other.scalingStats[i]);
             }
-            return new(a.Atk + b.Atk, a.Def + b.Def, a.MaxHp + b.MaxHp, a.MaxMana + b.MaxMana, a.ManaRegen + b.ManaRegen, a.WalkSpeed + b.WalkSpeed, a.AtkSpeed + b.AtkSpeed, a.CritRate + b.CritRate, a.CritDmg + b.CritDmg, a.DmgReduction + b.DmgReduction, a.Knockback + b.Knockback, a.KnockbackResistance + b.KnockbackResistance, other);
+        }
+
+        /// <summary>
+        /// Loses stats
+        /// </summary>
+        /// <param name="other">Stats to lose</param>
+        public void Lose(ScalingStats other) {
+            if (other is null) return;
+            Lose((BaseStats)other);
+            for (int i = 0; i < other.scalingStats.Length; i++) {
+                Lose((ScalingAttribute)i, other.scalingStats[i]);
+            }
+        }
+
+        /// <summary>
+        /// Gains a list of stats
+        /// </summary>
+        /// <param name="scalings">stats to gain</param>
+        public void Gain(params (ScalingAttribute, float)[] scalings) {
+            if (scalings is not null)
+                foreach (var (stat, value) in scalings)
+                    Gain(stat, value);
+        }
+
+        /// <summary>
+        /// Loses a list of stats
+        /// </summary>
+        /// <param name="scalings">stats to lose</param>
+        public void Lose(params (ScalingAttribute, float)[] scalings) => Gain(scalings?.Select(x => (x.Item1, -x.Item2)).ToArray());
+
+        /*
+        public static ScalingStats operator +(ScalingStats a, ScalingStats b) {
+            ScalingStats ri = a.Clone();
+            ri.Gain(b);
+            return ri;
         }
         public static ScalingStats operator -(ScalingStats a, ScalingStats b) {
-            Dictionary<HashedScalingStats, float> other = new();
-            foreach (HashedScalingStats stat in typeof(HashedScalingStats).GetEnumValues()) {
-                float result = a[stat] - b[stat];
-                if (Mathf.Abs(result) > ScalingEpsilon)
-                    other.Add(stat, result);
-            }
-            return new(a.Atk - b.Atk, a.Def - b.Def, a.MaxHp - b.MaxHp, a.MaxMana - b.MaxMana, a.ManaRegen - b.ManaRegen, a.WalkSpeed - b.WalkSpeed, a.AtkSpeed - b.AtkSpeed, a.CritRate - b.CritRate, a.CritDmg - b.CritDmg, a.DmgReduction - b.DmgReduction, a.Knockback - b.Knockback, a.KnockbackResistance - b.KnockbackResistance, other);
+            ScalingStats ri = a.Clone();
+            ri.Gain(b);
+            return ri;
         }
-        public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
+        */
+        // public static FinalStats operator *(BaseStats a, ScalingStats b) => new(a, b);
 
 
-        public float this[HashedScalingStats stat] {
-            get => OtherScaling.ContainsKey(stat) ? OtherScaling[stat] : 0;
+        public float this[ScalingAttribute stat] {
+            get => scalingStats[(int)stat];
             protected set {
-                if (OtherScaling.ContainsKey(stat)) OtherScaling[stat] = value;
-                else OtherScaling.Add(stat, value);
+                if (Mathf.Abs(value - scalingStats[(int)stat]) > Epsilon) {
+                    scalingStats[(int)stat] = value;
+                    OnScalingStatChange?.Invoke(stat);
+                }
             }
         }
-        public void InitializeHash(Dictionary<HashedScalingStats, float> d) { if (d is not null) OtherScaling = d; }
-
-
     }
 
     /// <summary>
     /// The stats obtained by scaling the BaseStats by the (1+percentage), and keeping the percentage stats the same
     /// </summary>
     [System.Serializable]
-    public class FinalStats : ScalingStats {
-        public FinalStats(BaseStats @base, ScalingStats scale) : base(@base.Atk * (1 + scale.Atk), @base.Def * (1 + scale.Def), @base.MaxHp * (1 + scale.MaxHp), @base.MaxMana * (1 + scale.MaxMana), @base.ManaRegen * (1 + scale.ManaRegen), scale.WalkSpeed, scale.AtkSpeed, scale.CritRate, scale.CritDmg, scale.DmgReduction, scale.Knockback, scale.KnockbackResistance) {
-            Normalize();
-            NormalizeHashedScale(scale);
-        }
-        public static readonly Dictionary<HashedScalingStats, float> OtherScalingMins = new() {
-        { HashedScalingStats.PhysicalDmg, -1 },
-        { HashedScalingStats.ProjectileDmg, -1 },
-        { HashedScalingStats.MagicDmg, -1 },
-        { HashedScalingStats.AttackRange, -0.75f },
-    }, OtherScalingMaxs = new() {
-        { HashedScalingStats.AttackRange, 1.5f },
-        { HashedScalingStats.ManaCostReduction, 0.95f }
-    };
-        void Normalize() {
-            Atk = Atk > 0 ? Atk : 0;
-            Def = Def > 0 ? Def : 0;
-            MaxHp = MaxHp > 1 ? MaxHp : 1;
-            MaxMana = MaxMana > 1 ? MaxMana : 1;
-            WalkSpeed = WalkSpeed > -1 ? WalkSpeed < 10 ? WalkSpeed : 10 : -1;
-            AtkSpeed = AtkSpeed > -0.5f ? AtkSpeed < 1 ? AtkSpeed : 1 : -0.5f;
-            CritRate = CritRate > 0 ? CritRate : 0;
-            CritDmg = CritDmg > -1 ? CritDmg : -1;
-            DmgReduction = DmgReduction < 0.96875f ? DmgReduction : 0.96875f;
-            Knockback = Knockback > -1 ? Knockback < 10 ? Knockback : 10 : -1;
-            KnockbackResistance = KnockbackResistance > -10 ? KnockbackResistance < 1 ? KnockbackResistance : 1 : -10;
-
-        }
-
-        void NormalizeHashedScale(ScalingStats scale) {
-            foreach (var x in new List<HashedScalingStats>(scale.OtherScaling.Keys)) {
-                float value = scale.OtherScaling[x];
-                OtherScaling.Add(x,
-                    (!OtherScalingMins.ContainsKey(x) || value > OtherScalingMins[x]) ?
-                        (!OtherScalingMaxs.ContainsKey(x) || value < OtherScalingMaxs[x]) ?
-                            value :
-                        OtherScalingMaxs[x] :
-                    OtherScalingMins[x]
-                );
+    public class FinalStats {
+        readonly BaseStats @base;
+        readonly ScalingStats scaling;
+        readonly float[] baseStats = new float[typeof(BaseAttribute).GetEnumValues().Length];
+        readonly float[] scalingStats = new float[typeof(ScalingAttribute).GetEnumValues().Length];
+        public FinalStats(BaseStats @base, ScalingStats scale) {
+            this.@base = @base;
+            scaling = scale;
+            foreach (BaseAttribute baseStat in typeof(BaseAttribute).GetEnumValues()) {
+                Compute(baseStat);
             }
+            foreach (ScalingAttribute scalingStat in typeof(ScalingAttribute).GetEnumValues()) {
+                Compute(scalingStat);
+            }
+
+            @base.OnBaseStatChange += Compute;
+            scaling.OnBaseStatChange += Compute;
+            scaling.OnScalingStatChange += Compute;
         }
-        public new float this[HashedScalingStats scale] => OtherScaling.ContainsKey(scale)? OtherScaling[scale]: 0;
+
+        /// <summary>
+        /// Recomputes for a signle attribute
+        /// </summary>
+        /// <param name="att">attribute to recompute</param>
+        public void Compute(BaseAttribute att) {
+            float result = @base[att] > 0 ? @base[att] * Mathf.Max(0, 1 + scaling[att]) : @base[att] * Mathf.Max(0f, 1 - scaling[att]);
+            result = (!BaseMins.ContainsKey(att) || result > BaseMins[att]) ?
+                (!BaseMaxs.ContainsKey(att) || result < BaseMaxs[att]) ?
+                    result :
+                BaseMaxs[att] :
+            BaseMins[att];
+            // cases with action: larger than epsilon and not in dict, larger than epsilon and in dict, smaller than epsilon and in dict
+            baseStats[(int)att] = result;
+        }
+
+        public void Compute(ScalingAttribute att) {
+            float result = scaling[att];
+            result = (!ScalingMins.ContainsKey(att) || result > ScalingMins[att]) ?
+                (!ScalingMaxs.ContainsKey(att) || result < ScalingMaxs[att]) ?
+                    result :
+                ScalingMaxs[att] :
+            ScalingMins[att];
+            scalingStats[(int)att] = result; 
+        }
+
+        public static readonly Dictionary<BaseAttribute, float> BaseMins = new() {
+            { BaseAttribute.Atk, 0 },
+            { BaseAttribute.Def, 0 },
+            { BaseAttribute.MaxHp, 1 },
+            { BaseAttribute.MaxMana, 1 }
+        }, BaseMaxs = new() {
+
+        };
+
+        public static readonly Dictionary<ScalingAttribute, float> ScalingMins = new() {
+            { ScalingAttribute.WalkSpeed, -1 },
+            { ScalingAttribute.AtkSpeed, -0.5f },
+            { ScalingAttribute.CritRate, 0 },
+            { ScalingAttribute.CritDmg, -1 },
+            { ScalingAttribute.Knockback, -1 },
+            {ScalingAttribute.KnockbackResistance, -10 },
+            { ScalingAttribute.PhysicalDmg, -1 },
+            { ScalingAttribute.ProjectileDmg, -1 },
+            { ScalingAttribute.MagicDmg, -1 },
+            { ScalingAttribute.AttackRange, -0.75f },
+        }, ScalingMaxs = new() {
+            { ScalingAttribute.WalkSpeed, 10 },
+            { ScalingAttribute.AtkSpeed, 1 },
+            { ScalingAttribute.DmgReduction, 0.96875f },
+            { ScalingAttribute.Knockback, 10 },
+            { ScalingAttribute.KnockbackResistance, 1 },
+            { ScalingAttribute.AttackRange, 1.5f },
+            { ScalingAttribute.ManaCostReduction, 0.95f }
+        };
+
+        public float this[BaseAttribute stat] => baseStats[(int)stat];
+        public float this[ScalingAttribute stat] => scalingStats[(int)stat];
+
+        public float Crit { get => Random.value < this[ScalingAttribute.CritRate] ? this[ScalingAttribute.CritDmg] : 0; }
     }
 }
 

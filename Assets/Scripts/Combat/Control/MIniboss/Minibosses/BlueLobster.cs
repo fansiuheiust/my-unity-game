@@ -58,12 +58,12 @@ namespace Combat.Miniboss {
 
             DestroyProp(tpCourtesy);
             transform.position = targetPos;
-            Owner.GainStats(null, new(atk: tpAttackBoost));
-            interruptedAction =  ()=>Owner.LoseStats(null, new(atk: tpAttackBoost));
+            Owner.ScalingStats.Gain((BaseAttribute.Atk, tpAttackBoost));
+            interruptedAction =  ()=>Owner.ScalingStats.Lose((BaseAttribute.Atk, tpAttackBoost));
             Behaviour.State = MobState.Attack;
             yield return new WaitForSeconds(Behaviour.AttackTime);
 
-            Owner.LoseStats(null, new(atk: tpAttackBoost));
+            Owner.ScalingStats.Lose((BaseAttribute.Atk, tpAttackBoost));
             Behaviour.ResumeStateSwitch();
             EndAbility();
             yield break;
@@ -122,7 +122,7 @@ namespace Combat.Miniboss {
             yield return new WaitForSeconds(spinClawTime);
 
             Owner.Equip(w);
-            Dictionary<HashedScalingStats, float> d = new() { { HashedScalingStats.AttackRange, spinClawRangeBoost } };
+            Dictionary<ScalingAttribute, float> d = new() { { ScalingAttribute.AttackRange, spinClawRangeBoost } };
             Owner.GainStats(null, new ScalingStats(otherScaling: d));
             interruptedAction = () => Owner.LoseStats(null, new ScalingStats(otherScaling: d));
             Behaviour.State = MobState.Attack;
@@ -136,7 +136,7 @@ namespace Combat.Miniboss {
 
         bool usedHalfHPAbility = false;
         void OnDamageTaken(Mob source, float amount) {
-            if (Owner.HP < Owner.Stats.MaxHp / 2 && !usedHalfHPAbility) {
+            if (Owner.HP < Owner.Stats[BaseAttribute.MaxHp] / 2 && !usedHalfHPAbility) {
                 usedHalfHPAbility = true;
                 StartNewAbility(ShellSmash);
             }
@@ -188,8 +188,8 @@ namespace Combat.Miniboss {
                 if (c != null)
                     DestroyProp(c.gameObject);
 
-
-            Owner.GainStats(null, new ScalingStats(atk: shellSmashAtkScale, def: shellSmashDefScale, walkSpeed: shellSmashSpeedScale));
+            Owner.ScalingStats.Gain((BaseAttribute.Atk, shellSmashAtkScale), (BaseAttribute.Def, shellSmashDefScale));
+            Owner.ScalingStats.Gain((ScalingAttribute.WalkSpeed, shellSmashSpeedScale));
             Owner.GetComponent<Rigidbody>().useGravity = true;
             Behaviour.ResumeStateSwitch();
             EndAbility();

@@ -7,7 +7,11 @@ namespace Combat.Abilities {
         float hpThreshold;
         bool triggered = false;
         protected override void SetFields(Ability ability) {
-            delta = new ScalingStats(atk: ability["Attack Increase"], walkSpeed: ability["Walk Speed Increase"], atkSpeed: ability["Attack Speed Increase"], def: -ability["Defence Reduction"]);
+            delta = new();
+            delta.Gain(BaseAttribute.Atk, ability["Attack Increase"]);
+            delta.Lose(BaseAttribute.Def, ability["Defence Reduction"]);
+            delta.Gain(ScalingAttribute.WalkSpeed, ability["Walk Speed Increase"]);
+            delta.Gain(ScalingAttribute.AtkSpeed, ability["Attack Speed Increase"]);
             hpThreshold = ability["HP Threshold"];
         }
 
@@ -17,7 +21,7 @@ namespace Combat.Abilities {
 
 
         void OnDamageTaken(Mob _, float __) {
-            if (Owner.HP / Owner.Stats.MaxHp < hpThreshold) {
+            if (Owner.HP / Owner.Stats[BaseAttribute.MaxHp] < hpThreshold) {
                 AbilityBehaviour();
             }
         }

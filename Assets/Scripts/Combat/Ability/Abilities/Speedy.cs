@@ -20,13 +20,13 @@ namespace Combat.Abilities {
         }
 
         IEnumerator Speed() {
-            Owner.GainStats(null, new(walkSpeed: speedBoost));
+            Owner.ScalingStats.Gain((ScalingAttribute.WalkSpeed, speedBoost));
             yield return new WaitForSeconds(duration);
             RemoveSpeedBoost();
         }
 
         void RemoveSpeedBoost() {
-            Owner.LoseStats(null, new(walkSpeed: speedBoost));
+            Owner.ScalingStats.Lose((ScalingAttribute.WalkSpeed, speedBoost));
             activeInstance = null;
         }
 

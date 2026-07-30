@@ -13,14 +13,14 @@ namespace Combat.Behaviours {
         protected override void SwitchState() {
             if (State == MobState.Charge) {
                 if (Delta.magnitude < AttackRange) {
-                    Owner.LoseStats(null, new ScalingStats(walkSpeed: speedIncrease));
+                    Owner.ScalingStats.Lose((ScalingAttribute.WalkSpeed, speedIncrease));
                     State = MobState.Attack;
                 }
                 return;
             }
             if (currRatio == 0) {
                 State = MobState.Charge;
-                Owner.GainStats(null, new ScalingStats(walkSpeed: speedIncrease));
+                Owner.ScalingStats.Gain((ScalingAttribute.WalkSpeed, speedIncrease));
             } else {
                 State = MobState.Escape;
             }

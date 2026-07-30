@@ -522,46 +522,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats:
-    _final:
-      <Atk>k__BackingField: 0
-      <Def>k__BackingField: 0
-      <MaxHp>k__BackingField: 0
-      <MaxMana>k__BackingField: 0
-      <ManaRegen>k__BackingField: 0
-      <WalkSpeed>k__BackingField: 0
-      <AtkSpeed>k__BackingField: 0
-      <CritRate>k__BackingField: 0
-      <CritDmg>k__BackingField: 0
-      <DmgReduction>k__BackingField: 0
-      <Knockback>k__BackingField: 0
-      <KnockbackResistance>k__BackingField: 0
     <Hp>k__BackingField: 0
   scalesToFloor: 0
   initialStats:
-    base:
-      <Atk>k__BackingField: 0
-      <Def>k__BackingField: 0
-      <MaxHp>k__BackingField: 20
-      <MaxMana>k__BackingField: 0
-      <ManaRegen>k__BackingField: 0
-    scaling:
-      <Atk>k__BackingField: 0
-      <Def>k__BackingField: 0
-      <MaxHp>k__BackingField: 0
-      <MaxMana>k__BackingField: 0
-      <ManaRegen>k__BackingField: 0
-      <WalkSpeed>k__BackingField: 0
-      <AtkSpeed>k__BackingField: 0
-      <CritRate>k__BackingField: 0
-      <CritDmg>k__BackingField: 0
-      <DmgReduction>k__BackingField: 0
-      <Knockback>k__BackingField: 0
-      <KnockbackResistance>k__BackingField: 0
-    hashedScaling:
+    baseStats:
+    - stats: 2
+      base: 20
+      scale: 0
     - stats: 0
-      data: -0.2
+      base: 4
+      scale: 0
+    - stats: 3
+      base: 100
+      scale: 0.2
+    hashedScaling:
+    - stats: 7
+      data: 10
+    - stats: 10
+      data: 1.5
   initialGears: []
   OnManaConsumption:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamageTake:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:

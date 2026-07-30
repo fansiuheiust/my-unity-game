@@ -24,16 +24,37 @@ public static class Global {
     };
 
     /// <summary>
+    /// String of a base stat
+    /// </summary>
+    /// <param name="h">hashed scaling stat to query</param>
+    /// <exception cref="System.NotImplementedException"> if the string of the hashed scaling stat is still not added</exception>
+    public static string HashedBaseStat(BaseAttribute h) => h switch {
+        BaseAttribute.Atk => "Attack",
+        BaseAttribute.MaxHp => "MaxHP",
+        BaseAttribute.Def => "Defence",
+        BaseAttribute.MaxMana => "Max Mana",
+        BaseAttribute.ManaRegen => "Mana Regen",
+        _ => throw new System.NotImplementedException($"Please add string of {h} to GlobalDataStructures.cs")
+    };
+
+    /// <summary>
     /// String of a scaling stat
     /// </summary>
     /// <param name="h">hashed scaling stat to query</param>
     /// <exception cref="System.NotImplementedException"> if the string of the hashed scaling stat is still not added</exception>
-    public static string HashedScalingStat(HashedScalingStats h) => h switch {
-        HashedScalingStats.PhysicalDmg => "Physical Damage",
-        HashedScalingStats.ProjectileDmg => "Projectile Damage",
-        HashedScalingStats.MagicDmg => "Magic Damage",
-        HashedScalingStats.AttackRange => "Attack Range",
-        HashedScalingStats.ManaCostReduction => "Mana Cost Reduction",
+    public static string HashedScalingStat(ScalingAttribute h) => h switch {
+        ScalingAttribute.WalkSpeed => "Walk Speed",
+        ScalingAttribute.AtkSpeed => "Attack Speed",
+        ScalingAttribute.CritRate => "Crit Rate",
+        ScalingAttribute.CritDmg => "Crit Damage",
+        ScalingAttribute.DmgReduction => "Damage Reduction",
+        ScalingAttribute.Knockback => "Knockback",
+        ScalingAttribute.KnockbackResistance => "Knockback Resistance",
+        ScalingAttribute.PhysicalDmg => "Physical Damage",
+        ScalingAttribute.ProjectileDmg => "Projectile Damage",
+        ScalingAttribute.MagicDmg => "Magic Damage",
+        ScalingAttribute.AttackRange => "Attack Range",
+        ScalingAttribute.ManaCostReduction => "Mana Cost Reduction",
         _ => throw new System.NotImplementedException($"Please add string of {h} to GlobalDataStructures.cs")
     };
 

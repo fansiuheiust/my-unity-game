@@ -86,7 +86,7 @@ namespace Combat {
                 // Combat.UnitTest.TestUpdateFinal();
             };
             _playerInput.actions["tempstuninterrupt"].performed += _ => {
-                Progression.UnitTest.TestPerkTreeLoad();
+                Combat.UnitTest.TestUpdateFinal();
             };
         }
 

@@ -3263,6 +3263,10 @@ PrefabInstance:
       value: blue_lobsters_shell
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -3271,8 +3275,36 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[0].base
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[1].base
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[2].base
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.scaling.<Atk>k__BackingField
       value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[0].stats
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[1].stats
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[2].scale
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[2].stats
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data

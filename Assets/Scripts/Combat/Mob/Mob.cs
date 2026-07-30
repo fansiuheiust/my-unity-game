@@ -27,15 +27,15 @@ namespace Combat {
         /// <summary>
         /// Base stats of the mob
         /// </summary>
-        public ref readonly BaseStats BaseStats => ref stats.Base;
+        public BaseStats BaseStats => stats.Base;
         /// <summary>
         /// Scaling stats of the mob
         /// </summary>
-        public ref readonly ScalingStats ScalingStats => ref stats.Scaling;
+        public ScalingStats ScalingStats => stats.Scaling;
         /// <summary>
         /// Stats after multiplying base stats with 1+scale and normalization
         /// </summary>
-        public ref readonly FinalStats Stats => ref stats.Final;
+        public FinalStats Stats => stats.Final;
 
         public float HP => stats.Hp;
         public float Mana => stats.Mana;
@@ -215,9 +215,6 @@ namespace Combat {
             stats.OnMovementSpeedChange += _movement.OnFinalStatsChanged;
             stats.OnAttackRangeChange += ChangeAttackRange;
 
-            // raises all stats change events
-            stats.ComputeFinalStats();
-
             // GC
             initialStats = null;
         }
@@ -236,6 +233,9 @@ namespace Combat {
                 GainStats(( StageController.DungeonData.MobBaseStatsMultiplier.Evaluate(StageController.Floor)-1) * BaseStats, null);
             }
             ResetHp();
+
+            // raises all stats change events 
+            stats.RaiseStatChangeEvents();
         }
 
         // damage-related
@@ -346,7 +346,7 @@ namespace Combat {
         /// <param name="duration">How long should this mob not act (because of knockback) for</param>
         void TakeKnockback(Mob source, Vector3 origin, float duration) {
             if (_isImmune) return;
-            duration *= (1 + source.stats.Final.Knockback) * (1 - stats.Final.KnockbackResistance);
+            duration *= (1 + source.Stats[ScalingAttribute.Knockback]) * (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;
             TakeStun(duration, source);
             _movement.TakeKnockback(origin, duration);
@@ -362,7 +362,7 @@ namespace Combat {
         public void TakeKnockback(Vector3 origin, float duration, bool isInternal = false, float magnitudeMultiplier = 1f) {
             if (_isImmune && !isInternal) return;
             if (!isInternal)
-                duration *= (1 - stats.Final.KnockbackResistance);
+                duration *= (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;
             TakeStun(duration, null, isInternal);
             _movement.TakeKnockback(origin, duration, magnitudeMultiplier);
@@ -417,6 +417,7 @@ namespace Combat {
         public void LoseStats(BaseStats @base, ScalingStats scaling) {
             stats.LoseStats(@base, scaling);
         }
+
         /// <summary>
         /// Equips the mob with a Gear, and updates the Mob's stats. Unequips the mob's original gear if any.
         /// </summary>
@@ -556,7 +557,7 @@ namespace Combat {
                 OnAttackControlReset?.Invoke();
                 return;
             }
-            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+            OnAttackClick?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats[ScalingAttribute.AtkSpeed])));
         }
         /// <summary>
         /// Handles mob "lifting" attack button
@@ -567,7 +568,7 @@ namespace Combat {
                 _clickedAttackDuringStun = false;
                 return;
             }
-            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + stats.Final.AtkSpeed)));
+            OnAttackLift?.Invoke(1 / (EquippedWeapon.BaseAttackSpeed * (1 + Stats[ScalingAttribute.AtkSpeed])));
         }
 
         /// <summary>

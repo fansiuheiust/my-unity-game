@@ -7,6 +7,8 @@ using System;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.ComponentModel;
 using Unity.Collections;
+using System.Linq;
+
 namespace Combat {
     public enum DamageType {
         Melee, Projectile, Magic, True
@@ -17,18 +19,18 @@ namespace Combat {
     /// </summary>
     [Serializable]
     public class MobStats {
-        BaseStats _base;
-        ScalingStats _scaling;
+        readonly BaseStats _base;
+        readonly ScalingStats _scaling;
         /// <summary>
         /// Computed every time a stat is changed
         /// </summary>
         [field: SerializeField]
         [field: Unity.Collections.ReadOnly]
-        FinalStats _final;
+        readonly FinalStats _final;
 
-        public ref readonly BaseStats Base => ref _base;
-        public ref readonly ScalingStats Scaling => ref _scaling;
-        public ref readonly FinalStats Final => ref _final;
+        public BaseStats Base => _base;
+        public ScalingStats Scaling => _scaling;
+        public FinalStats Final => _final;
 
 
         [field: SerializeField]
@@ -53,35 +55,57 @@ namespace Combat {
         public MobStats(BaseStats @base, ScalingStats scaling) {
             _base = @base.Clone();
             _scaling = scaling.Clone();
-            ComputeFinalStats();
-            Hp = _final.MaxHp;
-            Mana = _final.MaxMana;
+            _final = new(_base, _scaling);
+            Hp = _final[BaseAttribute.MaxHp];
+            Mana = _final[BaseAttribute.MaxMana];
+            _base.OnBaseStatChange += OnStatChanged;
+            _scaling.OnBaseStatChange += OnStatChanged;
+            _scaling.OnScalingStatChange += OnStatChanged;
         }
+
+        /// <summary>
+        /// Called when a BaseAttribute got changed in BaseStats or ScalingStats
+        /// </summary>
+        /// <param name="stat">the attribute that got changed</param>
+        void OnStatChanged(BaseAttribute stat) {
+            
+        }
+
+        /// <summary>
+        /// Called when a ScalingAttribute got changed
+        /// </summary>
+        /// <param name="stat">the attribute that got changed</param>
+        void OnStatChanged(ScalingAttribute stat) {
+            switch (stat) {
+                case ScalingAttribute.WalkSpeed:
+                    OnMovementSpeedChange?.Invoke(_final[ScalingAttribute.WalkSpeed]);
+                    break;
+                case ScalingAttribute.AttackRange:
+                    OnAttackRangeChange?.Invoke(_final[ScalingAttribute.AttackRange]);
+                    break;
+            }
+        }
+
+        public void RaiseStatChangeEvents() {
+            OnMovementSpeedChange?.Invoke(_final[ScalingAttribute.WalkSpeed]);
+            OnAttackRangeChange?.Invoke(_final[ScalingAttribute.AttackRange]);
+        }
+
 
         /// <summary>
         /// Self-documenting
         /// </summary>
         /// <param name="serializedMobStats">The mob stats as set in the inspector, hashed stats array must NOT contain double entry</param>
-        public MobStats(SerializedMobStats serializedMobStats) {
-            _base = serializedMobStats.@base;
-            _scaling = serializedMobStats.scaling;
-            Dictionary<HashedScalingStats, float> d = new();
-            foreach (var s in serializedMobStats.hashedScaling) {
-                d.Add(s.stats, s.data);
-            }
-            _scaling.InitializeHash(d);
-
-            ComputeFinalStats();
-            Hp = _final.MaxHp;
-            Mana = _final.MaxMana;
+        public MobStats(SerializedMobStats serializedMobStats): this(serializedMobStats.Base, serializedMobStats.Scaling) {
+            
         }
-        public void ResetHp() => Hp = _final.MaxHp;
+        public void ResetHp() => Hp = _final[BaseAttribute.MaxHp];
 
         // damage calculation
-        public float UnclassifiedDmg => _final.Atk * (1 + _final.Crit);
-        public float MeleeDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.PhysicalDmg]);
-        public float ProjectileDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.ProjectileDmg]);
-        public float MagicDmg => UnclassifiedDmg * (1 + _final[HashedScalingStats.MagicDmg]);
+        public float UnclassifiedDmg => _final[BaseAttribute.Atk] * (1 + _final.Crit);
+        public float MeleeDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.PhysicalDmg]);
+        public float ProjectileDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.ProjectileDmg]);
+        public float MagicDmg => UnclassifiedDmg * (1 + _final[ScalingAttribute.MagicDmg]);
 
         /// <returns>
         /// Default definition of dead: hp < 1
@@ -94,7 +118,7 @@ namespace Combat {
         /// <example>
         /// If <c>DmgTakenMultiplier</c> = 0.6, final damage taken = original damage * 0.6
         /// </example>
-        public float DmgTakenMultiplier => (1 - _final.Def / (100 + _final.Def)) * (1 - _final.DmgReduction);
+        public float DmgTakenMultiplier => (1 - _final[BaseAttribute.Def] / (100 + _final[BaseAttribute.Def])) * (1 - _final[ScalingAttribute.DmgReduction]);
 
         // mana change
         /// <summary>
@@ -103,8 +127,8 @@ namespace Combat {
         /// <param name="mana">Amount of mana to be consumed</param>
         /// <returns>Whether mana is consumed, and the mana consumed</returns>
         public (bool consumed, float amount) ConsumeMana(float mana) {
-            mana *= (1 - _final[HashedScalingStats.ManaCostReduction]);
-            if (mana < Mana)
+            mana *= (1 - _final[ScalingAttribute.ManaCostReduction]);
+            if (mana > Mana)
                 return (false, 0);
             Mana -= mana;
             return (true, mana);
@@ -119,11 +143,12 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void GainStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                _base += @base;
+                _base.Gain(@base);
             if (scaling is not null)
-                _scaling += scaling;
-            ComputeFinalStats();
+                _scaling.Gain(scaling);
         }
+
+
         /// <summary>
         /// Unequips the player with a gear, including weapon
         /// </summary>
@@ -131,21 +156,9 @@ namespace Combat {
         /// <param name="scaling">scaling stats of the gear, null if ScalingStats is unchanged</param>
         public void LoseStats(BaseStats @base, ScalingStats scaling) {
             if (@base is not null)
-                _base -= @base;
+                _base.Lose(@base);
             if (scaling is not null)
-                _scaling -= scaling;
-            ComputeFinalStats();
-        }
-
-        /// <summary>
-        /// Computes the final stats and invokes <c>OnStatsChange</c>.
-        /// Called once per gear change
-        /// </summary>
-        public void ComputeFinalStats() {
-            _final = _base * Scaling;
-            if (OnMovementSpeedChange is not null)
-                OnMovementSpeedChange(_final.WalkSpeed);
-            OnAttackRangeChange?.Invoke(_final[HashedScalingStats.AttackRange]);
+                _scaling.Lose(scaling);
         }
 
         // Damage taking
