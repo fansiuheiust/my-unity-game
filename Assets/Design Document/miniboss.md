@@ -54,5 +54,17 @@ Gears:
 
 
 
-### Vampress
+### Vampress (Floor 2+)
+
+A queen vampire who summons minions to assist her in battle.
+
+* Major: Spawns a major that attacks the player 
+* Swarm: Spawns many mobs that attack the player
+* Blood Transferral: Spawns blood processors, each heals the queen when the player takes damage
+* Blood Spill: After dropping below 50% HP, enters immune state and signals. After \~10 seconds passed, kills all summons, then heals herself based on the amount killed, deals damage to everyone in 10 units radius, damage based on the amount killed. Can only be used once.
+
+Gears:
+
+* Broken Staff (Common): Ranged weapon that provides HP and slight Mana Regen
+* 
 
