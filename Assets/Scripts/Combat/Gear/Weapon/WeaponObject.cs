@@ -31,7 +31,7 @@ namespace Combat {
             if (!TryGetComponent(out Block _)) {
                 Owner.OnBlockClick += ResetBlock;
             }
-
+            ChangeAttackRange(Owner.EquippedWeapon.weaponRange * (1 + Owner.Stats[ScalingAttribute.AttackRange]));
         }
 
         void Delete() {
