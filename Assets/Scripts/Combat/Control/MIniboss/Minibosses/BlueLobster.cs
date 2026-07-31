@@ -149,8 +149,10 @@ namespace Combat.Miniboss {
 
             Owner.transform.position += 1 * Vector3.up;
             Owner.GetComponent<Rigidbody>().useGravity = false;
+            Owner.GetComponent<MobMovement>().enabled = false;
+            interruptedAction = () => { Owner.GetComponent<Rigidbody>().useGravity = true; Owner.GetComponent<MobMovement>().enabled = true; };
+            yield return new WaitForSeconds(0.5f);
             Owner.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-            interruptedAction = () => Owner.GetComponent<Rigidbody>().useGravity = true;
 
             Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + centerOutClawTime);
             yield return new WaitForSeconds(shellSmashPause);
@@ -191,6 +193,7 @@ namespace Combat.Miniboss {
             Owner.ScalingStats.Gain((BaseAttribute.Atk, shellSmashAtkScale), (BaseAttribute.Def, shellSmashDefScale));
             Owner.ScalingStats.Gain((ScalingAttribute.WalkSpeed, shellSmashSpeedScale));
             Owner.GetComponent<Rigidbody>().useGravity = true;
+            Owner.GetComponent<MobMovement>().enabled = true;
             Behaviour.ResumeStateSwitch();
             EndAbility();
             yield break;
