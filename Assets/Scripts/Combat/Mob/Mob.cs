@@ -443,8 +443,8 @@ namespace Combat {
         void Equip(Weapon weapon) {
             if (EquippedWeapon is not null)
                 UnequipWeapon();
-            Instantiate(weapon.WeaponPrefab, Rotatable);
             EquippedWeapon = weapon;
+            Instantiate(weapon.WeaponPrefab, Rotatable);
             stats.GainStats(weapon.@base, weapon.scaling);
         }
         /// <summary>
