@@ -24,12 +24,12 @@ namespace Combat.Miniboss {
         float spinClawRadius = 3f, spinClawTime = 0.75f, spinClawRangeBoost = 1f;
 
         [SerializeField, Min(1)]
-        int thrownClawsPerShellSmash = 10, centerOutClawsPerShellSmash = 8;
+        int thrownClawsPerShellSmash = 10, flungClawsPerShellSmash = 8;
 
         [SerializeField]
-        float clawThrowDuration = 3f, centerOutClawTime = 1f;
+        float clawThrowDuration = 3f, clawFlingTime = 1f;
         [SerializeField]
-        float clawThrowVelocity = 10f, clawCenterOutVelocity = 50f;
+        float clawThrowVelocity = 10f, clawFlingVelocity = 50f;
         [SerializeField]
         float shellSmashPause = 1.5f;
         [SerializeField]
@@ -106,7 +106,7 @@ namespace Combat.Miniboss {
             interruptedAction = () => { if (Owner.EquippedWeapon is null) Owner.Equip(w); };
 
             Vector3 targetFront = t.transform.position + t.Rotatable.forward * spinClawRadius;
-            Vector3 left = targetFront - spinClawRadius * t.Rotatable.right, right = targetFront + spinClawRadius * t.Rotatable.right;
+            Vector3 left = targetFront - spinClawRadius / 1.5f * t.Rotatable.right, right = targetFront + spinClawRadius / 1.5f * t.Rotatable.right;
 
             SpinClaw leftClaw = InstantiateProp(spinClawPrefab).GetComponent<SpinClaw>(), rightClaw = InstantiateProp(spinClawPrefab).GetComponent<SpinClaw>();
 
@@ -154,7 +154,7 @@ namespace Combat.Miniboss {
             yield return new WaitForSeconds(0.5f);
             Owner.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
 
-            Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + centerOutClawTime);
+            Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + clawFlingTime);
             yield return new WaitForSeconds(shellSmashPause);
 
             float intervalPerThrow = clawThrowDuration / thrownClawsPerShellSmash;
@@ -173,17 +173,17 @@ namespace Combat.Miniboss {
             foreach (Projectile c in claws)
                 if (c != null)
                     DestroyProp(c.gameObject);
-            claws = new Projectile[centerOutClawsPerShellSmash];
-            intervalPerThrow = centerOutClawTime / centerOutClawsPerShellSmash;
-            for (int i = 0; i < centerOutClawsPerShellSmash; i++) {
-                Owner.Rotatable.localEulerAngles = new Vector3(0, 360f / centerOutClawsPerShellSmash * i, 0);
+            claws = new Projectile[flungClawsPerShellSmash];
+            intervalPerThrow = clawFlingTime / flungClawsPerShellSmash;
+            for (int i = 0; i < flungClawsPerShellSmash; i++) {
+                Owner.Rotatable.localEulerAngles = new Vector3(0, 360f / flungClawsPerShellSmash * i, 0);
                 claws[i] = InstantiateProp(rangedClawPrefab).GetComponent<Projectile>();
                 claws[i].transform.position = Owner.transform.position + Owner.Rotatable.forward * 2;
                 claws[i].transform.forward = Owner.Rotatable.forward;
                 yield return new WaitForSeconds(intervalPerThrow);
             }
             foreach (Projectile c in claws)
-                c.Set(Owner, 1, c.transform.forward * clawCenterOutVelocity, 1);
+                c.Set(Owner, 1, c.transform.forward * clawFlingVelocity, 1);
             yield return new WaitForSeconds(shellSmashPause);
 
             foreach (var c in claws)

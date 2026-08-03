@@ -519,16 +519,16 @@ MonoBehaviour:
   clawAttackCourtesy: 1
   clawTime: 0.6
   clawlerDistanceThreshold: 7
-  spinClawRadius: 3
+  spinClawRadius: 4
   spinClawTime: 0.75
   spinClawRangeBoost: 1
   thrownClawsPerShellSmash: 10
-  centerOutClawsPerShellSmash: 16
-  clawThrowDuration: 3
-  centerOutClawTime: 1
+  flungClawsPerShellSmash: 24
+  clawThrowDuration: 3.5
+  clawFlingTime: 1
   clawThrowVelocity: 30
-  clawCenterOutVelocity: 80
-  shellSmashPause: 3
+  clawFlingVelocity: 50
+  shellSmashPause: 2
   shellSmashAtkScale: 0.75
   shellSmashDefScale: -0.5
   shellSmashSpeedScale: 0.5
