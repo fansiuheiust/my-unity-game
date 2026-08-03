@@ -58,13 +58,16 @@ Gears:
 
 A queen vampire who summons minions to assist her in battle.
 
-* Major: Spawns a major that attacks the player 
+* Major: Spawns a major that attacks the player
 * Swarm: Spawns many mobs that attack the player
 * Blood Transferral: Spawns blood processors, each heals the queen when the player takes damage
 * Blood Spill: After dropping below 50% HP, enters immune state and signals. After \~10 seconds passed, kills all summons, then heals herself based on the amount killed, deals damage to everyone in 10 units radius, damage based on the amount killed. Can only be used once.
 
 Gears:
 
-* Broken Staff (Common): Ranged weapon that provides HP and slight Mana Regen
-* 
+* Drained Crown (Common): Helmet that provides HP and Mana Regen
+* Defunct Staff (Rare): Ranged weapon that provides Knockback
+* Infused Staff (Epic): Upgrade of Defunct Staff, with additional ability that summons mobs to fight by the player's side
+* Blood-Infused Crown (Legendary): Upgrade of Drained Crown, with additional ability that increases the player's Atk by how much damage they took or dealt
+* Vampress' Staff (Mythical): Upgrade of Infused Staff, the ability comes with right clicking when the summoned mobs are active to quickly kill them and deal massive AoE damage based of number of them killed; longer time implies more damage
 
