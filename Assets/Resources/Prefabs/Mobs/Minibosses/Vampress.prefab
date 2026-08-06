@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 5264415367786491927}
   - component: {fileID: 612017288743449827}
   - component: {fileID: 5587457927450791614}
+  - component: {fileID: 879179198002308248}
   m_Layer: 0
   m_Name: Vampress
   m_TagString: Untagged
@@ -369,6 +370,30 @@ MonoBehaviour:
   onTargetSwitch:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &879179198002308248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3704017514647809928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a2c5179a849a84e969771d33198d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  droppedGears: []
+  abilityIntervalMin: 4
+  abilityIntervalMax: 9
+  onAbilityStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onAbilityEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  majorCourtesyPrefab: {fileID: 5207319323361643739, guid: c0dd44f6b1319be4281f7e29d86cf6fd, type: 3}
+  majorPrefab: {fileID: 3817750248607857368, guid: ff1e922df79148a419f2d2284b07ef28, type: 3}
+  swarmSpawnCount: 35
 --- !u!1 &4299913458441563706
 GameObject:
   m_ObjectHideFlags: 0
