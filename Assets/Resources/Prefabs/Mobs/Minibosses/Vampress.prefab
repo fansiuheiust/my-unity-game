@@ -393,7 +393,10 @@ MonoBehaviour:
       m_Calls: []
   majorCourtesyPrefab: {fileID: 5207319323361643739, guid: c0dd44f6b1319be4281f7e29d86cf6fd, type: 3}
   majorPrefab: {fileID: 3817750248607857368, guid: ff1e922df79148a419f2d2284b07ef28, type: 3}
-  swarmSpawnCount: 35
+  swarmEggPrefab: {fileID: 5685350970119927826, guid: 3984ffb1e0f27c6409852d339b3c9649, type: 3}
+  swarmSpawnCount: 14
+  swarmSpawnTime: 1
+  swarmEggSpeed: 20
 --- !u!1 &4299913458441563706
 GameObject:
   m_ObjectHideFlags: 0
