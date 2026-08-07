@@ -392,7 +392,7 @@ MonoBehaviour:
   thresholdFloatDistance: 0.1
   springCoefficient: 150
   dampCoefficient: 21
-  maxSpeed: 10
+  maxSpeed: 8
   jumpHeight: 1
   acceleration: 35
   accelerationFromRotation:
@@ -446,14 +446,20 @@ MonoBehaviour:
   initialStats:
     baseStats:
     - stats: 2
-      base: 15
-      scale: 0
-    - stats: 0
       base: 6
       scale: 0
-    hashedScaling: []
+    - stats: 0
+      base: 1.5
+      scale: 0
+    hashedScaling:
+    - stats: 10
+      data: -0.33
+    - stats: 0
+      data: 0.1
+    - stats: 1
+      data: -0.3
   initialGears:
-  - long_sword
+  - mob_sword
   OnManaConsumption:
     m_PersistentCalls:
       m_Calls: []

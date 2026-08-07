@@ -307,10 +307,10 @@ MonoBehaviour:
   initialStats:
     baseStats:
     - stats: 2
-      base: 300
+      base: 150
       scale: 0
     - stats: 0
-      base: 4
+      base: 3
       scale: 0
     hashedScaling: []
   initialGears:
@@ -383,8 +383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   droppedGears: []
-  abilityIntervalMin: 4
-  abilityIntervalMax: 9
+  abilityIntervalMin: 13
+  abilityIntervalMax: 19
   onAbilityStart:
     m_PersistentCalls:
       m_Calls: []
@@ -394,7 +394,7 @@ MonoBehaviour:
   majorCourtesyPrefab: {fileID: 5207319323361643739, guid: c0dd44f6b1319be4281f7e29d86cf6fd, type: 3}
   majorPrefab: {fileID: 3817750248607857368, guid: ff1e922df79148a419f2d2284b07ef28, type: 3}
   swarmEggPrefab: {fileID: 5685350970119927826, guid: 3984ffb1e0f27c6409852d339b3c9649, type: 3}
-  swarmSpawnCount: 14
+  swarmSpawnCount: 12
   swarmSpawnTime: 1
   swarmEggSpeed: 20
 --- !u!1 &4299913458441563706

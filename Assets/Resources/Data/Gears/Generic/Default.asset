@@ -78,22 +78,18 @@ MonoBehaviour:
     weaponSpeed: 2
     weaponRange: 0.5
     prefabName: Default
-  - id: tester
-    name: Test Weapon
+  - id: humble_sword
+    name: Humble Sword
     tier: 0
     stats:
       baseStats:
       - stats: 0
-        base: 3
+        base: 4
         scale: 0
-      hashedScaling:
-      - stats: 0
-        data: 0.2
-      - stats: 3
-        data: -0.2
-    abilityID: Speedy
-    weaponSpeed: 2
-    weaponRange: 1
+      hashedScaling: []
+    abilityID: 
+    weaponSpeed: 1
+    weaponRange: 2
     prefabName: Default
   rangeds:
   - id: bow

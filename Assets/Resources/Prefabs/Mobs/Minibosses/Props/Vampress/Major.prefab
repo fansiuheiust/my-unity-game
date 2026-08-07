@@ -446,14 +446,16 @@ MonoBehaviour:
   initialStats:
     baseStats:
     - stats: 2
-      base: 60
+      base: 50
       scale: 0
     - stats: 0
       base: 7
       scale: 0
-    hashedScaling: []
+    hashedScaling:
+    - stats: 0
+      data: -0.05
   initialGears:
-  - long_sword
+  - mob_sword
   OnManaConsumption:
     m_PersistentCalls:
       m_Calls: []

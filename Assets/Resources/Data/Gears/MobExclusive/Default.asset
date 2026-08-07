@@ -18,28 +18,20 @@ MonoBehaviour:
     name: Lobster Claw
     tier: 0
     stats:
-      base:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-      scaling:
-        <Atk>k__BackingField: 0
-        <Def>k__BackingField: 0
-        <MaxHp>k__BackingField: 0
-        <MaxMana>k__BackingField: 0
-        <ManaRegen>k__BackingField: 0
-        <WalkSpeed>k__BackingField: 0
-        <AtkSpeed>k__BackingField: 0
-        <CritRate>k__BackingField: 0
-        <CritDmg>k__BackingField: 0
-        <DmgReduction>k__BackingField: 0
-        <Knockback>k__BackingField: 0
-        <KnockbackResistance>k__BackingField: 0
+      baseStats: []
+      hashedScaling: []
+    abilityID: 
+    weaponSpeed: 0
+    weaponRange: 1.5
+    prefabName: Claw
+  - id: mob_sword
+    name: Mob Sword
+    tier: 0
+    stats:
+      baseStats: []
       hashedScaling: []
     abilityID: 
     weaponSpeed: 0
     weaponRange: 2
-    prefabName: Claw
+    prefabName: Default
   rangeds: []
