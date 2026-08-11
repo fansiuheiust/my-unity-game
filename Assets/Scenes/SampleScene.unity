@@ -3264,7 +3264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.base.<Atk>k__BackingField
@@ -3304,7 +3304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data
-      value: 0.2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].data
@@ -3312,7 +3312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].stats
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].stats

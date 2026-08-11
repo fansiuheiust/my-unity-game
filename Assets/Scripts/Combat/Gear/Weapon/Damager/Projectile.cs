@@ -51,6 +51,7 @@ namespace Combat {
         }
 
         private void OnTriggerEnter(Collider collider) {
+            Physics.IgnoreCollision(Collider, GetComponent<Collider>());
             if (Owner == null) return;
             Hit(collider.gameObject);
         }
@@ -73,6 +74,7 @@ namespace Combat {
         }
 
         protected virtual bool Hit(Mob m) {
+            Physics.IgnoreCollision(m.GetComponent<Collider>(), GetComponent<Collider>());
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
                 Owner.DealKnockback(m, m.transform.position - RB.linearVelocity, 0.5f);

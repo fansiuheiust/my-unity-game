@@ -394,9 +394,14 @@ MonoBehaviour:
   majorCourtesyPrefab: {fileID: 5207319323361643739, guid: c0dd44f6b1319be4281f7e29d86cf6fd, type: 3}
   majorPrefab: {fileID: 3817750248607857368, guid: ff1e922df79148a419f2d2284b07ef28, type: 3}
   swarmEggPrefab: {fileID: 5685350970119927826, guid: 3984ffb1e0f27c6409852d339b3c9649, type: 3}
+  bloodSpillCourtesyPrefab: {fileID: 5207319323361643739, guid: bd450b6a1aae6dc46a0adc0b9b02c575, type: 3}
   swarmSpawnCount: 12
   swarmSpawnTime: 1
   swarmEggSpeed: 20
+  bloodSpillCourtesyTime: 2
+  captureTime: 0.5
+  captureCount: 10
+  captureCooldown: 1
 --- !u!1 &4299913458441563706
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ namespace Combat.Miniboss {
 
         public override void Delete() {
             GameObject spawn = spawner(swarmPrefab);
+            Physics.IgnoreCollision(spawn.GetComponent<Collider>(), GetComponent<Collider>());
             spawn.transform.position = transform.position;
             base.Delete();
         }
