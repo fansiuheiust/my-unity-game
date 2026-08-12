@@ -1,3 +1,4 @@
+using Progression.Balance;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,12 @@ namespace Combat.Miniboss {
         [SerializeField]
         float captureCooldown = 1f;
 
+        [SerializeField]
+        bool despawnsOutrangedSwarms = true;
+
         readonly HashSet<Mob> spawns = new();
+
+        Vector3 roomCenter;
         protected override (System.Func<IEnumerator> ability, System.Func<bool> predicate)[] Abilities => new (System.Func<IEnumerator>, System.Func<bool>)[] {
             (Major, ()=>true), (Swarm, ()=>spawns.Count < 40)
         };
@@ -40,11 +46,30 @@ namespace Combat.Miniboss {
             Owner.OnDamageTake.AddListener(OnDamageTaken);
         }
 
+        protected override void Start() {
+            base.Start();
+            roomCenter = transform.position;
+        }
+
         GameObject SpawnMinion(GameObject prefab) {
             GameObject returnItem = Instantiate(prefab);
             spawns.Add(returnItem.GetComponent<Mob>());
             returnItem.GetComponent<Mob>().OnDeath.AddListener(OnMobDied);
+            if (despawnsOutrangedSwarms)
+                StartCoroutine(RemoveOutranged(returnItem.GetComponent<Mob>()));
             return returnItem;
+        }
+
+        void RemoveMinion(Mob m) {
+            OnMobDied(m, null);
+            Destroy(m.gameObject);
+        }
+
+        IEnumerator RemoveOutranged(Mob m) {
+            yield return new WaitForSeconds(0.5f);
+            if (m != null && Mathf.Max(Mathf.Abs(m.transform.position.x - roomCenter.x), Mathf.Abs(m.transform.position.z - roomCenter.z), Mathf.Abs(m.transform.position.y - roomCenter.y)) >= (StageController.DungeonData.RoomLength + StageController.DungeonData.WallThickness) / 2f) {
+                RemoveMinion(m);
+            }
         }
 
         void OnMobDied(Mob m, Mob _) {
@@ -105,8 +130,7 @@ namespace Combat.Miniboss {
         IEnumerator Capture(Mob m) {
             GameObject courtesy = InstantiateProp(bloodSpillCourtesyPrefab);
             courtesy.transform.position = m.transform.position;
-            OnMobDied(m, null);
-            Destroy(m.gameObject);
+            RemoveMinion(m);
             yield return new WaitForSeconds(captureTime);
             DestroyProp(courtesy);
             yield break;
@@ -129,7 +153,7 @@ namespace Combat.Miniboss {
             Owner.transform.position += 3 * Vector3.up;
             yield return new WaitForSeconds(bloodSpillCourtesyTime);
 
-            yield return SwarmInternal(3f);
+            yield return SwarmInternal(4f);
 
             yield return new WaitForSeconds(bloodSpillCourtesyTime);
 

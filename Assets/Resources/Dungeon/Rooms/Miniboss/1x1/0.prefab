@@ -557,6 +557,7 @@ MonoBehaviour:
   - bosses: []
   - bosses:
     - BlueLobster
+    - Vampress
   minibossChooser: {fileID: 5958692402013283518}
   wallBlockerPrefab: {fileID: 3495721447088613988, guid: 10252cadf8cf4264c82567b69c06496c, type: 3}
 --- !u!1 &7830712020534792927

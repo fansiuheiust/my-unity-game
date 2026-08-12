@@ -2304,6 +2304,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2033596261147179342, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
+      propertyPath: bosses.Array.data[1].bosses.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2033596261147179342, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
+      propertyPath: 'bosses.Array.data[1].bosses.Array.data[0]'
+      value: Vampress
+      objectReference: {fileID: 0}
     - target: {fileID: 5532049538663541087, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.529217
@@ -2353,63 +2361,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
---- !u!1001 &1741982077
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3704017514647809928, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_Name
-      value: Vampress
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.41
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.58
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 8.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7887541443570307423, guid: bda151835781054479697f5a5d2d33ea, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bda151835781054479697f5a5d2d33ea, type: 3}
 --- !u!1 &1770425530
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,6 +3049,10 @@ PrefabInstance:
       value: long_sword
       objectReference: {fileID: 0}
     - target: {fileID: 6983130159692096714, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[0].base
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983130159692096714, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -3304,7 +3259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].data
@@ -3356,4 +3311,3 @@ SceneRoots:
   - {fileID: 101979816}
   - {fileID: 40205110}
   - {fileID: 1554069241}
-  - {fileID: 1741982077}

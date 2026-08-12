@@ -31,6 +31,10 @@ namespace Combat.Miniboss {
             Owner.OnDeath.AddListener(OnMobDied);
         }
 
+        protected virtual void Start() {
+
+        }
+
         protected virtual void OnDestroy() {
             InterruptAbility();
             StopAllCoroutines();
