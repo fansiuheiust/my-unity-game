@@ -446,7 +446,7 @@ MonoBehaviour:
   initialStats:
     baseStats:
     - stats: 2
-      base: 50
+      base: 30
       scale: 0
     - stats: 0
       base: 7

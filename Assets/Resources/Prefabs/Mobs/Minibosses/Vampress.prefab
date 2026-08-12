@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thresholdFloatDistance: 0.1
-  springCoefficient: 150
+  springCoefficient: 200
   dampCoefficient: 21
   maxSpeed: 10
   jumpHeight: 1
@@ -383,8 +383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   droppedGears: []
-  abilityIntervalMin: 13
-  abilityIntervalMax: 19
+  abilityIntervalMin: 6
+  abilityIntervalMax: 12
   onAbilityStart:
     m_PersistentCalls:
       m_Calls: []
@@ -402,6 +402,7 @@ MonoBehaviour:
   captureTime: 0.5
   captureCount: 10
   captureCooldown: 1
+  despawnsOutrangedSwarms: 1
 --- !u!1 &4299913458441563706
 GameObject:
   m_ObjectHideFlags: 0
