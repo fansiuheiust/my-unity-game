@@ -60,8 +60,8 @@ A queen vampire who summons minions to assist her in battle.
 
 * Major: Spawns a major that attacks the player
 * Swarm: Spawns many mobs that attack the player
-* Blood Spill: After dropping below 50% HP, enters immune state and signals. In each second, kills a summon (by enveloping it into an egg). After 10 seconds passed, kills all summons. Deals damage to everyone in 10 units radius if she killed at least 10 summons. Gains atk, def. Both scale with number of summons killed. Enters phase 2 and attacks with a ranged weapon instead.
-* Bloodrain: spawns projectiles like how she did when spawning swarm, but the projectiles actually damage.
+* Blood Spill: After dropping below 50% HP, enters immune state and signals. In each second, kills a summon (by enveloping it into an egg). After 10 seconds passed, kills all summons. Deals damage to everyone in 10 units radius if she killed at least 10 summons. Gains atk%, def. Both scale with number of summons killed. Enters phase 2 and attacks with a ranged weapon instead.
+* Bloodrain: spawns projectiles like how she did when spawning swarm, but faces up and the projectiles actually damage.
 
 Gears:
 

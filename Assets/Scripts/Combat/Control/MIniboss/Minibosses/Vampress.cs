@@ -139,6 +139,7 @@ namespace Combat.Miniboss {
         IEnumerator BloodSpill() {
 
             interruptedAction = () => {
+                Owner.IsImmune = false;
                 Behaviour.ResumeStateSwitch();
                 Owner.GetComponent<Rigidbody>().useGravity = true;
                 Owner.GetComponent<MobMovement>().enabled = true;
@@ -149,7 +150,7 @@ namespace Combat.Miniboss {
             Owner.GetComponent<Rigidbody>().useGravity = false;
             Owner.GetComponent<MobMovement>().enabled = false;
             Owner.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-            Owner.AddEffect<Immunity>().Apply(bloodSpillCourtesyTime * 3 + captureCount * captureCooldown);
+            Owner.IsImmune = true;
             Owner.transform.position += 3 * Vector3.up;
             yield return new WaitForSeconds(bloodSpillCourtesyTime);
 

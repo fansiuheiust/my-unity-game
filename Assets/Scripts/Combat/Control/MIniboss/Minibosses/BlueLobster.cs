@@ -150,11 +150,15 @@ namespace Combat.Miniboss {
             Owner.transform.position += 1 * Vector3.up;
             Owner.GetComponent<Rigidbody>().useGravity = false;
             Owner.GetComponent<MobMovement>().enabled = false;
-            interruptedAction = () => { Owner.GetComponent<Rigidbody>().useGravity = true; Owner.GetComponent<MobMovement>().enabled = true; };
+            interruptedAction = () => { 
+                Owner.IsImmune = false;
+                Owner.GetComponent<Rigidbody>().useGravity = true;
+                Owner.GetComponent<MobMovement>().enabled = true; 
+            };
             yield return new WaitForSeconds(0.5f);
             Owner.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
 
-            Owner.AddEffect<Immunity>().Apply(3 * shellSmashPause + clawThrowDuration + clawFlingTime);
+            Owner.IsImmune = true;
             yield return new WaitForSeconds(shellSmashPause);
 
             float intervalPerThrow = clawThrowDuration / thrownClawsPerShellSmash;
@@ -191,6 +195,7 @@ namespace Combat.Miniboss {
                     DestroyProp(c.gameObject);
 
             Owner.ScalingStats.Gain((BaseAttribute.Atk, shellSmashAtkScale), (BaseAttribute.Def, shellSmashDefScale));
+            Owner.IsImmune = false;
             Owner.ScalingStats.Gain((ScalingAttribute.WalkSpeed, shellSmashSpeedScale));
             Owner.GetComponent<Rigidbody>().useGravity = true;
             Owner.GetComponent<MobMovement>().enabled = true;
