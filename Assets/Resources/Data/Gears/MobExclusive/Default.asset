@@ -34,4 +34,15 @@ MonoBehaviour:
     weaponSpeed: 0
     weaponRange: 2
     prefabName: Default
-  rangeds: []
+  rangeds:
+  - id: vampress2
+    name: Vampress Phase 2
+    tier: 0
+    stats:
+      baseStats: []
+      hashedScaling: []
+    abilityID: 
+    weaponSpeed: 0
+    weaponRange: 150
+    prefabName: Vampress
+    pierce: 1

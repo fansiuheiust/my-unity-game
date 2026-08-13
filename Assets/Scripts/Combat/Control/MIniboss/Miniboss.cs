@@ -115,6 +115,7 @@ namespace Combat.Miniboss {
         /// Called when you want to start a new ability
         /// </summary>
         protected void StartNewAbility(System.Func<IEnumerator> ability) {
+            if (gameObject == null) return;
             if (!ActiveAbility) {
                 this.ability = StartCoroutine(ability());
                 ActiveAbility = true;

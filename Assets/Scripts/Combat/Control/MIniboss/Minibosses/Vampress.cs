@@ -1,3 +1,4 @@
+using Loot;
 using Progression.Balance;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace Combat.Miniboss {
         [SerializeField]
         GameObject bloodSpillCourtesyPrefab;
         [SerializeField]
+        string phase2WeaponID = "vampress2";
+
+
+        [SerializeField]
         int swarmSpawnCount = 10;
         [SerializeField]
         float swarmSpawnTime = 1;
@@ -30,6 +35,12 @@ namespace Combat.Miniboss {
         int captureCount = 10;
         [SerializeField]
         float captureCooldown = 1f;
+
+        [SerializeField]
+        float atkMultPerCapture = 0.2f, defPerCapture = 8;
+
+        [SerializeField]
+        float bloodSpillBase = 1.5f;
 
         [SerializeField]
         bool despawnsOutrangedSwarms = true;
@@ -175,6 +186,14 @@ namespace Combat.Miniboss {
             }
             yield return new WaitForSeconds(bloodSpillCourtesyTime);
 
+            Owner.BaseStats.Gain(BaseAttribute.Def, captured * defPerCapture);
+            Owner.ScalingStats.Gain(BaseAttribute.Atk, captured * atkMultPerCapture);
+
+            Owner.Equip(GearDatabase.Get(phase2WeaponID));
+
+            if (captured > captureCount) {
+                Debug.Log("Bad thing happens");
+            }
 
             interruptedAction();
             EndAbility();
