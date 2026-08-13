@@ -73,16 +73,18 @@ namespace Combat {
             }
         }
 
-        protected virtual bool Hit(Mob m) {
+        protected virtual bool Hit(Mob m, bool decrementPierce = true) {
             Physics.IgnoreCollision(m.GetComponent<Collider>(), GetComponent<Collider>());
             if (Owner.CanAttack(m)) {
                 Owner.DealDamage(m, DamageType, multiplier);
                 Owner.DealKnockback(m, m.transform.position - RB.linearVelocity, 0.5f);
-                PierceLeft--;
                 onHit.Invoke(m);
-                if (PierceLeft == 0) {
-                    // ran out of pierces
-                    Delete();
+                if (decrementPierce) {
+                    PierceLeft--;
+                    if (PierceLeft == 0) {
+                        // ran out of pierces
+                        Delete();
+                    }
                 }
                 return true;
             }

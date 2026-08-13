@@ -307,7 +307,7 @@ MonoBehaviour:
   initialStats:
     baseStats:
     - stats: 2
-      base: 150
+      base: 200
       scale: 0
     - stats: 0
       base: 3
@@ -395,6 +395,8 @@ MonoBehaviour:
   majorPrefab: {fileID: 3817750248607857368, guid: ff1e922df79148a419f2d2284b07ef28, type: 3}
   swarmEggPrefab: {fileID: 5685350970119927826, guid: 3984ffb1e0f27c6409852d339b3c9649, type: 3}
   bloodSpillCourtesyPrefab: {fileID: 5207319323361643739, guid: bd450b6a1aae6dc46a0adc0b9b02c575, type: 3}
+  bloodSpherePrefab: {fileID: 4152237858314563308, guid: 629390a6c6c8be946ab1ba54b2136684, type: 3}
+  phase2WeaponID: vampress2
   swarmSpawnCount: 12
   swarmSpawnTime: 1
   swarmEggSpeed: 20
@@ -402,6 +404,10 @@ MonoBehaviour:
   captureTime: 0.5
   captureCount: 10
   captureCooldown: 1
+  atkMultPerCapture: 0.2
+  defPerCapture: 8
+  bloodSphereBase: 2
+  bloodSphereVelocity: 75
   despawnsOutrangedSwarms: 1
 --- !u!1 &4299913458441563706
 GameObject:

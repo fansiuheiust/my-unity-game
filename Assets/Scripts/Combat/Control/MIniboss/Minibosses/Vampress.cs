@@ -17,6 +17,8 @@ namespace Combat.Miniboss {
         [SerializeField]
         GameObject bloodSpillCourtesyPrefab;
         [SerializeField]
+        GameObject bloodSpherePrefab;
+        [SerializeField]
         string phase2WeaponID = "vampress2";
 
 
@@ -40,7 +42,10 @@ namespace Combat.Miniboss {
         float atkMultPerCapture = 0.2f, defPerCapture = 8;
 
         [SerializeField]
-        float bloodSpillBase = 1.5f;
+        float bloodSphereBase = 2f;
+
+        [SerializeField]
+        float bloodSphereVelocity = 100f;
 
         [SerializeField]
         bool despawnsOutrangedSwarms = true;
@@ -193,6 +198,15 @@ namespace Combat.Miniboss {
 
             if (captured > captureCount) {
                 Debug.Log("Bad thing happens");
+
+                Projectile bloodSphere = Instantiate(bloodSpherePrefab).GetComponent<Projectile>();
+                bloodSphere.transform.position = Owner.transform.position + Vector3.up;
+
+                yield return new WaitForSeconds(bloodSpillCourtesyTime);
+
+                bloodSphere.Set(Owner, bloodSphereBase, bloodSphereVelocity * (Target.transform.position - bloodSphere.transform.position).normalized, 1);
+
+                yield return new WaitForSeconds(bloodSpillCourtesyTime);
             }
 
             interruptedAction();
