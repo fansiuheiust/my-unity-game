@@ -240,7 +240,7 @@ namespace Combat.Miniboss {
             // v = u + at => t = u/a
             float otherSpeed = bloodRainRadius / (2* verticalSpeed / -Physics.gravity.y);
             for (int i =0; i < bloodRainCount; i++) {
-                Vector3 vel = verticalSpeed * Vector3.up + otherSpeed * (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f))).normalized;
+                Vector3 vel = verticalSpeed * Vector3.up + otherSpeed * new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
 
                 Projectile bloodSphere = Instantiate(bloodSpherePrefab, Owner.transform.position, Quaternion.identity).GetComponent<Projectile>();
 

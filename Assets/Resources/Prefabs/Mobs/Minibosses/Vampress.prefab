@@ -390,8 +390,8 @@ MonoBehaviour:
   bloodSphereBase: 2
   bloodSphereVelocity: 75
   despawnsOutrangedSwarms: 1
-  bloodRainCount: 40
-  bloodRainDuration: 4
+  bloodRainCount: 30
+  bloodRainDuration: 1
   bloodRainHeight: 10
   bloodRainRadius: 25
   bloodSphereDamageMultiplier: 1
