@@ -130,7 +130,7 @@ namespace Combat {
         protected virtual void FollowTarget() {
             Vector3 scaledDelta = Vector3.Scale(Delta, new Vector3(1, 0, 1));
             MoveDirection = State switch {
-                MobState.Charge => (scaledDelta.magnitude-0.5f > AttackRange/2f)? scaledDelta: Vector3.zero,
+                MobState.Charge => (scaledDelta.magnitude-0.5f > AttackRange/2f * (Owner.EquippedWeapon is not null && Owner.EquippedWeapon is Ranged? 0.2f: 1f))? scaledDelta: Vector3.zero,
                 MobState.Escape => -scaledDelta,
                 _ => Vector3.zero
             };
