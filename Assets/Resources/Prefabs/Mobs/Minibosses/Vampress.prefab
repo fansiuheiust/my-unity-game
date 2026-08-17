@@ -377,6 +377,7 @@ MonoBehaviour:
   swarmEggPrefab: {fileID: 5685350970119927826, guid: 3984ffb1e0f27c6409852d339b3c9649, type: 3}
   bloodSpillCourtesyPrefab: {fileID: 5207319323361643739, guid: bd450b6a1aae6dc46a0adc0b9b02c575, type: 3}
   bloodSpherePrefab: {fileID: 4152237858314563308, guid: 629390a6c6c8be946ab1ba54b2136684, type: 3}
+  bloodRainCourtesyPrefab: {fileID: 2971810886905019157, guid: 70e971f25a8ed754b884310e4230f710, type: 3}
   phase2WeaponID: vampress2
   swarmSpawnCount: 12
   swarmSpawnTime: 1
@@ -390,10 +391,10 @@ MonoBehaviour:
   bloodSphereBase: 2
   bloodSphereVelocity: 75
   despawnsOutrangedSwarms: 1
-  bloodRainCount: 30
+  bloodRainCount: 150
   bloodRainDuration: 1
   bloodRainHeight: 10
-  bloodRainRadius: 25
+  bloodRainRadius: 20
   bloodSphereDamageMultiplier: 1
 --- !u!114 &-7958974791615147146
 MonoBehaviour:

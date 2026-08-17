@@ -1,4 +1,5 @@
 using Loot;
+using NUnit.Framework.Constraints;
 using Progression.Balance;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Combat.Miniboss {
         GameObject bloodSpillCourtesyPrefab;
         [SerializeField]
         GameObject bloodSpherePrefab;
+        [SerializeField]
+        GameObject bloodRainCourtesyPrefab;
         [SerializeField]
         string phase2WeaponID = "vampress2";
 
@@ -238,9 +241,16 @@ namespace Combat.Miniboss {
             float durationPerBlood = bloodRainDuration / bloodRainCount;
             float verticalSpeed = Mathf.Sqrt(-2 * Physics.gravity.y * bloodRainHeight);// v^2 = u^2 + 2as => u = sqrt(2as)
             // v = u + at => t = u/a
-            float otherSpeed = bloodRainRadius / (2* verticalSpeed / -Physics.gravity.y);
+            float time = 2 * verticalSpeed / -Physics.gravity.y;
+            float otherSpeed = bloodRainRadius / time;
             for (int i =0; i < bloodRainCount; i++) {
-                Vector3 vel = verticalSpeed * Vector3.up + otherSpeed * new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+                Vector3 dir = new(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+                Vector3 vel = verticalSpeed * Vector3.up + otherSpeed * dir;
+
+                Vector3 landingPos = dir * bloodRainRadius + transform.position + 1 * Vector3.down;
+                GameObject courtesy = InstantiateProp(bloodRainCourtesyPrefab);
+                courtesy.transform.position = landingPos;
+                StartCoroutine(Despawn(courtesy, time));
 
                 Projectile bloodSphere = Instantiate(bloodSpherePrefab, Owner.transform.position, Quaternion.identity).GetComponent<Projectile>();
 
@@ -253,6 +263,12 @@ namespace Combat.Miniboss {
             interruptedAction();
 
             EndAbility();
+            yield break;
+        }
+
+        IEnumerator Despawn(GameObject obj, float time) {
+            yield return new WaitForSeconds(time);
+            DestroyProp(obj);
             yield break;
         }
     }
