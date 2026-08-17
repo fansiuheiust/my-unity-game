@@ -3,6 +3,7 @@ using Progression.Balance;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -49,6 +50,18 @@ namespace Combat.Miniboss {
 
         [SerializeField]
         bool despawnsOutrangedSwarms = true;
+
+        [SerializeField]
+        int bloodRainCount = 10;
+        [SerializeField]
+        float bloodRainDuration = 2f;
+        [SerializeField]
+        float bloodRainHeight = 8f;
+        [SerializeField]
+        float bloodRainRadius = 20f;
+        [SerializeField]
+        float bloodSphereDamageMultiplier = 1f;
+
 
         readonly HashSet<Mob> spawns = new();
 
@@ -200,6 +213,7 @@ namespace Combat.Miniboss {
                 Debug.Log("Bad thing happens");
 
                 Projectile bloodSphere = Instantiate(bloodSpherePrefab).GetComponent<Projectile>();
+                bloodSphere.GetComponent<Rigidbody>().useGravity = false;
                 bloodSphere.transform.position = Owner.transform.position + Vector3.up;
 
                 yield return new WaitForSeconds(bloodSpillCourtesyTime);
@@ -209,7 +223,35 @@ namespace Combat.Miniboss {
                 yield return new WaitForSeconds(bloodSpillCourtesyTime);
             }
 
+            SwitchAbilitySet(new (System.Func<IEnumerator>, System.Func<bool>)[] { (BloodRain, ()=>true)});
+
             interruptedAction();
+            EndAbility();
+            yield break;
+        }
+
+        IEnumerator BloodRain() {
+            interruptedAction = () => {
+                Behaviour.ResumeStateSwitch();
+            };
+
+            float durationPerBlood = bloodRainDuration / bloodRainCount;
+            float verticalSpeed = Mathf.Sqrt(-2 * Physics.gravity.y * bloodRainHeight);// v^2 = u^2 + 2as => u = sqrt(2as)
+            // v = u + at => t = u/a
+            float otherSpeed = bloodRainRadius / (2* verticalSpeed / -Physics.gravity.y);
+            for (int i =0; i < bloodRainCount; i++) {
+                Vector3 vel = verticalSpeed * Vector3.up + otherSpeed * (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f))).normalized;
+
+                Projectile bloodSphere = Instantiate(bloodSpherePrefab, Owner.transform.position, Quaternion.identity).GetComponent<Projectile>();
+
+                bloodSphere.Set(Owner, bloodSphereDamageMultiplier, vel, 1);
+
+                yield return new WaitForSeconds(durationPerBlood);
+            }
+
+
+            interruptedAction();
+
             EndAbility();
             yield break;
         }

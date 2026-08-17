@@ -18,6 +18,7 @@ namespace Combat.Miniboss {
         /// 
         public AbilityChooser(params (System.Func<IEnumerator>, System.Func<bool>)[] abilities) {
             this.abilities = abilities.ToArray();
+            Reset();
         }
         /// <summary>
         /// Reshuffles the abilities
@@ -31,9 +32,11 @@ namespace Combat.Miniboss {
         /// Chooses the next available ability.<br />
         /// Reshuffles if reached the end of the current permutation.
         /// </summary>
-        /// <returns>The next available ability to use, null if an ability is active or no abilities fulfill the predicate</returns>
+        /// <param name="f">The next available ability to use, null if an ability is active or no abilities fulfill the predicate.</param>
+        /// <returns>True if an ability is chosen, false otherwise (including 0 abilities stored).</returns>
         public bool Next(out System.Func<IEnumerator> f) {
             f = null;
+            if (abilities.Length == 0) return false;
             for (; curr < abilities.Length; curr++) {
                 if (abilities[curr].predicate()) {
                     f = abilities[curr].ability;

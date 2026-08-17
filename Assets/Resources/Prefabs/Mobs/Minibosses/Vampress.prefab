@@ -109,8 +109,8 @@ GameObject:
   - component: {fileID: 1216661600292389350}
   - component: {fileID: 5264415367786491927}
   - component: {fileID: 612017288743449827}
-  - component: {fileID: 5587457927450791614}
   - component: {fileID: 879179198002308248}
+  - component: {fileID: -7958974791615147146}
   m_Layer: 0
   m_Name: Vampress
   m_TagString: Untagged
@@ -351,25 +351,6 @@ MonoBehaviour:
   OnMovementChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5587457927450791614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3704017514647809928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5effc7333c594b4b9eb4e860d66d9b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  findInterval: 1
-  searchRadius: 50
-  stateChangeInterval: 2
-  <Faction>k__BackingField: 2
-  onTargetSwitch:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &879179198002308248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,6 +390,30 @@ MonoBehaviour:
   bloodSphereBase: 2
   bloodSphereVelocity: 75
   despawnsOutrangedSwarms: 1
+  bloodRainCount: 40
+  bloodRainDuration: 4
+  bloodRainHeight: 10
+  bloodRainRadius: 25
+  bloodSphereDamageMultiplier: 1
+--- !u!114 &-7958974791615147146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3704017514647809928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5effc7333c594b4b9eb4e860d66d9b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  findInterval: 1
+  searchRadius: 50
+  stateChangeInterval: 2
+  <Faction>k__BackingField: 2
+  onTargetSwitch:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4299913458441563706
 GameObject:
   m_ObjectHideFlags: 0
