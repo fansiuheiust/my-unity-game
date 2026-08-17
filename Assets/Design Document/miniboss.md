@@ -54,5 +54,20 @@ Gears:
 
 
 
-### Vampress
+### Vampress (Floor 2+)
+
+A queen vampire who summons minions to assist her in battle.
+
+* Major: Spawns a major that attacks the player
+* Swarm: Spawns many mobs that attack the player
+* Blood Spill: After dropping below 50% HP, enters immune state and signals. In each second, kills a summon (by enveloping it into an egg). After 10 seconds passed, kills all summons. Deals damage to everyone in 10 units radius if she killed at least 10 summons. Gains atk%, def. Both scale with number of summons killed. Enters phase 2 and attacks with a ranged weapon instead.
+* Bloodrain: spawns projectiles like how she did when spawning swarm, but faces up and the projectiles actually damage.
+
+Gears:
+
+* Drained Crown (Common): Helmet that provides HP and Mana Regen
+* Defunct Staff (Rare): Ranged weapon that provides Knockback
+* Infused Staff (Epic): Upgrade of Defunct Staff, with additional ability that summons mobs to fight by the player's side
+* Blood-Infused Crown (Legendary): Upgrade of Drained Crown, with additional ability that increases the player's Atk by how much damage they took or dealt
+* Vampress' Staff (Mythical): Upgrade of Infused Staff, the ability comes with right clicking when the summoned mobs are active to quickly kill them and deal massive AoE damage based of number of them killed; longer time implies more damage
 

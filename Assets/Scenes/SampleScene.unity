@@ -2304,6 +2304,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2033596261147179342, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
+      propertyPath: bosses.Array.data[1].bosses.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2033596261147179342, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
+      propertyPath: 'bosses.Array.data[1].bosses.Array.data[0]'
+      value: Vampress
+      objectReference: {fileID: 0}
     - target: {fileID: 5532049538663541087, guid: 366152856e3f0fb43bae0462d6451753, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.529217
@@ -2382,7 +2390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593996a645aae434ba4bd29a0cb4e282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageController
-  floor: 2
+  floor: 1
   loadFromSave: 0
   levelingData: {fileID: 11400000, guid: e9cb36f9d4dd5464fb117e9734e7cca3, type: 2}
   perkData: {fileID: 11400000, guid: 292fc30c17e9ad84cb7c6dd25e59ed2d, type: 2}
@@ -2483,67 +2491,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 099b4b5d7369ba545b8117babeb9f670, type: 3}
---- !u!1001 &1892859153
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 7.546
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.505
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.0892644
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 479526788642236934, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4726813838405811930, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: <Faction>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5594697965900854007, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
-      propertyPath: m_Name
-      value: Blue Lobster
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d68657f34efa54e4cacc7ddac71cd490, type: 3}
 --- !u!1 &1965494259
 GameObject:
   m_ObjectHideFlags: 0
@@ -3102,6 +3049,10 @@ PrefabInstance:
       value: long_sword
       objectReference: {fileID: 0}
     - target: {fileID: 6983130159692096714, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
+      propertyPath: initialStats.baseStats.Array.data[0].base
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983130159692096714, guid: aa042e1fa91db1a4daf4934fbcbeeac2, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -3256,11 +3207,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: 'initialGears.Array.data[0]'
-      value: heat_seeking_claw
+      value: humble_sword
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: 'initialGears.Array.data[1]'
-      value: blue_lobsters_shell
+      value: detached_shell
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.baseStats.Array.size
@@ -3268,7 +3219,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.base.<Atk>k__BackingField
@@ -3280,7 +3231,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.baseStats.Array.data[1].base
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.baseStats.Array.data[2].base
@@ -3308,11 +3259,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[0].data
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].data
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
+      propertyPath: initialStats.hashedScaling.Array.data[0].stats
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6208849072461672503, guid: 4137803533db77a44b3d8538598c945f, type: 3}
       propertyPath: initialStats.hashedScaling.Array.data[1].stats
@@ -3355,5 +3310,4 @@ SceneRoots:
   - {fileID: 1770425532}
   - {fileID: 101979816}
   - {fileID: 40205110}
-  - {fileID: 1892859153}
   - {fileID: 1554069241}

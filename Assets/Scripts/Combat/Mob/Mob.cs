@@ -110,7 +110,7 @@ namespace Combat {
             }
         }
 
-        bool _isImmune = false;
+        public bool IsImmune { get; set; } = false;
 
         
         
@@ -255,7 +255,7 @@ namespace Combat {
         /// <param name="damageType">Type of damage the mob dealt</param>
         /// <param name="weaponMultiplier">The damage multiplier based on the weapon's action</param>
         void TakeDamage(Mob source, DamageType damageType, float weaponMultiplier = 1f) {
-            if (_isImmune) return;
+            if (IsImmune) return;
             OnDamageTake.Invoke(source, stats.TakeDamage(source.stats, damageType, weaponMultiplier));
             DeathCheck(source);
         }
@@ -268,7 +268,7 @@ namespace Combat {
         /// <param name="source">Source of damage (null if not damaged by a mob)</param>
         /// <param name="damageType">type of damage</param>
         public void TakeDamage(float amount, Mob source, DamageType damageType) {
-            if (_isImmune) return;
+            if (IsImmune) return;
             OnDamageTake.Invoke(source, stats.TakeDamage(amount, damageType));
             DeathCheck(source);
         }
@@ -345,7 +345,7 @@ namespace Combat {
         /// <param name="origin">the position of the knockback</param>
         /// <param name="duration">How long should this mob not act (because of knockback) for</param>
         void TakeKnockback(Mob source, Vector3 origin, float duration) {
-            if (_isImmune) return;
+            if (IsImmune) return;
             duration *= (1 + source.Stats[ScalingAttribute.Knockback]) * (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;
             TakeStun(duration, source);
@@ -360,7 +360,7 @@ namespace Combat {
         /// <param name="isInternal">Whether the knockback is internal: internal knockback's duration is not modified by knockback resistance</param>
         /// <param name="magnitudeMultiplier">How much faster the speed should move when knocked back</param>
         public void TakeKnockback(Vector3 origin, float duration, bool isInternal = false, float magnitudeMultiplier = 1f) {
-            if (_isImmune && !isInternal) return;
+            if (IsImmune && !isInternal) return;
             if (!isInternal)
                 duration *= (1 - Stats[ScalingAttribute.KnockbackResistance]);
             if (duration < 1e-3f) return;

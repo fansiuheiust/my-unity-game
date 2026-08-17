@@ -31,6 +31,10 @@ namespace Combat.Miniboss {
             Owner.OnDeath.AddListener(OnMobDied);
         }
 
+        protected virtual void Start() {
+
+        }
+
         protected virtual void OnDestroy() {
             InterruptAbility();
             StopAllCoroutines();
@@ -76,6 +80,13 @@ namespace Combat.Miniboss {
             }
         }
 
+        protected void SwitchAbilitySet((System.Func<IEnumerator>, System.Func<bool>)[] abilities) {
+            if (abilities is null) {
+                abilities = new (System.Func<IEnumerator>, System.Func<bool>)[0];
+            }
+            abilityChooser = new(abilities);
+        }
+
         IEnumerator AbilityUnleasher() {
             while (true) {
                 yield return new WaitForSeconds(Random.Range(abilityIntervalMin, abilityIntervalMax));
@@ -111,6 +122,7 @@ namespace Combat.Miniboss {
         /// Called when you want to start a new ability
         /// </summary>
         protected void StartNewAbility(System.Func<IEnumerator> ability) {
+            if (gameObject == null) return;
             if (!ActiveAbility) {
                 this.ability = StartCoroutine(ability());
                 ActiveAbility = true;
