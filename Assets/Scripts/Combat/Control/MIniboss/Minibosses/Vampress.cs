@@ -238,6 +238,7 @@ namespace Combat.Miniboss {
                 Behaviour.ResumeStateSwitch();
             };
             Behaviour.PauseStateSwitch();
+            Behaviour.State = MobState.Idle;
             GameObject selfCourtesy = InstantiateProp(bloodRainCourtesyPrefab);
             selfCourtesy.transform.position = Owner.transform.position+Vector3.up;
             yield return new WaitForSeconds(1);
@@ -265,6 +266,8 @@ namespace Combat.Miniboss {
             }
             if (selfCourtesy != null)
                 DestroyProp(selfCourtesy);
+            yield return new WaitForSeconds(time);
+
 
             interruptedAction();
 
