@@ -237,6 +237,11 @@ namespace Combat.Miniboss {
             interruptedAction = () => {
                 Behaviour.ResumeStateSwitch();
             };
+            Behaviour.PauseStateSwitch();
+            Behaviour.State = MobState.Idle;
+            GameObject selfCourtesy = InstantiateProp(bloodRainCourtesyPrefab);
+            selfCourtesy.transform.position = Owner.transform.position+Vector3.up;
+            yield return new WaitForSeconds(1);
 
             float durationPerBlood = bloodRainDuration / bloodRainCount;
             float verticalSpeed = Mathf.Sqrt(-2 * Physics.gravity.y * bloodRainHeight);// v^2 = u^2 + 2as => u = sqrt(2as)
@@ -255,9 +260,13 @@ namespace Combat.Miniboss {
                 Projectile bloodSphere = Instantiate(bloodSpherePrefab, Owner.transform.position, Quaternion.identity).GetComponent<Projectile>();
 
                 bloodSphere.Set(Owner, bloodSphereDamageMultiplier, vel, 1);
+                StartCoroutine(Despawn(bloodSphere.gameObject, 2* time));
 
                 yield return new WaitForSeconds(durationPerBlood);
             }
+            if (selfCourtesy != null)
+                DestroyProp(selfCourtesy);
+            yield return new WaitForSeconds(time);
 
 
             interruptedAction();
