@@ -2,6 +2,33 @@
 # Dungeon Game: Renamed
 A solo dungeon crawler project inspired by Hypixel Skyblock Dungeon, rebuilt from scratch from my version used for a school's Open Day.
 
+## Demonstration
+
+### Dungeon Procedural Generation
+Structure of a typical dungeon generated: (green: starting room; red: final room)
+
+Structure of a big generated dungeon
+
+Structure of an even bigger dungeon
+
+### Puzzles
+Jump Game Description
+
+Jump Game Playthrough
+
+Light as Steel Description
+
+Light as Steel Playthrough (sending a train up)
+
+Light as Steel Playthrough (collision)
+
+### Minibosses
+Vampress Summoning Swarm
+
+Vampress Phase Change
+
+Vampress Second Phase Attack
+
 ## List of features
 
 ### Combat
