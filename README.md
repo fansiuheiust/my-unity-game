@@ -5,29 +5,40 @@ A solo dungeon crawler project inspired by Hypixel Skyblock Dungeon, rebuilt fro
 ## Demonstration
 
 ### Dungeon Procedural Generation
-Structure of a typical dungeon generated: (green: starting room; red: final room)
+Structure of a typical dungeon generated: (green: starting room; red: final room; blue connection: optional rooms)
+![Small room](Demos/dungeon_demo_small.png)
 
 Structure of a big generated dungeon
+![Medium room](Demos/dungeon_demo_medium.png)
 
 Structure of an even bigger dungeon
+![Large room](Demos/dungeon_demo_large.png)
 
 ### Puzzles
 Jump Game Description
+![Jump Game Desc](Demos/jump_game_description.png)
 
 Jump Game Playthrough
+![Jump Game Demo](Demos/jump_game_demo.gif)
 
 Light as Steel Description
+![Light as Steel Desc](Demos/light_as_steel_description.png)
 
 Light as Steel Playthrough (sending a train up)
+![Light as Steel Demo 1](Demos/light_as_steel_jump.gif)
 
 Light as Steel Playthrough (collision)
+![Light as Steel Demo 2](Demos/light_as_steel_collision.gif)
 
 ### Minibosses
 Vampress Summoning Swarm
+![Vampress Summoning](Demos/vampress_spawn.gif)
 
-Vampress Phase Change
+Vampress Phase Change (player must kill enough swarms, or Vampress does a deadly attack, and each captured swarm buffs the Vampress)
+![Vampress Phase Change](Demos/vampress_phase_change.gif)
 
-Vampress Second Phase Attack
+Vampress Second Phase Attack: Blood Rain
+![Vampress Blood Rain](Demos/vampress_blood_rain.gif)
 
 ## List of features
 
